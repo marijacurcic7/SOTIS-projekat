@@ -14,8 +14,9 @@ import { USE_EMULATOR as USE_FUNCTIONS_EMULATOR } from '@angular/fire/compat/fun
 import { environment } from 'src/environments/environment';
 
 //auth
-import { AngularFireAuth, USE_EMULATOR as USE_AUTH_EMULATOR } from '@angular/fire/compat/auth';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFireAuth, AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './components/material.module';
 
 /* 
 This function is necessary to properly load logged in user after page refresh.
@@ -41,6 +42,8 @@ export function initializeApp1(afa: AngularFireAuth) {
     AngularFirestoreModule,
     AngularFireFunctionsModule,
     AngularFireAuthModule,
+    BrowserAnimationsModule,
+    MaterialModule
   ],
   providers: [
     {
@@ -51,10 +54,6 @@ export function initializeApp1(afa: AngularFireAuth) {
       provide: USE_FUNCTIONS_EMULATOR,
       useValue: environment.production ? undefined : ['localhost', 5001]
     },
-    // {
-    //   provide: USE_AUTH_EMULATOR,
-    //   useValue: environment.production ? undefined : ['localhost', 9099]
-    // },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp1,

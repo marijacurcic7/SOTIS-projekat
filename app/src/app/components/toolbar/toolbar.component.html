@@ -1,0 +1,43 @@
+<mat-toolbar color="primary" [ngClass]="{'transparent' : route.children.length === 0}">
+  <mat-toolbar-row>
+    <a href="/"> 
+      <span [ngClass]="{'titleSmall': innerWidth < 450}"> 
+        {{title}} 
+      </span> 
+    </a>
+    <span class="menu-spacer"></span>
+
+    <!-- <div *ngIf="(auth.user$ | async)?.role === 'admin' ">
+      <button mat-button routerLink="/manage" >
+        <mat-icon class="material-icons-filled">edit</mat-icon>
+        <span *ngIf="innerWidth > 450">Edit</span> 
+      </button>
+    </div>
+
+    <div *ngIf="(auth.user$ | async)?.role === 'user' ">
+      <button mat-button routerLink="/my-reviews">
+        <mat-icon class="material-icons-outlined">reviews</mat-icon>
+        <span *ngIf="innerWidth > 450">My Reviews</span> 
+      </button>
+      <button mat-button routerLink="/my-news">
+        <mat-icon class="material-icons-outlined">feed</mat-icon>
+        <span *ngIf="innerWidth > 450">News</span> 
+      </button>
+    </div> -->
+    
+
+    <div *ngIf="auth.user$ | async; else login">
+      <button mat-button (click)="auth.logout()">
+        <span *ngIf="innerWidth > 450">Log Out</span> 
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+    <ng-template #login>
+      <button mat-button routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Log In
+      </button>
+      <button mat-button routerLink="/signup">Sign Up</button>
+    </ng-template>
+  </mat-toolbar-row>
+</mat-toolbar>
