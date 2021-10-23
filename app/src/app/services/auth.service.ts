@@ -33,7 +33,7 @@ export class AuthService {
     try {
       const credential = await this.auth.createUserWithEmailAndPassword(email, password)
       if (credential.user === null) throw new Error()
-      this.setUserData(credential.user)
+      this.setUserData(credential.user.uid, email, name)
       this.openSuccessSnackBar('Successfully created new account.')
     } catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
@@ -56,7 +56,11 @@ export class AuthService {
 
   async googleLogin() {
     try {
-      await this.auth.signInWithPopup(new GoogleAuthProvider())
+      const credential = await this.auth.signInWithPopup(new GoogleAuthProvider())
+      if (credential.user === null) throw new Error()
+      const { uid, email, displayName } = credential.user
+      if (uid === null || email === null || displayName === null) throw new Error()
+      this.setUserData(uid, email, displayName)
       this.openSuccessSnackBar('Successfully logged in.')
     } catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
@@ -69,7 +73,7 @@ export class AuthService {
     this.auth.signOut()
   }
 
-  setUserData({ uid, email, displayName }: firebase.default.User) {
+  setUserData(uid: string, email: string, displayName: string) {
     return this.firestore.doc(`users/${uid}`).set({
       uid,
       email,
