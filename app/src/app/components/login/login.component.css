@@ -1,0 +1,11 @@
+
+.center {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.errorBorder {
+  border:2px solid rgba(207, 13, 13, 0.507);
+}

@@ -1,0 +1,22 @@
+.menu-spacer {
+  flex: 1 1 auto;
+}
+button{
+  margin-left: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* .transparent {
+  background:linear-gradient(to top, rgba(0,0,0,.0) 10%, rgba(0,0,0,0.2));
+  position: absolute;
+  color: rgb(238, 238, 238);
+} */
+
+.titleSmall {
+  font-size: smaller;
+}
