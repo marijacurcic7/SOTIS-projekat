@@ -27,7 +27,7 @@ Use this function only in development environment!
 export function initializeApp1(afa: AngularFireAuth) {
   return () => {
     if (environment.production) return Promise.resolve()
-    else return afa.useEmulator(`http://localhost:9099`);
+    else return afa.useEmulator(`http://localhost:8083`);
   };
 }
 
@@ -52,7 +52,7 @@ export function initializeApp1(afa: AngularFireAuth) {
     },
     {
       provide: USE_FUNCTIONS_EMULATOR,
-      useValue: environment.production ? undefined : ['localhost', 5001]
+      useValue: environment.production ? undefined : ['localhost', 8082]
     },
     {
       provide: APP_INITIALIZER,
