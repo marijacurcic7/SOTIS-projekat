@@ -1,2 +1,5 @@
 <app-toolbar></app-toolbar>
 <router-outlet></router-outlet>
+<div *ngIf="route.children.length === 0">
+  <app-teacher-home-page></app-teacher-home-page>
+</div>

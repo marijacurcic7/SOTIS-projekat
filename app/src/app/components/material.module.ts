@@ -15,13 +15,17 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { TeacherHomePageComponent } from './teacher/teacher-home-page/teacher-home-page.component';
+import { AddTestComponent } from './teacher/add-test/add-test.component';
 
 @NgModule({
   declarations: [
     ToolbarComponent,
     HomePageComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    TeacherHomePageComponent,
+    AddTestComponent
   ],
   imports: [
     CommonModule,

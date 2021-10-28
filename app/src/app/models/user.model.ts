@@ -1,7 +1,10 @@
+import { Take } from "./take.model";
+
 export interface User {
   uid: string;
   email: string;
-  photoURL?: string;
-  displayName?: string;
-  role: string
+  displayName: string;
+  role: string,
+  createdTests?: string[], // if teacher
+  takes?: Take[] // if student
 }
