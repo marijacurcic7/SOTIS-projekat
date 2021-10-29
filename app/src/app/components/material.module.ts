@@ -16,7 +16,9 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { TeacherHomePageComponent } from './teacher/teacher-home-page/teacher-home-page.component';
-import { AddTestComponent } from './teacher/add-test/add-test.component';
+import { AddTestComponent, QuestionDialog } from './teacher/add-test/add-test.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import { AddTestComponent } from './teacher/add-test/add-test.component';
     LoginComponent,
     SignupComponent,
     TeacherHomePageComponent,
-    AddTestComponent
+    AddTestComponent,
+    QuestionDialog
   ],
   imports: [
     CommonModule,
@@ -39,6 +42,8 @@ import { AddTestComponent } from './teacher/add-test/add-test.component';
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatDialogModule,
+    MatRadioModule
 
   ]
 })

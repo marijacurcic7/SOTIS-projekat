@@ -1,0 +1,23 @@
+
+
+  .actions {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+
+  .qdialog {
+    width: 100%;
+  }
+
+  td {
+    padding-right: 8px;
+  }
+
+  .custom-modalbox {
+        padding: 0;   
+  }
