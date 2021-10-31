@@ -1,5 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Answer } from 'src/app/models/answer.model';
+import { Question } from "../../../models/question.model"
+import { Test } from "../../../models/test.model"
+import { MatTableDataSource } from '@angular/material/table';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
 
 export interface DialogData {
   text: string;
@@ -8,7 +14,19 @@ export interface DialogData {
   answer2: string;
   answer3: string;
   answer4: string;
+  a1check: boolean;
+  a2check: boolean;
+  a3check: boolean;
+  a4check: boolean;
 }
+
+export interface QuestionData {
+  text: string;
+  maxPoints: number;
+  possibleAnswers: string[];
+  trueAnswers: string[];
+}
+
 
 @Component({
   selector: 'app-add-test',
@@ -17,27 +35,84 @@ export interface DialogData {
 })
 export class AddTestComponent implements OnInit {
 
+  testForm!: FormGroup;
+  test!: Test;
+  maxPoints: number;
   name: string;
   topic: string;
-  text: string;
+  questions: Question[];
+  answers: Answer[];
+  displayedColumns: string[] = ['text', 'points'];
+  dataSource: MatTableDataSource<Question>;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+    private fb: FormBuilder,
+    ) { 
+    this.questions = [];
+    this.answers = [];
+    this.dataSource = new MatTableDataSource<Question>();
+    this.maxPoints = 0;
+    this.testForm = this.fb.group({
+      'name': [''],
+      'topic': [''],
+    });
+  }
 
   questionDialog(): void {
     const dialogRef = this.dialog.open(QuestionDialog, {
       width: '800px',
-      data: {text: this.text},
-      // panelClass: 'custom-modalbox'
+      data: {},
+      // data: {text: this.text},
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      this.text = result;
+      console.log(result);
+      if(result){
+
+        let q : Question = {
+          text: result.text,
+          maxPoints: result.maxPoints,
+          possibleAnswers: result.possibleAnswers,
+        }
+        this.maxPoints += result.maxPoints;
+        console.log(q);
+        this.questions.push(q);
+        this.answers.push(result.trueAnswers);
+        this.dataSource = new MatTableDataSource<Question>(this.questions);
+      }
+      
     });
   }
 
   ngOnInit(): void {
   }
+
+  saveTest(){
+
+    this.name = this.testForm.controls['name'].value;
+    this.topic = this.testForm.controls['topic'].value;
+    console.log(this.name);
+    console.log(this.topic);
+
+    this.test = {
+      name: this.name,
+      topic: this.topic,
+      maxPoints: this.maxPoints,
+      questions: this.questions,
+      answers: this.answers,
+      createdBy: {
+        displayName: "",
+        teacherId: ""
+      }
+    }
+
+    console.log(this.test);
+
+    console.log("SAVE");
+  }
+
+
 
 }
 
@@ -47,13 +122,63 @@ export class AddTestComponent implements OnInit {
   styleUrls: ['./add-test.component.css']
 })
 export class QuestionDialog {
+  
+  a1check = false;
+  a2check = false;
+  a3check = false;
+  a4check = false;
 
   constructor(
     public dialogRef: MatDialogRef<QuestionDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
-  onNoClick(): void {
+  onCancel(): void {
     this.dialogRef.close();
   }
 
+  onDone(): void {
+
+    let question1 : QuestionData = {
+      text: this.data.text,
+      maxPoints: Number(this.data.maxPoints),
+      possibleAnswers: [],
+      trueAnswers: []
+    }
+
+    if(this.data.answer1){
+      question1.possibleAnswers.push(this.data.answer1)
+      if(this.a1check){
+        question1.trueAnswers.push(this.data.answer1)
+      }
+    }
+    if(this.data.answer2){
+      question1.possibleAnswers.push(this.data.answer2)
+      if(this.a2check){
+        question1.trueAnswers.push(this.data.answer2)
+      }
+    }
+    if(this.data.answer3){
+      question1.possibleAnswers.push(this.data.answer3)
+      if(this.a3check){
+        question1.trueAnswers.push(this.data.answer3)
+      }
+    }
+    if(this.data.answer4){
+      question1.possibleAnswers.push(this.data.answer4)
+      if(this.a4check){
+        question1.trueAnswers.push(this.data.answer4)
+      }
+    }
+
+    
+
+    console.log(question1);
+
+
+
+    this.dialogRef.close(question1);
+  }
+
 }
+
+

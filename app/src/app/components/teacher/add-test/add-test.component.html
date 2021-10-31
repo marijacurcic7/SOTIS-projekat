@@ -8,26 +8,47 @@
         </mat-card-header>
 
         <mat-card-content>
-            <form>
+            <form [formGroup]="testForm">
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Test name</mat-label>
-                    <input matInput placeholder="Test name">
+                    <input matInput placeholder="Test name" formControlName="name">
                 </mat-form-field>
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Topic</mat-label>
-                    <input matInput placeholder="Topic">
+                    <input matInput placeholder="Topic" formControlName="topic">
                 </mat-form-field>
-                <!-- <mat-form-field class="full-width" appearance="fill">
-                    <mat-label>Max points</mat-label>
-                    <input matInput placeholder="Max points">
-                </mat-form-field> -->
-                <mat-form-field class="full-width" appearance="fill">
-                    <mat-label>Question 1:</mat-label>
-                    <input matInput placeholder="Question text">
-                </mat-form-field>
+                <br />
+                <p>Questions</p>
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                  
+                    <!-- Position Column -->
+                    <!-- <ng-container matColumnDef="position">
+                      <th mat-header-cell *matHeaderCellDef> No. </th>
+                      <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                    </ng-container> -->
+                  
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="text">
+                      <th mat-header-cell *matHeaderCellDef> Question </th>
+                      <td mat-cell *matCellDef="let element"> {{element.text}} </td>
+                    </ng-container>
+                  
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="points">
+                      <th mat-header-cell *matHeaderCellDef> Points </th>
+                      <td mat-cell *matCellDef="let element"> {{element.maxPoints}} </td>
+                    </ng-container>
+                  
+                  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
                 <button mat-raised-button (click)="questionDialog()">Add question</button>
             </form>
         </mat-card-content>
+        <mat-card-actions>
+            <button mat-button (click)="saveTest()">Save</button>
+        </mat-card-actions>
     </mat-card>
 
     

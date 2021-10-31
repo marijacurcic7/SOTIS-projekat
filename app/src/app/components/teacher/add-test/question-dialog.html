@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Add question</h1>
 <div mat-dialog-content>
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Enter question text</mat-label>
+    <mat-label>Question text</mat-label>
     <textarea matInput [(ngModel)]="data.text"></textarea>
   </mat-form-field>
   <mat-form-field appearance="fill">
@@ -18,20 +18,25 @@
         </mat-form-field>
         </td>
         <td>
-        <mat-radio-group>
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="a1check">True</mat-checkbox>
+            </section>
+
+        <!-- <mat-radio-group>
             <mat-radio-button class="full-width" value="true">true</mat-radio-button>
             <mat-radio-button class="full-width" value="false">false</mat-radio-button>
-        </mat-radio-group>
+        </mat-radio-group> -->
         </td>
         <td><mat-form-field class="full-width" appearance="fill">
             <mat-label>Answer 2</mat-label>
             <textarea matInput [(ngModel)]="data.answer2"></textarea>
         </mat-form-field></td>
         <td>
-            <mat-radio-group>
+            <mat-checkbox class="example-margin" [(ngModel)]="a2check">True</mat-checkbox>
+            <!-- <mat-radio-group>
                 <mat-radio-button class="full-width" value="true">true</mat-radio-button>
                 <mat-radio-button class="full-width" value="false">false</mat-radio-button>
-            </mat-radio-group>
+            </mat-radio-group> -->
         </td>
     </tr>
     <tr>
@@ -40,26 +45,29 @@
             <textarea matInput [(ngModel)]="data.answer3"></textarea>
         </mat-form-field></td>
         <td>
-            <mat-radio-group>
+            <mat-checkbox class="example-margin" [(ngModel)]="a3check">True</mat-checkbox>
+            <!-- <mat-radio-group>
                 <mat-radio-button class="full-width" value="true">true</mat-radio-button>
                 <mat-radio-button class="full-width" value="false">false</mat-radio-button>
-            </mat-radio-group>
+            </mat-radio-group> -->
         </td>
         <td><mat-form-field class="full-width" appearance="fill">
             <mat-label>Answer 4</mat-label>
             <textarea matInput [(ngModel)]="data.answer4"></textarea>
         </mat-form-field></td>
         <td>
-            <mat-radio-group>
+            <mat-checkbox class="example-margin" [ngModel]="a4check">True</mat-checkbox>
+
+            <!-- <mat-radio-group>
                 <mat-radio-button class="full-width" value="true">true</mat-radio-button>
                 <mat-radio-button class="full-width" value="false">false</mat-radio-button>
-            </mat-radio-group>
+            </mat-radio-group> -->
         </td>
         </tr>
   </table>
 
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data.text" cdkFocusInitial>Done</button>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onDone()" cdkFocusInitial>Done</button>
 </div>

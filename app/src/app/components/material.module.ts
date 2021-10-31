@@ -19,6 +19,8 @@ import { TeacherHomePageComponent } from './teacher/teacher-home-page/teacher-ho
 import { AddTestComponent, QuestionDialog } from './teacher/add-test/add-test.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatTableModule} from '@angular/material/table';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -43,8 +45,9 @@ import {MatRadioModule} from '@angular/material/radio';
     ReactiveFormsModule,
     MatInputModule,
     MatDialogModule,
-    MatRadioModule
-
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule
   ]
 })
 export class MaterialModule { }
