@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Answer } from 'src/app/models/answer.model';
 import { Question } from "../../../models/question.model"
 import { Test } from "../../../models/test.model"
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
+import { TestService } from 'src/app/services/test.service';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 export interface DialogData {
   text: string;
@@ -45,9 +47,13 @@ export class AddTestComponent implements OnInit {
   displayedColumns: string[] = ['text', 'points', 'edit', 'delete'];
   dataSource: MatTableDataSource<Question>;
 
-  constructor(public dialog: MatDialog,
+  constructor(
+    public dialog: MatDialog,
     private fb: FormBuilder,
-    ) { 
+    private testService: TestService,
+    private authService: AuthService,
+    private router: Router,
+  ) {
     this.questions = [];
     this.answers = [];
     this.dataSource = new MatTableDataSource<Question>();
@@ -68,9 +74,9 @@ export class AddTestComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       console.log(result);
-      if(result){
+      if (result) {
 
-        let q : Question = {
+        let q: Question = {
           text: result.text,
           maxPoints: result.maxPoints,
           possibleAnswers: result.possibleAnswers,
@@ -81,35 +87,66 @@ export class AddTestComponent implements OnInit {
         this.answers.push(result.trueAnswers);
         this.dataSource = new MatTableDataSource<Question>(this.questions);
       }
-      
+
     });
   }
 
   ngOnInit(): void {
   }
 
-  saveTest(){
+  async saveTest() {
 
-    this.name = this.testForm.controls['name'].value;
-    this.topic = this.testForm.controls['topic'].value;
-    console.log(this.name);
-    console.log(this.topic);
+    // this.name = this.testForm.controls['name'].value;
+    // this.topic = this.testForm.controls['topic'].value;
+    // console.log(this.name);
+    // console.log(this.topic);
 
-    this.test = {
-      name: this.name,
-      topic: this.topic,
-      maxPoints: this.maxPoints,
-      questions: this.questions,
-      answers: this.answers,
+    // this.test = {
+    //   name: this.name,
+    //   topic: this.topic,
+    //   maxPoints: this.maxPoints,
+    //   questions: this.questions,
+    //   answers: this.answers,
+    //   createdBy: {
+    //     displayName: "",
+    //     teacherId: ""
+    //   }
+    // }
+
+    // console.log(this.test);
+
+    /**
+     * TODO: skloniti ove dummy objekte koji se cuva u bazi klikom na dugme save
+     */
+    if (!this.authService.user) return
+    const dummyTest: Test = {
+      name: 'ime testa',
+      topic: 'web programiranje',
+      maxPoints: 3,
       createdBy: {
-        displayName: "",
-        teacherId: ""
-      }
+        displayName: this.authService.user.displayName,
+        teacherId: this.authService.user.uid
+      },
     }
+    const dummyQuestions: Question[] = [
+      // first question
+      {
+        text: 'Which of the following is the highest mountain?',
+        maxPoints: 3,
+        possibleAnswers: ['Mount Everest', 'Kopaonik', 'Tara']
+      }
+    ]
+    const dummyAnswers: Answer[] = [
+      // first answer
+      { correctAnswers: ['Mount Everest'] }
+    ]
 
-    console.log(this.test);
-
-    console.log("SAVE");
+    try {
+      await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
+      this.router.navigate(['/'])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -122,7 +159,7 @@ export class AddTestComponent implements OnInit {
   styleUrls: ['./add-test.component.css']
 })
 export class QuestionDialog {
-  
+
   a1check = false;
   a2check = false;
   a3check = false;
@@ -130,7 +167,7 @@ export class QuestionDialog {
 
   constructor(
     public dialogRef: MatDialogRef<QuestionDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
 
   onCancel(): void {
     this.dialogRef.close();
@@ -138,39 +175,39 @@ export class QuestionDialog {
 
   onDone(): void {
 
-    let question1 : QuestionData = {
+    let question1: QuestionData = {
       text: this.data.text,
       maxPoints: Number(this.data.maxPoints),
       possibleAnswers: [],
       trueAnswers: []
     }
 
-    if(this.data.answer1){
+    if (this.data.answer1) {
       question1.possibleAnswers.push(this.data.answer1)
-      if(this.a1check){
+      if (this.a1check) {
         question1.trueAnswers.push(this.data.answer1)
       }
     }
-    if(this.data.answer2){
+    if (this.data.answer2) {
       question1.possibleAnswers.push(this.data.answer2)
-      if(this.a2check){
+      if (this.a2check) {
         question1.trueAnswers.push(this.data.answer2)
       }
     }
-    if(this.data.answer3){
+    if (this.data.answer3) {
       question1.possibleAnswers.push(this.data.answer3)
-      if(this.a3check){
+      if (this.a3check) {
         question1.trueAnswers.push(this.data.answer3)
       }
     }
-    if(this.data.answer4){
+    if (this.data.answer4) {
       question1.possibleAnswers.push(this.data.answer4)
-      if(this.a4check){
+      if (this.a4check) {
         question1.trueAnswers.push(this.data.answer4)
       }
     }
 
-    
+
 
     console.log(question1);
 
