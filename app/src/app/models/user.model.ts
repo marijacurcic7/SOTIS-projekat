@@ -4,7 +4,7 @@ export interface User {
   uid: string;
   email: string;
   displayName: string;
-  role: string,
+  role: 'teacher' | 'student' | 'admin' | undefined,
   createdTests?: string[], // if teacher
   takes?: Take[] // if student
 }
