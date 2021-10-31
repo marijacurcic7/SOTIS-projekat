@@ -37,12 +37,12 @@ export class AddTestComponent implements OnInit {
 
   testForm!: FormGroup;
   test!: Test;
-  maxPoints: number;
+  maxPoints: number = 0;
   name: string;
   topic: string;
   questions: Question[];
   answers: Answer[];
-  displayedColumns: string[] = ['text', 'points'];
+  displayedColumns: string[] = ['text', 'points', 'edit', 'delete'];
   dataSource: MatTableDataSource<Question>;
 
   constructor(public dialog: MatDialog,
@@ -55,6 +55,7 @@ export class AddTestComponent implements OnInit {
     this.testForm = this.fb.group({
       'name': [''],
       'topic': [''],
+      'maxPoints': [''],
     });
   }
 
@@ -62,7 +63,6 @@ export class AddTestComponent implements OnInit {
     const dialogRef = this.dialog.open(QuestionDialog, {
       width: '800px',
       data: {},
-      // data: {text: this.text},
     });
 
     dialogRef.afterClosed().subscribe(result => {
