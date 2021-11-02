@@ -22,6 +22,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TestsComponent } from './tests/tests.component';
+import { TestViewComponent } from './test-view/test-view.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { TestsComponent } from './tests/tests.component';
     TeacherHomePageComponent,
     AddTestComponent,
     QuestionDialog,
-    TestsComponent
+    TestsComponent,
+    TestViewComponent
   ],
   imports: [
     CommonModule,

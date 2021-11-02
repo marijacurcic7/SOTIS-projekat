@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
 import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
@@ -11,11 +12,12 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class TestsComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'topic', 'points', 'teacher'];
+  displayedColumns: string[] = ['name', 'topic', 'points', 'teacher', 'actions'];
   tests: Test[] = [];
 
   constructor(
     private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -37,7 +39,9 @@ export class TestsComponent implements OnInit {
     this.tests.push(dummyTest);
   }
 
-  viewQuestions(element: any){
+  viewDetails(element: any){
+    console.log(element);
+    this.router.navigate(['/test-view']);
 
   }
 

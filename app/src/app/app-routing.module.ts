@@ -4,6 +4,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AddTestComponent } from './components/teacher/add-test/add-test.component';
+import { TestViewComponent } from './components/test-view/test-view.component';
 import { TestsComponent } from './components/tests/tests.component';
 
 
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'tests',
         component: TestsComponent
+      },
+      {
+        path: 'test-view',
+        component: TestViewComponent
       }
     ]
   }
