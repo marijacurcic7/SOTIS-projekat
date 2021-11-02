@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
 import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
-import { AuthService } from 'src/app/services/auth.service';
+import { TestService } from 'src/app/services/test.service';
 
 @Component({
   selector: 'app-tests',
@@ -16,32 +16,43 @@ export class TestsComponent implements OnInit {
   tests: Test[] = [];
 
   constructor(
-    private authService: AuthService,
+    private testService: TestService,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    (await this.testService.getTests()).subscribe(t => {
+      this.tests = t;
+    })
 
-    // if (!this.authService.user) return
-    const dummyTest: Test = {
-      name: 'ime testa',
-      topic: 'web programiranje',
-      maxPoints: 3,
-      createdBy: {
-        displayName: "teacher name",
-        teacherId: "teacher id"
-        // displayName: this.authService.user.displayName,
-        // teacherId: this.authService.user.uid
-      },
-    }
-    
+    // // if (!this.authService.user) return
+    // const dummyTest: Test = {
+    //   name: 'ime testa',
+    //   topic: 'web programiranje',
+    //   maxPoints: 3,
+    //   createdBy: {
+    //     displayName: "teacher name",
+    //     teacherId: "teacher id"
+    //     // displayName: this.authService.user.displayName,
+    //     // teacherId: this.authService.user.uid
+    //   },
+    // }
 
-    this.tests.push(dummyTest);
+
+    // this.tests.push(dummyTest);
   }
 
-  viewDetails(element: any){
+  async viewDetails(element: any) {
     console.log(element);
-    this.router.navigate(['/test-view']);
+    const testId = 'JHNbN89t3AKdUUFx4zui';
+    (await this.testService.getQuestions(testId)).subscribe(q => {
+      console.log(q)
+    })
+
+    ;(await this.testService.getAnswers(testId)).subscribe(a => {
+      console.log(a)
+    })
+    // this.router.navigate(['/test-view']);
 
   }
 

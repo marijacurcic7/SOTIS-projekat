@@ -5,6 +5,7 @@ import { FirebaseError } from '@firebase/util';
 import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
 import { Test } from '../models/test.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,40 @@ export class TestService {
       else this.openFailSnackBar()
       throw error
     }
+  }
+
+  async getTests() {
+    const testsCollection = this.firestore.collection<Test>('tests');
+    return testsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Test;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+  async getQuestions(testId: string) {
+    const questionsCollection = this.firestore.collection<Question>(`tests/${testId}/questions`);
+    return questionsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Question;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+  async getAnswers(testId: string) {
+    const answersCollection = this.firestore.collection<Answer>(`tests/${testId}/answers`);
+    return answersCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Answer;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
   }
 
   openSuccessSnackBar(message: string): void {

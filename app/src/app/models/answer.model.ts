@@ -1,3 +1,4 @@
 export interface Answer {
-  correctAnswers: string[]
+  correctAnswers: string[],
+  id?: string
 }
