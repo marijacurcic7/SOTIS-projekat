@@ -84,7 +84,11 @@ export class AddTestComponent implements OnInit {
         this.maxPoints += result.maxPoints;
         console.log(q);
         this.questions.push(q);
-        this.answers.push(result.trueAnswers);
+
+        let a: Answer = {
+          correctAnswers: result.trueAnswers
+        }
+        this.answers.push(a);
         this.dataSource = new MatTableDataSource<Question>(this.questions);
       }
 
@@ -96,53 +100,54 @@ export class AddTestComponent implements OnInit {
 
   async saveTest() {
 
-    // this.name = this.testForm.controls['name'].value;
-    // this.topic = this.testForm.controls['topic'].value;
-    // console.log(this.name);
-    // console.log(this.topic);
+    this.name = this.testForm.controls['name'].value;
+    this.topic = this.testForm.controls['topic'].value;
 
-    // this.test = {
-    //   name: this.name,
-    //   topic: this.topic,
-    //   maxPoints: this.maxPoints,
-    //   questions: this.questions,
-    //   answers: this.answers,
-    //   createdBy: {
-    //     displayName: "",
-    //     teacherId: ""
-    //   }
-    // }
+    if (!this.authService.user) return;
 
-    // console.log(this.test);
+    this.test = {
+      name: this.name,
+      topic: this.topic,
+      maxPoints: this.maxPoints,
+      createdBy: {
+        displayName: this.authService.user.displayName,
+        teacherId: this.authService.user.uid
+      }
+    }
+
+    console.log(this.test);
+    console.log(this.questions);
+    console.log(this.answers);
 
     /**
      * TODO: skloniti ove dummy objekte koji se cuva u bazi klikom na dugme save
      */
-    if (!this.authService.user) return
-    const dummyTest: Test = {
-      name: 'ime testa',
-      topic: 'web programiranje',
-      maxPoints: 3,
-      createdBy: {
-        displayName: this.authService.user.displayName,
-        teacherId: this.authService.user.uid
-      },
-    }
-    const dummyQuestions: Question[] = [
-      // first question
-      {
-        text: 'Which of the following is the highest mountain?',
-        maxPoints: 3,
-        possibleAnswers: ['Mount Everest', 'Kopaonik', 'Tara']
-      }
-    ]
-    const dummyAnswers: Answer[] = [
-      // first answer
-      { correctAnswers: ['Mount Everest'] }
-    ]
+    // if (!this.authService.user) return
+    // const dummyTest: Test = {
+    //   name: 'ime testa',
+    //   topic: 'web programiranje',
+    //   maxPoints: 3,
+    //   createdBy: {
+    //     displayName: this.authService.user.displayName,
+    //     teacherId: this.authService.user.uid
+    //   },
+    // }
+    // const dummyQuestions: Question[] = [
+    //   // first question
+    //   {
+    //     text: 'Which of the following is the highest mountain?',
+    //     maxPoints: 3,
+    //     possibleAnswers: ['Mount Everest', 'Kopaonik', 'Tara']
+    //   }
+    // ]
+    // const dummyAnswers: Answer[] = [
+    //   // first answer
+    //   { correctAnswers: ['Mount Everest'] }
+    // ]
 
     try {
-      await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
+      // await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
+      await this.testService.addTest(this.test, this.questions, this.answers);
       this.router.navigate(['/'])
     } catch (error) {
       console.log(error)
@@ -164,6 +169,8 @@ export class QuestionDialog {
   a2check = false;
   a3check = false;
   a4check = false;
+  a3visible: boolean = false;
+  a4visible: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<QuestionDialog>,
@@ -214,6 +221,24 @@ export class QuestionDialog {
 
 
     this.dialogRef.close(question1);
+  }
+
+  addA3(){
+    this.a3visible = true;
+  }
+
+  addA4(){
+    this.a4visible = true;
+  }
+
+  deleteA3(){
+    this.a3visible = false;
+    this.a3check = false;
+  }
+
+  deleteA4(){
+    this.a4visible = false;
+    this.a4check = false;
   }
 
 }

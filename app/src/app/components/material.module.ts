@@ -21,6 +21,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { TestsComponent } from './tests/tests.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     SignupComponent,
     TeacherHomePageComponent,
     AddTestComponent,
-    QuestionDialog
+    QuestionDialog,
+    TestsComponent
   ],
   imports: [
     CommonModule,
