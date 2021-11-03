@@ -50,7 +50,7 @@ export class TestService {
     }
   }
 
-  async getTests(teacherId: string) {
+  getTests(teacherId: string) {
     const testsCollection = this.firestore.collection<Test>('tests', ref =>
       ref.where('createdBy.teacherId', '==', teacherId)
     );
@@ -64,7 +64,7 @@ export class TestService {
     )
   }
 
-  async getTest(testId: string) {
+  getTest(testId: string) {
     const test = this.firestore.doc<Test>(`tests/${testId}`);
 
     return test.snapshotChanges().pipe(
@@ -77,7 +77,7 @@ export class TestService {
     )
   }
 
-  async getQuestions(testId: string) {
+  getQuestions(testId: string) {
     const questionsCollection = this.firestore.collection<Question>(`tests/${testId}/questions`);
     return questionsCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
@@ -88,7 +88,7 @@ export class TestService {
       }))
     )
   }
-  async getAnswers(testId: string) {
+  getAnswers(testId: string) {
     const answersCollection = this.firestore.collection<Answer>(`tests/${testId}/answers`);
     return answersCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
@@ -100,7 +100,7 @@ export class TestService {
     )
   }
 
-  async getAnswer(testId: string, questionId: string) {
+  getAnswer(testId: string, questionId: string) {
     const answer = this.firestore.doc<Answer>(`tests/${testId}/answers/${questionId}`);
 
     return answer.snapshotChanges().pipe(

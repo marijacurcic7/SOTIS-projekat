@@ -35,12 +35,12 @@ export class TestViewComponent implements OnInit {
   expandedElement: Question | null;
 
 
-  constructor(    
+  constructor(
     private route: ActivatedRoute,
     private testService: TestService,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-  ) { 
+  ) {
     this.test = {
       name: "",
       topic: "",
@@ -56,52 +56,52 @@ export class TestViewComponent implements OnInit {
 
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     let testId = String(this.route.snapshot.paramMap.get('id'));
     console.log(testId);
 
-    (await this.testService.getTest(testId)).subscribe(t => {
+    this.testService.getTest(testId).subscribe(t => {
       this.test = t;
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
     });
 
-    (await this.testService.getQuestions(testId)).subscribe(q => {
+    this.testService.getQuestions(testId).subscribe(q => {
       console.log(q);
       this.questions = q;
     });
 
   }
 
-  async toggleRow(q: Question) {
+  toggleRow(q: Question) {
 
     let id = String(this.route.snapshot.paramMap.get('id'));
     if (!q.id) return;
 
-    (await this.testService.getAnswer(id, q.id)).subscribe(a => {
+    this.testService.getAnswer(id, q.id).subscribe(a => {
       this.answer = a;
     });
 
-    
+
     q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
-  
+
   }
 
-  correct(q: Question, a: string){
+  correct(q: Question, a: string) {
 
     let id = String(this.route.snapshot.paramMap.get('id'));
     if (!q.id) return;
 
-    // (await this.testService.getAnswer(id, q.id)).subscribe(ans => {
+    //this.testService.getAnswer(id, q.id).subscribe(ans => {
     //   this.answer = ans;
-      for (var val of this.answer.correctAnswers){
-        if(a == val) return true;
-      }
-      return false;
+    for (var val of this.answer.correctAnswers) {
+      if (a == val) return true;
+    }
+    return false;
     // });
 
-    
+
   }
 
 

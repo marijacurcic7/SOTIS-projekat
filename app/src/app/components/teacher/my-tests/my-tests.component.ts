@@ -17,22 +17,22 @@ export class MyTestsComponent implements OnInit {
     private router: Router
   ) { }
 
-  async ngOnInit() {
-    (await this.testService.getTests('0Qecl1gUb2ORbU0vKOQYRSWy8xC8')).subscribe(t => {
+  ngOnInit() {
+    this.testService.getTests('0Qecl1gUb2ORbU0vKOQYRSWy8xC8').subscribe(t => {
       this.tests = t;
     })
   }
 
-  async viewDetails(element: any) {
+  viewDetails(element: any) {
     console.log(element);
     const testId = 'JHNbN89t3AKdUUFx4zui';
-    (await this.testService.getQuestions(testId)).subscribe(q => {
+    this.testService.getQuestions(testId).subscribe(q => {
       console.log(q)
     })
 
-      ; (await this.testService.getAnswers(testId)).subscribe(a => {
-        console.log(a)
-      })
+    this.testService.getAnswers(testId).subscribe(a => {
+      console.log(a)
+    })
     // this.router.navigate(['/test-view']);
 
   }
