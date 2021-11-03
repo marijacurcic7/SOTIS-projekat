@@ -5,7 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AddTestComponent } from './components/teacher/add-test/add-test.component';
 import { TestViewComponent } from './components/test-view/test-view.component';
-import { TestsComponent } from './components/tests/tests.component';
+import { TestsComponent } from './components/all-tests/tests.component';
 
 
 const routes: Routes = [
@@ -30,7 +30,7 @@ const routes: Routes = [
         component: TestsComponent
       },
       {
-        path: 'test-view',
+        path: 'test-view/:id',
         component: TestViewComponent
       }
     ]

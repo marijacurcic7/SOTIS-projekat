@@ -61,6 +61,20 @@ export class TestService {
       }))
     )
   }
+
+  async getTest(testId: string) {
+    const test = this.firestore.doc<Test>(`tests/${testId}`);
+
+    return test.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Test;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
+    )
+  }
+
   async getQuestions(testId: string) {
     const questionsCollection = this.firestore.collection<Question>(`tests/${testId}/questions`);
     return questionsCollection.snapshotChanges().pipe(
@@ -81,6 +95,19 @@ export class TestService {
         data.id = id;
         return data;
       }))
+    )
+  }
+
+  async getAnswer(testId: string, questionId: string) {
+    const answer = this.firestore.doc<Answer>(`tests/${testId}/answers/${questionId}`);
+
+    return answer.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Answer;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
     )
   }
 
