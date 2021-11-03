@@ -7,31 +7,27 @@ import { FirebaseError } from '@firebase/util';
 import { Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { GoogleAuthProvider } from 'firebase/auth'
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user: User | undefined
+  user$: Observable<User | undefined>;
+
   constructor(
     private auth: AngularFireAuth,
     private snackBar: MatSnackBar,
     private firestore: AngularFirestore,
     private router: Router,
   ) {
-    this.auth.onAuthStateChanged(firebaseUser => {
-      if (firebaseUser) {
-        const ret = this.firestore.doc<User>(`users/${firebaseUser.uid}`).valueChanges()
-        ret.subscribe(user => {
-          if (user) {
-            this.user = user;
-            this.user.uid = firebaseUser.uid;
-          }
-        })
-      }
-      else this.user = undefined
-      // this.user$.subscribe(user => console.log(user?.uid))
-    })
+
+    this.user$ = this.auth.authState.pipe(
+      switchMap(user => {
+        if (user) return this.firestore.doc<User>(`users/${user.uid}`).valueChanges()
+        else return of(undefined)
+      })
+    )
   }
 
   async signUp(email: string, password: string, name: string) {

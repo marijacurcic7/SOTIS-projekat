@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Test } from 'src/app/models/test.model';
+import { User } from 'src/app/models/user.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { TestService } from 'src/app/services/test.service';
 
 @Component({
@@ -11,15 +13,18 @@ import { TestService } from 'src/app/services/test.service';
 export class MyTestsComponent implements OnInit {
   displayedColumns: string[] = ['name', 'topic', 'points', 'teacher', 'actions'];
   tests: Test[] = [];
+  user: User | undefined
 
   constructor(
     private testService: TestService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
-    this.testService.getTests('0Qecl1gUb2ORbU0vKOQYRSWy8xC8').subscribe(t => {
-      this.tests = t;
+    this.authService.user$.subscribe(user => {
+      if (!user) this.tests = []
+      else this.testService.getTests(user.uid).subscribe(tests => this.tests = tests)
     })
   }
 

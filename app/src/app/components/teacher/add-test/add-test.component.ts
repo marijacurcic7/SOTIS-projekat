@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { TestService } from 'src/app/services/test.service';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/models/user.model';
 
 export interface DialogData {
   text: string;
@@ -37,6 +38,7 @@ export interface QuestionData {
 })
 export class AddTestComponent implements OnInit {
 
+  user: User | undefined
   testForm!: FormGroup;
   test!: Test;
   maxPoints: number = 0;
@@ -96,6 +98,7 @@ export class AddTestComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService.user$.subscribe(user => this.user = user)
   }
 
   async saveTest() {
@@ -103,47 +106,21 @@ export class AddTestComponent implements OnInit {
     this.name = this.testForm.controls['name'].value;
     this.topic = this.testForm.controls['topic'].value;
 
-    if (!this.authService.user) return;
+    if(!this.user) throw new Error('You must login first.')
 
     this.test = {
       name: this.name,
       topic: this.topic,
       maxPoints: this.maxPoints,
       createdBy: {
-        displayName: this.authService.user.displayName,
-        teacherId: this.authService.user.uid
+        displayName: this.user.displayName,
+        teacherId: this.user.uid
       }
     }
 
     console.log(this.test);
     console.log(this.questions);
     console.log(this.answers);
-
-    /**
-     * TODO: skloniti ove dummy objekte koji se cuva u bazi klikom na dugme save
-     */
-    // if (!this.authService.user) return
-    // const dummyTest: Test = {
-    //   name: 'ime testa',
-    //   topic: 'web programiranje',
-    //   maxPoints: 3,
-    //   createdBy: {
-    //     displayName: this.authService.user.displayName,
-    //     teacherId: this.authService.user.uid
-    //   },
-    // }
-    // const dummyQuestions: Question[] = [
-    //   // first question
-    //   {
-    //     text: 'Which of the following is the highest mountain?',
-    //     maxPoints: 3,
-    //     possibleAnswers: ['Mount Everest', 'Kopaonik', 'Tara']
-    //   }
-    // ]
-    // const dummyAnswers: Answer[] = [
-    //   // first answer
-    //   { correctAnswers: ['Mount Everest'] }
-    // ]
 
     try {
       // await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
