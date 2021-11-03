@@ -9,10 +9,23 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class HomePageComponent implements OnInit {
 
+  homePageState: 'teacher' | 'student' | 'admin' | 'no-user' | 'still-loading'
+
   constructor(public route: ActivatedRoute,
     public auth: AuthService) { }
 
   ngOnInit(): void {
+    this.homePageState = 'still-loading'
+    
+    this.auth.user$.subscribe(user => {
+      if (user === undefined) this.homePageState = 'no-user'
+      else {
+        if (user.role === 'teacher') this.homePageState = 'teacher'
+        else if (user.role === 'student') this.homePageState = 'student'
+        else if (user.role === 'admin') this.homePageState = 'admin'
+        else this.homePageState = 'no-user'
+      }
+    })
   }
 
 }

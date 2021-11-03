@@ -13,3 +13,6 @@
   transform: scale(1.05);
   cursor: pointer;
 }
+.mat-card-content {
+  color: #7256a3;
+}
