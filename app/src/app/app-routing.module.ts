@@ -5,7 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AddTestComponent } from './components/teacher/add-test/add-test.component';
 import { TestViewComponent } from './components/test-view/test-view.component';
-import { TestsComponent } from './components/all-tests/tests.component';
+import { MyTestsComponent } from './components/teacher/my-tests/my-tests.component';
 
 
 const routes: Routes = [
@@ -26,8 +26,8 @@ const routes: Routes = [
         component: AddTestComponent
       },
       {
-        path: 'tests',
-        component: TestsComponent
+        path: 'my-tests',
+        component: MyTestsComponent
       },
       {
         path: 'test-view/:id',

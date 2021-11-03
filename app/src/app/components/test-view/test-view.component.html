@@ -1,12 +1,13 @@
 <div class="test-card">
     <mat-card>
         <mat-card-header>
+            <mat-card-title>
+                <span style="font-size: 2rem;">{{test.name}}</span>
+            </mat-card-title>
             <mat-card-subtitle>
+                <mat-icon class="material-icons-outlined" style="vertical-align: bottom">person</mat-icon>
                 {{teacherName}}
             </mat-card-subtitle>
-            <mat-card-title>
-                {{test.name}}
-            </mat-card-title>
             <mat-card-subtitle>
                 {{test.topic}}
             </mat-card-subtitle>
@@ -15,13 +16,13 @@
         <mat-card-content>
             <p>Max points: {{test.maxPoints}}</p>
 
-            <table mat-table [dataSource]="questions" class="mat-elevation-z8" multiTemplateDataRows>
-                
+            <table mat-table [dataSource]="questions" class="mat-elevation-z0" multiTemplateDataRows>
+
                 <ng-container matColumnDef="text">
                     <th mat-header-cell *matHeaderCellDef> Question </th>
                     <td mat-cell *matCellDef="let element"> {{element.text}} </td>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="points">
                     <th mat-header-cell *matHeaderCellDef> Points </th>
                     <td mat-cell *matCellDef="let element"> {{element.maxPoints}} </td>
@@ -30,7 +31,8 @@
                 <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
                 <ng-container matColumnDef="expandedDetail">
                     <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-                        <div class="example-element-detail" *ngIf="element.possibleAnswers.length" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <div class="example-element-detail" *ngIf="element.possibleAnswers.length"
+                            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                             <div class="inner-table mat-elevation-z8" *ngIf="expandedElement">
                                 <table #innerTables mat-table [dataSource]="element.possibleAnswers">
                                     <ng-container matColumnDef="answer">
@@ -39,7 +41,16 @@
                                     </ng-container>
                                     <ng-container matColumnDef="correct">
                                         <th mat-header-cell *matHeaderCellDef> Correct </th>
-                                        <td mat-cell *matCellDef="let answer"> {{correct(element, answer)}} </td>
+                                        <td mat-cell *matCellDef="let answer">
+                                            <span *ngIf="correct(element, answer); else elseBlock">
+                                                <mat-icon class="material-icons-outlined"
+                                                    style="vertical-align: bottom; color:#2bbf21">check</mat-icon>
+                                            </span>
+                                            <ng-template #elseBlock>
+                                                <mat-icon class="material-icons-outlined"
+                                                    style="vertical-align: bottom; color: #bf3b21">close</mat-icon>
+                                            </ng-template>
+                                        </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="innerDisplayedColumns"></tr>
                                     <tr mat-row *matRowDef="let row; columns: innerDisplayedColumns;"></tr>
@@ -48,12 +59,11 @@
                         </div>
                     </td>
                 </ng-container>
-                
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                (click)="toggleRow(row)"
-                [class.example-element-row]="row.possibleAnswers.length"
-	            [class.example-expanded-row]="expandedElement === row">
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleRow(row)"
+                    [class.example-element-row]="row.possibleAnswers.length"
+                    [class.example-expanded-row]="expandedElement === row">
                 </tr>
                 <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
             </table>

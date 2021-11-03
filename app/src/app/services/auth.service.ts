@@ -13,6 +13,7 @@ import { GoogleAuthProvider } from 'firebase/auth'
 })
 export class AuthService {
   user: User | undefined
+  user$: Observable<User | undefined>
   constructor(
     private auth: AngularFireAuth,
     private snackBar: MatSnackBar,
@@ -22,12 +23,13 @@ export class AuthService {
     this.auth.onAuthStateChanged(firebaseUser => {
       if (firebaseUser) {
         const ret = this.firestore.doc<User>(`users/${firebaseUser.uid}`).valueChanges()
-
-        ret.subscribe(user => { if (user) {
-          this.user = user;
-          this.user.uid = firebaseUser.uid;
-
-         } })
+        this.user$ = ret
+        ret.subscribe(user => {
+          if (user) {
+            this.user = user;
+            this.user.uid = firebaseUser.uid;
+          }
+        })
       }
       else this.user = undefined
       // this.user$.subscribe(user => console.log(user?.uid))

@@ -5,7 +5,7 @@ import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from 'src/app/services/auth.service';
 
 export interface AnswerData {
   text: string;
@@ -38,7 +38,8 @@ export class TestViewComponent implements OnInit {
   constructor(    
     private route: ActivatedRoute,
     private testService: TestService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private authService: AuthService,
   ) { 
     this.test = {
       name: "",
@@ -56,16 +57,16 @@ export class TestViewComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    let id = String(this.route.snapshot.paramMap.get('id'));
-    console.log(id);
+    let testId = String(this.route.snapshot.paramMap.get('id'));
+    console.log(testId);
 
-    (await this.testService.getTest(id)).subscribe(t => {
+    (await this.testService.getTest(testId)).subscribe(t => {
       this.test = t;
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
     });
 
-    (await this.testService.getQuestions(id)).subscribe(q => {
+    (await this.testService.getQuestions(testId)).subscribe(q => {
       console.log(q);
       this.questions = q;
     });

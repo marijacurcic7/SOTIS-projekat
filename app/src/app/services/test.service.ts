@@ -50,8 +50,10 @@ export class TestService {
     }
   }
 
-  async getTests() {
-    const testsCollection = this.firestore.collection<Test>('tests');
+  async getTests(teacherId: string) {
+    const testsCollection = this.firestore.collection<Test>('tests', ref =>
+      ref.where('createdBy.teacherId', '==', teacherId)
+    );
     return testsCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Test;
