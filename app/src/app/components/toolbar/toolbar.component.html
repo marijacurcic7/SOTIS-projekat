@@ -8,7 +8,7 @@
     <span class="menu-spacer"></span>
 
     <div *ngIf="auth.user$ | async; else login">
-      <button mat-button (click)="auth.logout()">
+      <button mat-button (click)="auth.logout()" routerLink="/">
         <span *ngIf="innerWidth > 450">Log Out</span> 
         <mat-icon>logout</mat-icon>
       </button>
