@@ -2,27 +2,36 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if true
+      allow read, write: if false
     }
 
   match /users/{userId} {
     allow read: if isOwner(userId)
   }
+
+  // everybody can read tests, Q & A
+  // only teacher can write to tests, Q & A
   match /tests/{document=**} {
-    allow read, write: if true
-    // allow write: if isTeacher()
+    allow read: if true;
+    allow write: if isTeacher();
+
+    match /questions/{question} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+    match /answers/{answer} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
   }
 
-    function isOwner(userId) {
-      return request.auth.uid == userId
+    // function isStudent() { return getRole('student') }
+    function isTeacher() { return getRole('teacher') }
+    function getRole(role) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
     }
-    function isStudent() {
-      return incomingData().email.mathes('.*@student.com')
-    }
-    function isTeacher() {
-      return incomingData().role == "teacher"
-    }
-    function existingData() { return resource.data }
-    function incomingData() { return request.resource.data }
+    function isOwner(userId) { return request.auth.uid == userId }
+    // function existingData() { return resource.data }
+    // function incomingData() { return request.resource.data }
   }
 }
