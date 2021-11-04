@@ -11,18 +11,22 @@
             <form [formGroup]="testForm">
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Test name</mat-label>
-                    <input matInput placeholder="Test name" formControlName="name">
+                    <input matInput placeholder="Test name" formControlName="name" required>
                 </mat-form-field>
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Topic</mat-label>
-                    <input matInput placeholder="Topic" formControlName="topic">
+                    <input matInput placeholder="Topic" formControlName="topic" required>
                 </mat-form-field>
-                <mat-form-field class="full-width" appearance="fill">
-                    <mat-label>Max Points</mat-label>
-                    <input matInput placeholder="Max Points" formControlName="maxPoints" [(ngModel)]="maxPoints" [readonly]='true'>
-                </mat-form-field>
-                <br />
-                <p>Questions</p>
+                <!-- <mat-form-field class="full-width" appearance="fill"> -->
+                <div class='div1'>
+
+                    <mat-label>Max Points: {{maxPoints}}</mat-label>
+                                            
+                </div>
+                    <!-- <input matInput placeholder="Max Points" formControlName="maxPoints" [(ngModel)]="maxPoints" [readonly]='true'> -->
+                <!-- </mat-form-field> -->
+                <!-- <mat-divider></mat-divider>
+                <p>Questions</p> -->
                 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
                   
                     <ng-container matColumnDef="text">
@@ -61,7 +65,11 @@
             </form>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-button (click)="saveTest()">Save</button>
+            <mat-error *ngIf=submitionError style="margin-bottom: 10px;">
+                Error. Unable to create test.
+            </mat-error>
+            <button mat-button (click)="cancel()">Cancel</button>
+            <button mat-raised-button color="primary" (click)="saveTest()" [disabled]="testForm.invalid">Save</button>
         </mat-card-actions>
     </mat-card>
 

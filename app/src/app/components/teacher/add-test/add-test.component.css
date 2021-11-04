@@ -5,6 +5,10 @@
     align-items: center;
     flex-direction: column;
   }
+
+  .div1{
+    padding-bottom: 15px;
+  }
   
   .full-width {
     width: 100%;

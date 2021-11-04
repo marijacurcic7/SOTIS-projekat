@@ -9,6 +9,7 @@ import { TestService } from 'src/app/services/test.service';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/models/user.model';
+import { createOfflineCompileUrlResolver } from '@angular/compiler';
 
 export interface DialogData {
   text: string;
@@ -46,8 +47,9 @@ export class AddTestComponent implements OnInit {
   topic: string;
   questions: Question[];
   answers: Answer[];
-  displayedColumns: string[] = ['text', 'points', 'edit', 'delete'];
+  displayedColumns: string[] = ['text', 'points'];
   dataSource: MatTableDataSource<Question>;
+  submitionError: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -98,7 +100,8 @@ export class AddTestComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.user$.subscribe(user => this.user = user)
+    this.authService.user$.subscribe(user => this.user = user);
+
   }
 
   async saveTest() {
@@ -127,8 +130,13 @@ export class AddTestComponent implements OnInit {
       await this.testService.addTest(this.test, this.questions, this.answers);
       this.router.navigate(['/'])
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      this.submitionError = true;
     }
+  }
+
+  cancel() {
+    this.router.navigate(['/']);
   }
 
 
@@ -148,10 +156,27 @@ export class QuestionDialog {
   a4check = false;
   a3visible: boolean = false;
   a4visible: boolean = false;
+  questionForm!: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<QuestionDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private fb: FormBuilder,
+  ) 
+  { 
+    this.questionForm = this.fb.group({
+      'text': [''],
+      'maxPoints': [''],
+      'a1': [''],
+      'a2': [''],
+      'a3': [''],
+      'a4': [''],
+      'a1check': [''],
+      'a2check': [''],
+      'a3check': [''],
+      'a4check': ['']
+    });
+  }
 
   onCancel(): void {
     this.dialogRef.close();
@@ -160,34 +185,44 @@ export class QuestionDialog {
   onDone(): void {
 
     let question1: QuestionData = {
-      text: this.data.text,
-      maxPoints: Number(this.data.maxPoints),
+      text: this.questionForm.controls['text'].value,
+      maxPoints: Number(this.questionForm.controls['maxPoints'].value),
       possibleAnswers: [],
       trueAnswers: []
     }
 
-    if (this.data.answer1) {
-      question1.possibleAnswers.push(this.data.answer1)
+    let answer1 = this.questionForm.controls['a1'].value;
+    let answer2 = this.questionForm.controls['a2'].value;
+    let answer3 = this.questionForm.controls['a3'].value;
+    let answer4 = this.questionForm.controls['a4'].value;
+
+    this.a1check = this.questionForm.controls['a1check'].value;
+    this.a2check = this.questionForm.controls['a2check'].value;
+    this.a3check = this.questionForm.controls['a3check'].value;
+    this.a4check = this.questionForm.controls['a4check'].value;
+
+    if (answer1) {
+      question1.possibleAnswers.push(answer1)
       if (this.a1check) {
-        question1.trueAnswers.push(this.data.answer1)
+        question1.trueAnswers.push(answer1)
       }
     }
-    if (this.data.answer2) {
-      question1.possibleAnswers.push(this.data.answer2)
+    if (answer2) {
+      question1.possibleAnswers.push(answer2)
       if (this.a2check) {
-        question1.trueAnswers.push(this.data.answer2)
+        question1.trueAnswers.push(answer2)
       }
     }
-    if (this.data.answer3) {
-      question1.possibleAnswers.push(this.data.answer3)
+    if (answer3) {
+      question1.possibleAnswers.push(answer3)
       if (this.a3check) {
-        question1.trueAnswers.push(this.data.answer3)
+        question1.trueAnswers.push(answer3)
       }
     }
-    if (this.data.answer4) {
-      question1.possibleAnswers.push(this.data.answer4)
+    if (answer4) {
+      question1.possibleAnswers.push(answer4)
       if (this.a4check) {
-        question1.trueAnswers.push(this.data.answer4)
+        question1.trueAnswers.push(answer4)
       }
     }
 

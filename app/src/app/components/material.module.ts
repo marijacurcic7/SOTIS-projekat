@@ -23,6 +23,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TestViewComponent } from './test-view/test-view.component';
 import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
     MatDialogModule,
     MatRadioModule,
     MatTableModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDividerModule
   ]
 })
 export class MaterialModule { }
