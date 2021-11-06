@@ -32,8 +32,8 @@
                 <ng-container matColumnDef="expandedDetail">
                     <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
                         <div class="example-element-detail" *ngIf="element.possibleAnswers.length"
-                            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                            <div class="inner-table mat-elevation-z8" *ngIf="expandedElement">
+                            [@detailExpand]="(expandedElements.indexOf(element) > -1) ? 'expanded' : 'collapsed'">
+                            <div class="inner-table mat-elevation-z8" *ngIf="expandedElements.indexOf(element) > -1">
                                 <table #innerTables mat-table [dataSource]="element.possibleAnswers">
                                     <ng-container matColumnDef="answer">
                                         <th mat-header-cell *matHeaderCellDef> Answer </th>
@@ -63,7 +63,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleRow(row)"
                     [class.example-element-row]="row.possibleAnswers.length"
-                    [class.example-expanded-row]="expandedElement === row">
+                    [class.example-expanded-row]="expandedElements.indexOf(row) > -1">
                 </tr>
                 <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
             </table>

@@ -33,6 +33,7 @@ export class TestViewComponent implements OnInit {
   displayedColumns: string[] = ['text', 'points'];
   innerDisplayedColumns = ['answer', 'correct'];
   expandedElement: Question | null;
+  expandedElements: Question[];
 
 
   constructor(
@@ -53,6 +54,7 @@ export class TestViewComponent implements OnInit {
     this.answer = {
       correctAnswers: []
     }
+    this.expandedElements = [];
 
   }
 
@@ -82,8 +84,11 @@ export class TestViewComponent implements OnInit {
       this.answer = a;
     });
 
+    let i = this.expandedElements.indexOf(q);
+    if(i > -1) this.expandedElements.splice(i);
+    else this.expandedElements.push(q);
 
-    q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
+    // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
 
   }

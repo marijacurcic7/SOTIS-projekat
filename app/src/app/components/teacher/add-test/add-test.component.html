@@ -19,9 +19,7 @@
                 </mat-form-field>
                 <!-- <mat-form-field class="full-width" appearance="fill"> -->
                 <div class='div1'>
-
-                    <mat-label>Max Points: {{maxPoints}}</mat-label>
-                                            
+                    <mat-label>Max Points: {{maxPoints}}</mat-label>          
                 </div>
                     <!-- <input matInput placeholder="Max Points" formControlName="maxPoints" [(ngModel)]="maxPoints" [readonly]='true'> -->
                 <!-- </mat-form-field> -->
@@ -69,7 +67,7 @@
                 Error. Unable to create test.
             </mat-error>
             <button mat-button (click)="cancel()">Cancel</button>
-            <button mat-raised-button color="primary" (click)="saveTest()" [disabled]="testForm.invalid">Save</button>
+            <button mat-raised-button color="primary" (click)="saveTest()" [disabled]="testForm.invalid || questions.length == 0">Save</button>
         </mat-card-actions>
     </mat-card>
 
