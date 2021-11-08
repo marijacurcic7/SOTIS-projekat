@@ -10,7 +10,7 @@
   </ng-container>
   <ng-template #student>
     <ng-container *ngIf="homePageState === 'student'; else admin">
-      <!-- student home page component -->
+      <app-student-home-page></app-student-home-page>
     </ng-container>
   </ng-template>
   <ng-template #admin>
