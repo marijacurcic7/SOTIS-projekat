@@ -24,6 +24,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TestViewComponent } from './test-view/test-view.component';
 import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
 import {MatDividerModule} from '@angular/material/divider';
+import { AllTestsComponent } from './all-tests/all-tests.component';
+import { TakeTestComponent } from './student/take-test/take-test.component';
+import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,10 @@ import {MatDividerModule} from '@angular/material/divider';
     AddTestComponent,
     QuestionDialog,
     TestViewComponent,
-    MyTestsComponent
+    MyTestsComponent,
+    AllTestsComponent,
+    TakeTestComponent,
+    StudentHomePageComponent
   ],
   imports: [
     CommonModule,
