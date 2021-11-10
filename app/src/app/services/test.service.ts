@@ -64,6 +64,19 @@ export class TestService {
     )
   }
 
+  getAllTests() {
+    const testsCollection = this.firestore.collection<Test>('tests');
+    
+    return testsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Test;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
   getTest(testId: string) {
     const test = this.firestore.doc<Test>(`tests/${testId}`);
 

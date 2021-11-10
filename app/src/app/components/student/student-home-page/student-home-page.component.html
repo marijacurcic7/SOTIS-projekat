@@ -1,1 +1,24 @@
-<p>student-home-page works!</p>
+<div style="padding: 1rem;">
+    <div style="font-size: 2rem; color: #220e46">
+      <mat-icon class="material-icons-filled">person</mat-icon>
+      {{(authService.user$ |async)?.displayName }}
+    </div>
+    <span style=" font-size: large; padding-left: 2rem; color: #7256a3">
+      {{(authService.user$ | async)?.role}}
+    </span>
+</div>
+
+<div class='actions'>
+    <!-- view all tests -->
+    <mat-card routerLink="/all-tests">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="material-icons-outlined" style="vertical-align: bottom">summarize</mat-icon>
+          All Tests
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        View all tests
+      </mat-card-content>
+    </mat-card>
+  </div>

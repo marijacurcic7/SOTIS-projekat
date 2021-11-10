@@ -7,10 +7,6 @@ import { TestService } from 'src/app/services/test.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AuthService } from 'src/app/services/auth.service';
 
-export interface AnswerData {
-  text: string;
-  correct: boolean;
-}
 
 @Component({
   selector: 'app-test-view',

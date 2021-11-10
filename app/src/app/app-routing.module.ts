@@ -7,6 +7,8 @@ import { AddTestComponent } from './components/teacher/add-test/add-test.compone
 import { TestViewComponent } from './components/test-view/test-view.component';
 import { MyTestsComponent } from './components/teacher/my-tests/my-tests.component';
 import { RoleGuard } from './guards/role.guard';
+import { AllTestsComponent } from './components/all-tests/all-tests.component';
+import { TakeTestComponent } from './components/student/take-test/take-test.component';
 
 const routes: Routes = [
   {
@@ -36,7 +38,15 @@ const routes: Routes = [
         component: TestViewComponent,
         data: { roles: ['teacher'] },
         canActivate: [RoleGuard]
-      }
+      },
+      {
+        path: 'all-tests',
+        component: AllTestsComponent
+      },
+      {
+        path: 'take-test/:id',
+        component: TakeTestComponent
+      },
     ]
   }
 ];
