@@ -1,5 +1,5 @@
 <div class="test-card">
-    <mat-card *ngIf="activeStepIndex == 0">
+    <mat-card>
         <mat-card-header>
             <mat-card-title>
                 <span style="font-size: 2rem;">{{test.name}}</span>
@@ -23,19 +23,5 @@
         </mat-card-actions>
     </mat-card>
 
-    <mat-card class="question-card" *ngIf="activeStepIndex > 0">
-        <mat-card-header>
-            <mat-card-title>
-                <span style="font-size: 2rem;">{{question.text}}</span>
-            </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-
-        </mat-card-content>
-        <mat-card-actions>
-            <button mat-raised-button color="primary" *ngIf="last" (click)="finish()">Finish</button>
-            <button mat-raised-button color="primary" *ngIf="!last" (click)="next()">Next</button>
-        </mat-card-actions>
-    </mat-card>
+    
 </div>

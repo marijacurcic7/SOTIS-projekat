@@ -76,8 +76,8 @@ export class AddTestComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      console.log(result);
+      // console.log('The dialog was closed');
+      // console.log(result);
       if (result) {
 
         let q: Question = {
@@ -122,9 +122,9 @@ export class AddTestComponent implements OnInit {
       }
     }
 
-    console.log(this.test);
-    console.log(this.questions);
-    console.log(this.answers);
+    // console.log(this.test);
+    // console.log(this.questions);
+    // console.log(this.answers);
 
     try {
       // await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
@@ -226,12 +226,6 @@ export class QuestionDialog {
         question1.trueAnswers.push(answer4)
       }
     }
-
-
-
-    console.log(question1);
-
-
 
     this.dialogRef.close(question1);
   }

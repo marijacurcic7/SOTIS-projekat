@@ -8,6 +8,7 @@ import { Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { GoogleAuthProvider } from 'firebase/auth'
 import { switchMap } from 'rxjs/operators';
+import { Take } from '../models/take.model';
 
 @Injectable({
   providedIn: 'root'
@@ -108,4 +109,6 @@ export class AuthService {
       panelClass: ['red-snackbar']
     });
   }
+
+
 }

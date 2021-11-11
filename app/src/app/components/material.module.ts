@@ -27,6 +27,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import { AllTestsComponent } from './all-tests/all-tests.component';
 import { TakeTestComponent } from './student/take-test/take-test.component';
 import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
+import { QuestionComponent } from './student/question/question.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { StudentHomePageComponent } from './student/student-home-page/student-ho
     MyTestsComponent,
     AllTestsComponent,
     TakeTestComponent,
-    StudentHomePageComponent
+    StudentHomePageComponent,
+    QuestionComponent
   ],
   imports: [
     CommonModule,

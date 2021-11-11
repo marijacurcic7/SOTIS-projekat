@@ -9,6 +9,7 @@ import { MyTestsComponent } from './components/teacher/my-tests/my-tests.compone
 import { RoleGuard } from './guards/role.guard';
 import { AllTestsComponent } from './components/all-tests/all-tests.component';
 import { TakeTestComponent } from './components/student/take-test/take-test.component';
+import { QuestionComponent } from './components/student/question/question.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
       {
         path: 'take-test/:id',
         component: TakeTestComponent
+      },
+      {
+        path: 'take-test/:id/question/:qid',
+        component: QuestionComponent
       },
     ]
   }

@@ -113,6 +113,19 @@ export class TestService {
     )
   }
 
+  getQuestion(testId: string, questionId: string) {
+    const question = this.firestore.doc<Question>(`tests/${testId}/questions/${questionId}`);
+
+    return question.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Question;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
+    )
+  }
+
   getAnswer(testId: string, questionId: string) {
     const answer = this.firestore.doc<Answer>(`tests/${testId}/answers/${questionId}`);
 

@@ -5,6 +5,4 @@ export interface User {
   email: string;
   displayName: string;
   role: 'teacher' | 'student' | 'admin',
-  createdTests?: string[], // if teacher
-  takes?: Take[] // if student
 }

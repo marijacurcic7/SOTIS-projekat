@@ -6,6 +6,5 @@ export interface Take {
   testName: string,
   testId: string,
   startTime: firebase.firestore.Timestamp,
-  endTime: firebase.firestore.Timestamp,
-  myAnswers: string[]
+  endTime?: firebase.firestore.Timestamp,
 }

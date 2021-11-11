@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
 import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
+import { Take } from 'src/app/models/take.model';
+import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TestService } from 'src/app/services/test.service';
+import firebase from 'firebase/compat/app';
+import { TakeService } from 'src/app/services/take.service';
 
 @Component({
   selector: 'app-take-test',
@@ -13,19 +17,23 @@ import { TestService } from 'src/app/services/test.service';
 })
 export class TakeTestComponent implements OnInit {
 
+  user: User | undefined
+  testId: string;
+  questionId: string | undefined;
   test: Test;
+  take: Take;
   teacherName: string;
   activeStepIndex: number;
   questions: Question[];
-  answer: Answer;
   question: Question;
-  qindex: number;
-  last: boolean;
+
 
   constructor(
     private route: ActivatedRoute,
     private testService: TestService,
+    private takeService: TakeService,
     private authService: AuthService,
+    private router: Router,
   ) { 
     this.test = {
       name: "",
@@ -36,44 +44,49 @@ export class TakeTestComponent implements OnInit {
         teacherId: ""
       }
     }
-    this.activeStepIndex = 0;
-    this.qindex = 0;
-    this.last = false;
+
+    
   }
 
   ngOnInit(): void {
-    let testId = String(this.route.snapshot.paramMap.get('id'));
-    console.log(testId);
+    this.authService.user$.subscribe(user => this.user = user);
 
-    this.testService.getTest(testId).subscribe(t => {
+    this.testId = String(this.route.snapshot.paramMap.get('id'));
+    console.log(this.testId);
+
+    this.testService.getTest(this.testId).subscribe(t => {
       this.test = t;
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
     });
 
-    this.testService.getQuestions(testId).subscribe(q => {
+    this.testService.getQuestions(this.testId).subscribe(q => {
       console.log(q);
       this.questions = q;
-      this.question = q[this.qindex];
+      this.question = q[0];
+      
+      this.questionId = this.question.id;
     });
 
   }
 
   start() {
-    this.activeStepIndex = 1;
-    if(this.questions.length == this.activeStepIndex) this.last = true;
+
+    this.take = {
+      passed: false,
+      points: 0,
+      testName: this.test.name,
+      testId: this.testId,
+      startTime: firebase.firestore.Timestamp.fromDate(new Date()),
+    }
+
+    if(!this.user) throw new Error('You must login first.');
+
+    // this.takeService.addTake(this.take, this.user.uid);
+
+    this.router.navigate([`/take-test/${this.testId}/question/${this.question.id}`]);
   }
 
-  next() {
-    this.activeStepIndex += 1;
-    if(this.questions.length == this.activeStepIndex) this.last = true;
-    this.qindex += 1;
-    this.question = this.questions[this.qindex];
-
-  }
-
-  finish(){
-    
-  }
+  
 
 }

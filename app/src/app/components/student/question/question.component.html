@@ -1,0 +1,48 @@
+<div class="question-card">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <span style="font-size: 2rem;">{{question.text}}</span>
+            </mat-card-title>
+        </mat-card-header>
+    
+        <mat-card-content>
+            <table class="full-width">
+                <tr>
+                    <td>
+                        <button class="full-width" mat-button [ngClass]="{'test': a1Clicked}" (click)="answer1Clicked()">
+                            {{question.possibleAnswers[0]}}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="full-width" mat-button *ngIf="question.possibleAnswers.length > 1" [ngClass]="{'test': a2Clicked}" (click)="answer2Clicked()">
+                            {{question.possibleAnswers[1]}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="full-width" mat-button *ngIf="question.possibleAnswers.length > 2" [ngClass]="{'test': a3Clicked}" (click)="answer3Clicked()">
+                            {{question.possibleAnswers[2]}}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="full-width" mat-button *ngIf="question.possibleAnswers.length > 3" [ngClass]="{'test': a4Clicked}" (click)="answer4Clicked()">
+                            {{question.possibleAnswers[3]}}
+                        </button>
+                    </td>
+                </tr>
+            </table>
+    
+        </mat-card-content>
+        <mat-card-actions>
+            <span>
+                <button mat-raised-button color="link" *ngIf="!first" (click)="previous()">Previous</button>
+                <button mat-raised-button color="link" *ngIf="!last" (click)="next()">Next</button>
+            </span>
+            <span  class="finish">
+                <button mat-raised-button color="primary" (click)="finish()">Finish</button>
+            </span>
+        </mat-card-actions>
+    </mat-card>
+</div>
