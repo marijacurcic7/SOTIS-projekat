@@ -101,6 +101,7 @@ export class TestService {
       }))
     )
   }
+  
   getAnswers(testId: string) {
     const answersCollection = this.firestore.collection<Answer>(`tests/${testId}/answers`);
     return answersCollection.snapshotChanges().pipe(

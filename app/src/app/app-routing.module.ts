@@ -46,10 +46,16 @@ const routes: Routes = [
       },
       {
         path: 'take-test/:id',
-        component: TakeTestComponent
+        component: TakeTestComponent,
+        // children: [
+        //   {
+        //     path: 'take/:tid/question/:qid',
+        //     component: QuestionComponent
+        //   },
+        // ]
       },
       {
-        path: 'take-test/:id/question/:qid',
+        path: 'take-test/:id/take/:tid/question/:qid',
         component: QuestionComponent
       },
     ]

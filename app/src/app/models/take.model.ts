@@ -1,6 +1,7 @@
 import firebase from 'firebase/compat/app';
 
 export interface Take {
+  id? : string;
   passed: boolean,
   points: number,
   testName: string,

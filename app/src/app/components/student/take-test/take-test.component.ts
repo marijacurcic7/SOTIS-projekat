@@ -9,6 +9,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TestService } from 'src/app/services/test.service';
 import firebase from 'firebase/compat/app';
 import { TakeService } from 'src/app/services/take.service';
+import { MyAnswer } from 'src/app/models/my-answer.model';
+import { setupTestingRouter } from '@angular/router/testing';
 
 @Component({
   selector: 'app-take-test',
@@ -26,6 +28,7 @@ export class TakeTestComponent implements OnInit {
   activeStepIndex: number;
   questions: Question[];
   question: Question;
+  myAnswers: MyAnswer[];
 
 
   constructor(
@@ -82,9 +85,22 @@ export class TakeTestComponent implements OnInit {
 
     if(!this.user) throw new Error('You must login first.');
 
-    // this.takeService.addTake(this.take, this.user.uid);
+    this.myAnswers = [];
+    for (let index = 0; index < this.questions.length; index++) {
+      let myAnswer: MyAnswer = {
+        id: String(index),
+        myAnswers: []
+      }
+      this.myAnswers.push(myAnswer);
+    }
 
-    this.router.navigate([`/take-test/${this.testId}/question/${this.question.id}`]);
+    var takeId: string;
+    this.takeService.addTake(this.take, this.user.uid, this.questions, this.myAnswers).then( res => {
+      takeId = res as string;
+      console.log(this.questions.length);
+      this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], {state: {questions: this.questions}});
+    })
+    
   }
 
   
