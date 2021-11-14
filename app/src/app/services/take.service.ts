@@ -106,20 +106,31 @@ export class TakeService {
 
   finishTake(takeId: string, userId: string, testId: string){
     const endTime = firebase.firestore.Timestamp.fromDate(new Date());
+    let totalPoints = 0;
+
     this.testService.getAnswers(testId).pipe(take(1)).subscribe(correctAnswers => {
-      if(!correctAnswers) return;
+      if (!correctAnswers) return;
       console.log(correctAnswers);
 
       this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
         console.log(myAnswers);
 
-        // correctAnswers.forEach(ca => {
-        //   ca.correctAnswers
-        // });
+        correctAnswers.forEach((correctAnswer, index) => {
+          const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort()
 
+          if(!myAnswers[index]) return;
+          const myAnswersForAQuestion = myAnswers[index].myAnswers.sort()
 
-      });
-    });
+          const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i])
+          if (isEveryAnswerForAQuestionCorrect) totalPoints++
+          
+
+        });
+        console.log(totalPoints);
+        
+      })
+    })
+  
     
 
 
