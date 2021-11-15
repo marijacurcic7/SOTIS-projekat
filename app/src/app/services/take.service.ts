@@ -115,21 +115,25 @@ export class TakeService {
       this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
         console.log(myAnswers);
 
-        correctAnswers.forEach((correctAnswer, index) => {
-          const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort()
+        this.testService.getQuestions(testId).pipe(take(1)).subscribe(questions => {
+          console.log(questions);
 
-          if(!myAnswers[index]) return;
-          const myAnswersForAQuestion = myAnswers[index].myAnswers.sort()
+          correctAnswers.forEach((correctAnswer, index) => {
+            const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
 
-          const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i])
-          if (isEveryAnswerForAQuestionCorrect) totalPoints++
-          
+            if(!myAnswers[index]) return;
+            const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
+            const maxPoints = questions[index].maxPoints;
+            console.log(maxPoints);
+            console.log(myAnswersForAQuestion);
+            const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
+            if (isEveryAnswerForAQuestionCorrect) totalPoints += maxPoints;
 
+          });
+          console.log(totalPoints);
         });
-        console.log(totalPoints);
-        
-      })
-    })
+      });
+    });
   
     
 
