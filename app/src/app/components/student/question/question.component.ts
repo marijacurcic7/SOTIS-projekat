@@ -41,6 +41,7 @@ export class QuestionComponent implements OnInit {
   answer3: string;
   answer4: string;
   qlength: number;
+
   
 
   constructor(
@@ -175,8 +176,9 @@ export class QuestionComponent implements OnInit {
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
     await this.takeService.finishTake(this.takeId, this.user.uid, this.testId);
-
-    this.router.navigate([`/take-test/${this.testId}`]);
+    
+    this.router.navigate([`/take-test/${this.testId}/take/${this.takeId}/results`]);
+    
   }
 
   removeAnswer(element: string) {

@@ -28,6 +28,7 @@ import { AllTestsComponent } from './all-tests/all-tests.component';
 import { TakeTestComponent } from './student/take-test/take-test.component';
 import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
 import { QuestionComponent } from './student/question/question.component';
+import { ResultsComponent } from './student/results/results.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { QuestionComponent } from './student/question/question.component';
     AllTestsComponent,
     TakeTestComponent,
     StudentHomePageComponent,
-    QuestionComponent
+    QuestionComponent,
+    ResultsComponent
   ],
   imports: [
     CommonModule,

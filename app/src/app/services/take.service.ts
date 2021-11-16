@@ -104,37 +104,67 @@ export class TakeService {
 
   }
 
+  updateTake(takeId: string, userId: string, take: Take) {
+    return this.firestore.doc<Take>(`users/${userId}/takes/${takeId}`).set(take);
+
+  }
+
   finishTake(takeId: string, userId: string, testId: string){
-    const endTime = firebase.firestore.Timestamp.fromDate(new Date());
-    let totalPoints = 0;
 
-    this.testService.getAnswers(testId).pipe(take(1)).subscribe(correctAnswers => {
-      if (!correctAnswers) return;
-      console.log(correctAnswers);
+    try {
+      const endTime = firebase.firestore.Timestamp.fromDate(new Date());
+      let totalPoints = 0;
 
-      this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
-        console.log(myAnswers);
+      this.testService.getAnswers(testId).pipe(take(1)).subscribe(correctAnswers => {
+        if (!correctAnswers) return;
+        console.log(correctAnswers);
 
-        this.testService.getQuestions(testId).pipe(take(1)).subscribe(questions => {
-          console.log(questions);
+        this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
+          console.log(myAnswers);
 
-          correctAnswers.forEach((correctAnswer, index) => {
-            const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
+          this.testService.getQuestions(testId).pipe(take(1)).subscribe(questions => {
+            console.log(questions);
+            var maxTestPoints = 0;
+            correctAnswers.forEach((correctAnswer, index) => {
+              const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
 
-            if(!myAnswers[index]) return;
-            const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
-            const maxPoints = questions[index].maxPoints;
-            console.log(maxPoints);
-            console.log(myAnswersForAQuestion);
-            const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
-            if (isEveryAnswerForAQuestionCorrect) totalPoints += maxPoints;
-
+              if(!myAnswers[index]) return;
+              const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
+              const maxPoints = questions[Number(myAnswers[index].id)].maxPoints;
+              console.log(maxPoints);
+              console.log(myAnswersForAQuestion);
+              const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
+              if (isEveryAnswerForAQuestionCorrect){
+                totalPoints += maxPoints;
+                myAnswers[index].points = maxPoints;
+                myAnswers[index].correct = true;
+              } 
+              else {
+                myAnswers[index].points = 0;
+                myAnswers[index].correct = false;
+              }
+              maxTestPoints += maxPoints;
+              this.updateMyAnswer(takeId, userId, String(index), myAnswers[index]);
+              console.log(myAnswers[index]);
+            });
+            console.log(totalPoints);
+            this.getTake(takeId, userId).subscribe( take => {
+              take.endTime = firebase.firestore.Timestamp.fromDate(new Date());
+              take.points = totalPoints;
+              take.passed = totalPoints/maxTestPoints >= 0.5;
+              this.updateTake(takeId, userId, take);
+            });
+            console.log(myAnswers);
+            
           });
-          console.log(totalPoints);
         });
       });
-    });
-  
+    }
+    catch(error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code);
+      else this.openFailSnackBar();
+      throw error;
+    }
     
 
 
