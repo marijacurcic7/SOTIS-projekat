@@ -1,9 +1,5 @@
 .container {
-  padding: 1rem;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center; */
+  padding: 2rem;
 }
 #mynetwork {
   height: 70vh;
@@ -11,10 +7,20 @@
   /* background-color: #7256a3; */
   border-radius: 1rem;
 }
-
-.add-new-node {
-  padding-bottom: 0.5rem;
+.node-actions-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 .node-actions {
-  padding-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+}
+.delete-btn-red {
+  background-color: #a3565321; 
+  color: #a35656
+}
+.delete-btn-disabled {
+  background-color: #a3565321; 
+  color: #a35656
 }
