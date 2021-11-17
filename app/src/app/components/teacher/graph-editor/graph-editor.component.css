@@ -6,14 +6,14 @@
   align-content: center; */
 }
 #mynetwork {
-  height: 30rem;
-  /* border: 1px solid lightgray; */
-  background-color: #7256a328;
+  height: 70vh;
+  border: 1px solid #7256a33f;
+  /* background-color: #7256a3; */
   border-radius: 1rem;
 }
 
 .add-new-node {
-  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 .node-actions {
   padding-bottom: 2rem;
