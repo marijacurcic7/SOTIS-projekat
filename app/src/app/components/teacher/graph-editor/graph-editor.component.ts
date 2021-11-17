@@ -9,12 +9,12 @@ import { Network } from 'vis-network';
 })
 export class GraphEditorComponent implements OnInit {
 
-  nodes = new DataSet([
+  nodes = new DataSet<any>([
     { id: '1', label: "Node 1" },
     { id: '2', label: "Node 2" },
     { id: '3', label: "Node 3" },
     { id: '4', label: "Node 4" },
-    { id: '5', label: "Node 5" },
+    { id: '5', label: "Html tags" },
   ]);
 
   // create an array with edges
@@ -26,29 +26,47 @@ export class GraphEditorComponent implements OnInit {
     { from: '2', to: '5', arrows: "to" },
   ]);
 
+  currentNode: any;
+
   constructor() { }
 
   ngOnInit(): void {
     // create a network
-    const container = document.getElementById("mynetwork");
+    const networkHtmlElem = document.getElementById("mynetwork");
     const data = {
       nodes: this.nodes,
       edges: this.edges,
     };
 
-    if (!container) return
-    const network = new Network(container, data, {});
+    if (!networkHtmlElem) return
+    const network = new Network(networkHtmlElem, data, { autoResize: true, height: '100%', width: '100%' });
     network.on('click', (params) => {
       if (params && params.nodes && params.nodes.length === 1) {
         const nodeId = params.nodes[0]
-        this.addNewNode(nodeId)
+        // this.addNewNode(nodeId)
       }
     })
   }
 
   addNewNode(parentNodeId: string) {
-    const newNode = { id: '10', label: 'New Node' }
+    const newNode = { id: Math.random() * 100, label: 'New Node' }
     const newEdge = { from: parentNodeId, to: newNode.id, arrows: "to" }
-    // this.nodes.add([newNode])
+    this.nodes.add([newNode])
+    this.edges.add([newEdge])
+  }
+
+  // TODO: IMPLEMENTIRATI OVE METODE, dodati neka polja za unos.
+  // note: bolje da budu u okviru ove stranice, a ne dijaloga, jer onda korisnik nece videti graph editor od dijaloga
+  createNewNode() {
+
+  }
+  editInputNodes() {
+
+  }
+  editOutputNodes() {
+
+  }
+  deleteNode() {
+
   }
 }

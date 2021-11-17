@@ -1,5 +1,20 @@
+.container {
+  padding: 1rem;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center; */
+}
 #mynetwork {
-  width: 600px;
-  height: 400px;
-  border: 1px solid lightgray;
+  height: 30rem;
+  /* border: 1px solid lightgray; */
+  background-color: #7256a328;
+  border-radius: 1rem;
+}
+
+.add-new-node {
+  padding-top: 0.5rem;
+}
+.node-actions {
+  padding-bottom: 2rem;
 }

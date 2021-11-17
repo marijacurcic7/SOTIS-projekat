@@ -1,3 +1,45 @@
-<p>graph-editor works!</p>
+<div class='container'>
+  <div id="mynetwork"></div>
 
-<div id="mynetwork"></div>
+  <div class='add-new-node'>
+    <button mat-button style="font-size: large; background-color: #5ca35618; color: #5ca356"
+    onclick="createNewNode()">
+      <mat-icon class="material-icons-outlined">add</mat-icon>
+      Add New Node
+    </button>
+  </div>
+
+  <!-- current clicked node -->
+  <div style="padding-top: 2rem;">
+    <mat-card>
+      <mat-card-title>
+        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
+        Html tags
+      </mat-card-title>
+
+      <mat-card-content>
+        <div style="font-size: large;">Input nodes: Node 1, Node 2, Node 3, Node 4</div>
+        <div style="font-size: large;">Output nodes: None</div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button style="background-color: #b6b83d1c; color: #b6b83d"
+        onclick="editInputNodes()">
+          <mat-icon class="material-icons-outlined">edit</mat-icon>
+          Edit Input Nodes
+        </button>
+        <button mat-button style="background-color: #b6b83d1c; color: #b6b83d"
+        onclick="editOutputNodes()">
+          <mat-icon class="material-icons-outlined">edit</mat-icon>
+          Edit Output Nodes
+        </button>
+        <button mat-button style="background-color: #b8413d18; color: #b8413d"
+        onclick="deleteNode()">
+          <mat-icon class="material-icons-outlined">delete</mat-icon>
+          Delete Node
+        </button>
+      </mat-card-actions>
+
+    </mat-card>
+  </div>
+</div>
