@@ -59,24 +59,25 @@ export class ResultsComponent implements OnInit {
     this.testId = String(this.route.snapshot.paramMap.get('id'));
     this.takeId = String(this.route.snapshot.paramMap.get('tid'));
     
+    this.testService.getTest(this.testId).subscribe(test => {
+      this.test = test;
+      console.log(this.test);
+      this.maxPoints = this.test.maxPoints;
+    });
+
     this.authService.user$.subscribe(user => {
       this.user = user;
       if(!this.user) throw new Error('You are not logged in.');
       this.takeService.getTake(this.takeId, this.user?.uid).pipe(take(1)).subscribe(t => {
         this.take = t;
         console.log(this.take);
-
-        this.testService.getTest(this.testId).pipe(take(1)).subscribe(test => {
-          this.test = test;
-          console.log(this.test);
-          this.maxPoints = this.test.maxPoints;
-
-          if(!this.user) throw new Error('You are not logged in.');
-          this.takeService.getMyAnswers(this.takeId, this.user.uid).pipe(take(1)).subscribe( ans => {
-            console.log(ans);
-            this.answers = ans;
-            this.dataSource = new MatTableDataSource<MyAnswer>(this.answers);
-          });
+        
+        if(!this.user) throw new Error('You are not logged in.');
+        this.takeService.getMyAnswers(this.takeId, this.user.uid).pipe(take(1)).subscribe( ans => {
+          console.log(ans);
+          this.answers = ans;
+          this.dataSource = new MatTableDataSource<MyAnswer>(this.answers);
+          
         });
         
       });

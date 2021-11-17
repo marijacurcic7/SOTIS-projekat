@@ -9,6 +9,7 @@ import { Take } from '../models/take.model';
 import { map, take } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { TestService } from './test.service';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -19,7 +20,8 @@ export class TakeService {
   constructor(
     private firestore: AngularFirestore,
     private snackBar: MatSnackBar,
-    private testService: TestService
+    private testService: TestService,
+    private router: Router,
   ) { }
 
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
@@ -122,10 +124,10 @@ export class TakeService {
         this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
           console.log(myAnswers);
 
-          this.testService.getQuestions(testId).pipe(take(1)).subscribe(questions => {
+          this.testService.getQuestions(testId).pipe(take(1)).subscribe(async questions => {
             console.log(questions);
             var maxTestPoints = 0;
-            correctAnswers.forEach((correctAnswer, index) => {
+            correctAnswers.forEach(async (correctAnswer, index) => {
               const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
 
               if(!myAnswers[index]) return;
@@ -144,19 +146,19 @@ export class TakeService {
                 myAnswers[index].correct = false;
               }
               maxTestPoints += maxPoints;
-              this.updateMyAnswer(takeId, userId, String(index), myAnswers[index]);
+              await this.updateMyAnswer(takeId, userId, String(index), myAnswers[index]);
               console.log(myAnswers[index]);
             });
             console.log(totalPoints);
-            this.getTake(takeId, userId).subscribe( take => {
-              take.endTime = firebase.firestore.Timestamp.fromDate(new Date());
-              take.points = totalPoints;
-              take.passed = totalPoints/maxTestPoints >= 0.5;
-              this.updateTake(takeId, userId, take);
+
+            await this.firestore.doc<Take>(`users/${userId}/takes/${takeId}`).update({
+              endTime: firebase.firestore.Timestamp.fromDate(new Date()),
+              points: totalPoints,
+              passed: totalPoints / maxTestPoints >= 0.5
             });
-            console.log(myAnswers);
-            
+            this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
           });
+          
         });
       });
     }

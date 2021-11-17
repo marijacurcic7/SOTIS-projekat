@@ -110,9 +110,9 @@ export class QuestionComponent implements OnInit {
   }
 
 
-  next() {
+  async next() {
     if(!this.user) throw new Error('You must login first.');
-    this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
+    await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
     this.nextQuestionId = String(Number(this.questionId) + 1);
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
@@ -122,9 +122,9 @@ export class QuestionComponent implements OnInit {
     });
   }
 
-  previous() {
+  async previous() {
     if(!this.user) throw new Error('You must login first.');
-    this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
+    await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
     this.prevQuestionId = String(Number(this.questionId) - 1);
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
@@ -175,9 +175,9 @@ export class QuestionComponent implements OnInit {
     if(!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
-    await this.takeService.finishTake(this.takeId, this.user.uid, this.testId);
+    this.takeService.finishTake(this.takeId, this.user.uid, this.testId);
     
-    this.router.navigate([`/take-test/${this.testId}/take/${this.takeId}/results`]);
+    
     
   }
 
