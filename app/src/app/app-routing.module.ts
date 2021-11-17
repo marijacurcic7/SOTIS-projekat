@@ -11,6 +11,7 @@ import { AllTestsComponent } from './components/all-tests/all-tests.component';
 import { TakeTestComponent } from './components/student/take-test/take-test.component';
 import { QuestionComponent } from './components/student/question/question.component';
 import { ResultsComponent } from './components/student/results/results.component';
+import { GraphEditorComponent } from './components/teacher/graph-editor/graph-editor.component';
 
 const routes: Routes = [
   {
@@ -48,12 +49,6 @@ const routes: Routes = [
       {
         path: 'take-test/:id',
         component: TakeTestComponent,
-        // children: [
-        //   {
-        //     path: 'take/:tid/question/:qid',
-        //     component: QuestionComponent
-        //   },
-        // ]
       },
       {
         path: 'take-test/:id/take/:tid/question/:qid',
@@ -63,6 +58,10 @@ const routes: Routes = [
         path: 'take-test/:id/take/:tid/results',
         component: ResultsComponent
       },
+      {
+        path: 'graph-editor',
+        component: GraphEditorComponent
+      }
     ]
   }
 ];

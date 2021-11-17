@@ -29,6 +29,7 @@ import { TakeTestComponent } from './student/take-test/take-test.component';
 import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
 import { QuestionComponent } from './student/question/question.component';
 import { ResultsComponent } from './student/results/results.component';
+import { GraphEditorComponent } from './teacher/graph-editor/graph-editor.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ResultsComponent } from './student/results/results.component';
     TakeTestComponent,
     StudentHomePageComponent,
     QuestionComponent,
-    ResultsComponent
+    ResultsComponent,
+    GraphEditorComponent
   ],
   imports: [
     CommonModule,
