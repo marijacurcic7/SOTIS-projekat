@@ -1,1 +1,6 @@
-<p>delete-domain works!</p>
+<h1 mat-dialog-title>Confirm deleting domain {{data.name}}</h1>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="data" [disabled]="!data.name"
+  style="color: rgb(192, 67, 67);">Delete</button>
+</div>

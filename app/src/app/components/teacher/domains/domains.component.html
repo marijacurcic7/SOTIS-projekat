@@ -5,75 +5,18 @@
     Add Domain
   </button>
 
-  <mat-card>
+  <mat-card *ngFor="let domain of domains$ | async">
     <mat-card-header>
       <mat-card-title>
         <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color: #7256a3">scatter_plot</mat-icon>
-        <span> HTML </span>
+        <span> {{domain.name}} </span>
       </mat-card-title>
-      <button mat-icon-button class='edit-btn'>
+      <button mat-icon-button class='edit-btn' (click)="editDomain(domain)">
         <mat-icon class="material-icons-outlined">edit</mat-icon>
       </button>
-      <button mat-icon-button class='delete-btn'>
+      <button mat-icon-button class='delete-btn' (click)="deleteDomain(domain)">
         <mat-icon class="material-icons-outlined">delete</mat-icon>
       </button>
-    </mat-card-header>
-  </mat-card>
-
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        JavaScript
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        Css
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        Python
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        WebAssembly
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        Node.js
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        Swift
-      </mat-card-title>
-    </mat-card-header>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">scatter_plot</mat-icon>
-        Go
-      </mat-card-title>
     </mat-card-header>
   </mat-card>
 
