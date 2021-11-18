@@ -59,7 +59,9 @@ export class DomainService {
       }))
     )
   }
-
+  getDomain(domainId: string) {
+    return this.firestore.doc<Domain>(`domains/${domainId}`).valueChanges();
+  }
 
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {

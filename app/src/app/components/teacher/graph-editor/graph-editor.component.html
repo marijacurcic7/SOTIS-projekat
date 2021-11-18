@@ -1,15 +1,17 @@
 <div class='container'>
   <div class='node-actions-container'>
     <div class='node-actions'>
-      <button mat-button style="background-color: #5684a321; color: #5684a3" 
-      (click)="centerNetwork()">
+      <button mat-button class='btn-blue' 
+      (click)="centerNetwork()"
+      [disabled]="!domain">
         <mat-icon class="material-icons-outlined">center_focus_strong</mat-icon>
         Recenter
       </button>
     </div>
     <div class='node-actions'>
-      <button mat-button style="background-color: #5ca35321; color: #5ca356" 
-      (click)="createNewNode()">
+      <button mat-button class="btn-green" 
+      (click)="createNewNode()"
+      [disabled]="!domain">
         <mat-icon class="material-icons-outlined">add</mat-icon>
         Add Node
       </button>
@@ -32,6 +34,5 @@
     </div>
 
   </div>
-
   <div id="mynetwork"></div>
 </div>

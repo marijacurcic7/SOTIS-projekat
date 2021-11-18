@@ -60,12 +60,12 @@ const routes: Routes = [
         component: ResultsComponent
       },
       {
-        path: 'graph-editor',
-        component: GraphEditorComponent
-      },
-      {
         path: 'domains',
         component: DomainsComponent
+      },
+      {
+        path: 'graph-editor/:id',
+        component: GraphEditorComponent
       }
     ]
   }

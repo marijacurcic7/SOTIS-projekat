@@ -5,7 +5,7 @@
     Add Domain
   </button>
 
-  <mat-card *ngFor="let domain of domains$ | async">
+  <mat-card *ngFor="let domain of domains$ | async" [routerLink]="['/graph-editor', domain.id]">
     <mat-card-header>
       <mat-card-title>
         <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color: #7256a3">scatter_plot</mat-icon>

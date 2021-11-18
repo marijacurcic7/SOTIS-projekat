@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { Domain } from 'src/app/models/domain.model';
 import { MyNode } from 'src/app/models/myNode.model';
+import { DomainService } from 'src/app/services/domain.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
 import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.component';
@@ -13,32 +16,46 @@ import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.com
 })
 export class GraphEditorComponent implements OnInit {
 
+  network: Network
+  selectedNode: MyNode | undefined;
+  domain: Domain | undefined
+
   nodes = new DataSet<MyNode>([
     { id: '1', label: "Node 1", inputNodes: [] },
     { id: '2', label: "Node 2" },
     { id: '3', label: "Node 3" },
     { id: '4', label: "Node 4" },
     { id: '5', label: "Html tags" },
-  ]);
-
-  // create an array with edges
+  ])
 
   edges = new DataSet<any>([
     { id: '13', from: '1', to: '3', arrows: "to" },
     { id: '12', from: '1', to: '2', arrows: "to" },
     { id: '24', from: '2', to: '4', arrows: "to" },
     { id: '25', from: '2', to: '5', arrows: "to" },
-  ]);
-
-  network: Network
-  selectedNode: MyNode | undefined;
+  ])
 
   constructor(
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private domainService: DomainService
   ) { }
 
   ngOnInit(): void {
+    this.initNetwork()
+    const domainId = String(this.route.snapshot.paramMap.get('id'));
+    this.domainService.getDomain(domainId).subscribe(domain => {
+      if (domain) {
+        this.domain = domain
+      }
+      else {
+        this.openFailSnackBar('Domain not found.')
+      }
+    })
+  }
+
+  initNetwork() {
     // create a network
     const networkHtmlElem = document.getElementById("mynetwork");
     const data = {
@@ -65,7 +82,7 @@ export class GraphEditorComponent implements OnInit {
       }
     }
 
-    if (!networkHtmlElem) return
+    if (!networkHtmlElem) return console.error('html elem not found')
     this.network = new Network(networkHtmlElem, data, options)
     this.edges.forEach
 
@@ -133,7 +150,7 @@ export class GraphEditorComponent implements OnInit {
   }
 
   editNode() {
-    if(!this.selectedNode) return
+    if (!this.selectedNode) return
     const dialogRef = this.dialog.open(EditNodeDialogComponent, {
       // width: ' 10rem',
       data: this.selectedNode.label
