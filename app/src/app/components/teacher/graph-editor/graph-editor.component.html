@@ -1,0 +1,33 @@
+<div class='container'>
+  <div style="display: flex; justify-content: space-between;">
+    <span style="font-size: 2rem; font-weight: 200;">{{domain?.name}}</span>
+
+    <div class='node-actions-container'>
+      <div class='node-actions'>
+        <button mat-button class='btn-blue' (click)="centerNetwork()" [disabled]="!domain">
+          <mat-icon class="material-icons-outlined">center_focus_strong</mat-icon>
+          Recenter
+        </button>
+      </div>
+      <div class='node-actions'>
+        <button mat-button class="btn-green" (click)="createNewNode()" [disabled]="!domain">
+          <mat-icon class="material-icons-outlined">add</mat-icon>
+          Add Node
+        </button>
+      </div>
+      <div class='node-actions'>
+        <button mat-button class='btn-yellow' (click)="editNode()" [disabled]="selectedNode === undefined">
+          <mat-icon class="material-icons-outlined">edit</mat-icon>
+        </button>
+      </div>
+      <div class='node-actions'>
+        <button mat-button class='btn-red' (click)="deleteNode()" [disabled]="selectedNode === undefined">
+          <mat-icon class="material-icons-outlined">delete</mat-icon>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="mynetwork"></div>
+</div>

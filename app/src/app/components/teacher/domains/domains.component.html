@@ -1,0 +1,23 @@
+<div class='actions'>
+  <button mat-button style="font-size: large;background-color: #5ca35321; color: #5ca356;margin: 1rem;"
+    (click)="createNewDomain()">
+    <mat-icon class="material-icons-outlined">add</mat-icon>
+    Add Domain
+  </button>
+
+  <mat-card *ngFor="let domain of domains$ | async" [routerLink]="['/graph-editor', domain.id]">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color: #7256a3">scatter_plot</mat-icon>
+        <span> {{domain.name}} </span>
+      </mat-card-title>
+      <button mat-icon-button class='edit-btn' (click)="editDomain($event, domain)">
+        <mat-icon class="material-icons-outlined">edit</mat-icon>
+      </button>
+      <button mat-icon-button class='delete-btn' (click)="deleteDomain($event, domain)">
+        <mat-icon class="material-icons-outlined">delete</mat-icon>
+      </button>
+    </mat-card-header>
+  </mat-card>
+
+</div>

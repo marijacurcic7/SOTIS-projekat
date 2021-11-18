@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Edit Domain Name</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <input autocomplete="off" type="text" matInput [(ngModel)]="data.name">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="data" 
+  [disabled]="!data.name">Save</button>
+</div>
