@@ -7,27 +7,8 @@
     </a>
     <span class="menu-spacer"></span>
 
-    <!-- <div *ngIf="(auth.user$ | async)?.role === 'admin' ">
-      <button mat-button routerLink="/manage" >
-        <mat-icon class="material-icons-filled">edit</mat-icon>
-        <span *ngIf="innerWidth > 450">Edit</span> 
-      </button>
-    </div>
-
-    <div *ngIf="(auth.user$ | async)?.role === 'user' ">
-      <button mat-button routerLink="/my-reviews">
-        <mat-icon class="material-icons-outlined">reviews</mat-icon>
-        <span *ngIf="innerWidth > 450">My Reviews</span> 
-      </button>
-      <button mat-button routerLink="/my-news">
-        <mat-icon class="material-icons-outlined">feed</mat-icon>
-        <span *ngIf="innerWidth > 450">News</span> 
-      </button>
-    </div> -->
-    
-
     <div *ngIf="auth.user$ | async; else login">
-      <button mat-button (click)="auth.logout()">
+      <button mat-button (click)="auth.logout()" routerLink="/">
         <span *ngIf="innerWidth > 450">Log Out</span> 
         <mat-icon>logout</mat-icon>
       </button>
@@ -37,7 +18,7 @@
         <mat-icon>login</mat-icon>
         Log In
       </button>
-      <button mat-button routerLink="/signup">Sign Up</button>
+      <!-- <button mat-button routerLink="/signup">Sign Up</button> -->
     </ng-template>
   </mat-toolbar-row>
 </mat-toolbar>

@@ -5,19 +5,33 @@ service cloud.firestore {
       allow read, write: if true
     }
 
-// TODO: update firestore rules to make sense!
-  //   match /users/{userId} {
-  //     allow read: if isOwner(userId)
-  //     allow write: if isOwner(userId) && isStudent(userId)
-  //   }
+  match /users/{userId} {
+    allow read: if isOwner(userId)
+  }
 
-  //   function isOwner(userId) {
-  //     return request.auth.uid == userId
-  //   }
-  //   function isStudent(userId) {
-  //     return incomingData(userId).email.mathes('.*[student].com')
-  //   }
-  //   function existingData() { return resource.data }
-  //   function incomingData() { return request.resource.data }
+  // everybody can read tests, Q & A
+  // only teacher can write to tests, Q & A
+  match /tests/{document=**} {
+    allow read: if true;
+    allow write: if isTeacher();
+
+    match /questions/{question} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+    match /answers/{answer} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+  }
+
+    // function isStudent() { return getRole('student') }
+    function isTeacher() { return getRole('teacher') }
+    function getRole(role) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
+    }
+    function isOwner(userId) { return request.auth.uid == userId }
+    // function existingData() { return resource.data }
+    // function incomingData() { return request.resource.data }
   }
 }

@@ -15,13 +15,37 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { TeacherHomePageComponent } from './teacher/teacher-home-page/teacher-home-page.component';
+import { AddTestComponent, QuestionDialog } from './teacher/add-test/add-test.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatTableModule} from '@angular/material/table';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { TestViewComponent } from './test-view/test-view.component';
+import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
+import {MatDividerModule} from '@angular/material/divider';
+import { AllTestsComponent } from './all-tests/all-tests.component';
+import { TakeTestComponent } from './student/take-test/take-test.component';
+import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
+import { QuestionComponent } from './student/question/question.component';
+import { ResultsComponent } from './student/results/results.component';
 
 @NgModule({
   declarations: [
     ToolbarComponent,
     HomePageComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    TeacherHomePageComponent,
+    AddTestComponent,
+    QuestionDialog,
+    TestViewComponent,
+    MyTestsComponent,
+    AllTestsComponent,
+    TakeTestComponent,
+    StudentHomePageComponent,
+    QuestionComponent,
+    ResultsComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +59,11 @@ import { SignupComponent } from './signup/signup.component';
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
-
+    MatDialogModule,
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatDividerModule
   ]
 })
 export class MaterialModule { }

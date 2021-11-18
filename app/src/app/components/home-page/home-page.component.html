@@ -1,2 +1,30 @@
 <app-toolbar></app-toolbar>
 <router-outlet></router-outlet>
+<div *ngIf="route.children.length === 0">
+  <ng-template #loadingPage>
+    <!-- shoud stay empty -->
+  </ng-template>
+
+  <ng-container *ngIf="homePageState ==='teacher'; else student">
+    <app-teacher-home-page></app-teacher-home-page>
+  </ng-container>
+  <ng-template #student>
+    <ng-container *ngIf="homePageState === 'student'; else admin">
+      <app-student-home-page></app-student-home-page>
+    </ng-container>
+  </ng-template>
+  <ng-template #admin>
+    <ng-container *ngIf="homePageState === 'admin'; else noUser">
+      <!-- admin home page component -->
+    </ng-container>
+  </ng-template>
+  <ng-template #noUser>
+    <ng-container *ngIf="homePageState === 'no-user'; else loadingPage">
+      <div class="noUser">
+        <h1> Powerful Online Learing Tool </h1>
+        <p> Please log in to continue. </p>
+        <img src="../../../assets/online-learning.svg" alt="Online learning">
+      </div>
+    </ng-container>
+  </ng-template>
+</div>

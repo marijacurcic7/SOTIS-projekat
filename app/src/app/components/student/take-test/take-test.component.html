@@ -1,0 +1,28 @@
+<div class="test-card">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <span style="font-size: 2rem;">{{test.name}}</span>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <mat-icon class="material-icons-outlined" style="vertical-align: bottom">person</mat-icon>
+                {{teacherName}}
+            </mat-card-subtitle>
+            <mat-card-subtitle>
+                {{test.topic}}
+            </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p>Max points: {{test.maxPoints}}</p>
+
+            
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="start()">Start</button>
+        </mat-card-actions>
+    </mat-card>
+
+
+    
+</div>

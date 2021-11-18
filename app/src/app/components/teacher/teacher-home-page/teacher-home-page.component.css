@@ -1,0 +1,18 @@
+.actions {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.mat-card {
+  width: 90%;
+  max-width: 30rem;
+  margin-top: 0.6rem;
+  transition:  transform .1s;
+}
+.mat-card:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+.mat-card-content {
+  color: #7256a3;
+}

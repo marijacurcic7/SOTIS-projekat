@@ -1,0 +1,27 @@
+.test-card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  mat-card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+
+  .mat-table {
+    width: 250px;
+    margin: auto;
+    
+}
+
+
+
+  
+
+  

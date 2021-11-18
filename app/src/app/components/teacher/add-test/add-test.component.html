@@ -1,0 +1,77 @@
+
+<div class='actions'>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+              Create Test
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <form [formGroup]="testForm">
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Test name</mat-label>
+                    <input matInput placeholder="Test name" formControlName="name" required>
+                </mat-form-field>
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Topic</mat-label>
+                    <input matInput placeholder="Topic" formControlName="topic" required>
+                </mat-form-field>
+                <!-- <mat-form-field class="full-width" appearance="fill"> -->
+                <div class='div1'>
+                    <mat-label>Max Points: {{maxPoints}}</mat-label>          
+                </div>
+                    <!-- <input matInput placeholder="Max Points" formControlName="maxPoints" [(ngModel)]="maxPoints" [readonly]='true'> -->
+                <!-- </mat-form-field> -->
+                <!-- <mat-divider></mat-divider>
+                <p>Questions</p> -->
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                  
+                    <ng-container matColumnDef="text">
+                      <th mat-header-cell *matHeaderCellDef> Question </th>
+                      <td mat-cell *matCellDef="let element"> {{element.text}} </td>
+                    </ng-container>
+                  
+                    <ng-container matColumnDef="points">
+                      <th mat-header-cell *matHeaderCellDef> Points </th>
+                      <td mat-cell *matCellDef="let element"> {{element.maxPoints}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="edit">
+                        <th mat-header-cell *matHeaderCellDef>  </th>
+                        <td mat-cell *matCellDef="let element"> 
+                            <button mat-icon-button>
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="delete">
+                        <th mat-header-cell *matHeaderCellDef>  </th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button>
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                  
+                  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <button mat-raised-button (click)="questionDialog()">Add question</button>
+            </form>
+        </mat-card-content>
+        <mat-card-actions>
+            <mat-error *ngIf=submitionError style="margin-bottom: 10px;">
+                Error. Unable to create test.
+            </mat-error>
+            <button mat-button (click)="cancel()">Cancel</button>
+            <button mat-raised-button color="primary" (click)="saveTest()" [disabled]="testForm.invalid || questions.length == 0">Save</button>
+        </mat-card-actions>
+    </mat-card>
+
+    
+    
+
+</div>
