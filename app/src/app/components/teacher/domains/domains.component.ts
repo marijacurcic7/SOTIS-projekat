@@ -35,7 +35,8 @@ export class DomainsComponent implements OnInit {
       }
     })
   }
-  editDomain(domain: Domain) {
+  editDomain(event: Event, domain: Domain) {
+    event.stopPropagation()
     const dialogRef = this.dialog.open(EditDomainComponent, {
       data: domain
     })
@@ -45,7 +46,8 @@ export class DomainsComponent implements OnInit {
       }
     })
   }
-  deleteDomain(domain: Domain) {
+  deleteDomain(event: Event, domain: Domain) {
+    event.stopPropagation()
     const dialogRef = this.dialog.open(DeleteDomainComponent, {
       data: domain
     })
