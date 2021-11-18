@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Domain } from 'src/app/models/domain.model';
-import { MyNode } from 'src/app/models/myNode.model';
+import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
@@ -17,23 +17,10 @@ import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.com
 export class GraphEditorComponent implements OnInit {
 
   network: Network
-  selectedNode: MyNode | undefined;
+  selectedNode: DomainProblem | undefined;
   domain: Domain | undefined
-
-  nodes = new DataSet<MyNode>([
-    { id: '1', label: "Node 1", inputNodes: [] },
-    { id: '2', label: "Node 2" },
-    { id: '3', label: "Node 3" },
-    { id: '4', label: "Node 4" },
-    { id: '5', label: "Html tags" },
-  ])
-
-  edges = new DataSet<any>([
-    { id: '13', from: '1', to: '3', arrows: "to" },
-    { id: '12', from: '1', to: '2', arrows: "to" },
-    { id: '24', from: '2', to: '4', arrows: "to" },
-    { id: '25', from: '2', to: '5', arrows: "to" },
-  ])
+  nodes = new DataSet<DomainProblem>()
+  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
 
   constructor(
     private snackBar: MatSnackBar,
@@ -44,14 +31,40 @@ export class GraphEditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initNetwork()
+    this.initDomainAndDomainProblems()
+  }
+
+  initDomainAndDomainProblems() {
     const domainId = String(this.route.snapshot.paramMap.get('id'));
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
+        this.domain.id = domainId
       }
-      else {
-        this.openFailSnackBar('Domain not found.')
+      else this.openFailSnackBar('Domain not found.')
+    })
+
+    this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
+      if (domainProblems && domainProblems.length) {
+
+        // update nodes
+        // this.nodes.clear()
+        this.nodes.update(domainProblems)
+
+        // update edges
+        domainProblems.forEach(parentNode => {
+          parentNode.output?.forEach(childNodeId => {
+            this.edges.update({
+              id: `${parentNode.id}${childNodeId}`,
+              from: parentNode.id,
+              to: childNodeId,
+              arrows: 'to'
+            })
+          })
+        })
+        // setTimeout(() => this.centerNetwork(), 200);
       }
+      else this.openSuccessSnackBar('Domain Problems is empty.')
     })
   }
 
@@ -64,13 +77,14 @@ export class GraphEditorComponent implements OnInit {
     };
     const options: Options = {
       interaction: { multiselect: true, zoomView: false },
+      // physics: {enabled: false},
       autoResize: true,
       height: '100%',
       width: '100%',
       nodes: {
         shape: 'box',
-        margin: { top: 10, bottom: 10, left: 10, right: 10 },
-        font: { size: 18, color: '#462d73' },
+        margin: { top: 5, bottom: 5, left: 5, right: 5 },
+        font: { size: 14, color: '#462d73' },
         color: {
           border: '#dedae6',
           background: '#dedae6',
@@ -84,11 +98,10 @@ export class GraphEditorComponent implements OnInit {
 
     if (!networkHtmlElem) return console.error('html elem not found')
     this.network = new Network(networkHtmlElem, data, options)
-    this.edges.forEach
 
     this.network.on('click', (params) => {
       if (params && params.nodes && params.nodes.length === 1) {
-        this.selectedNode = this.nodes.get(params.nodes[0]) as unknown as MyNode
+        this.selectedNode = this.nodes.get(params.nodes[0]) as unknown as DomainProblem
       }
       if (params && params.nodes && params.nodes.length === 2) {
         this.connectTwoNodes(params.nodes[0] as string, params.nodes[1] as string)
@@ -97,26 +110,67 @@ export class GraphEditorComponent implements OnInit {
           this.network.selectNodes([])
           this.selectedNode = undefined
         }, 1000);
-        // console.log(network.getConnectedNodes(params.nodes[0]))
-        // const nodeId = params.nodes[0]
-        // this.currentNode = this.nodes.get(nodeId) as unknown as MyNode
       }
     })
     this.network.on('deselectNode', () => {
       console.log('deselected node')
       this.selectedNode = undefined
     })
+    this.network.on('doubleClick', () => this.editNode())
   }
 
-  connectTwoNodes(parentNodeId: string, childNodeId: string) {
+  async connectTwoNodes(parentNodeId: string, childNodeId: string) {
+    if (!this.domain) return
     const newEdge = { from: parentNodeId, to: childNodeId, arrows: "to" }
-    // TODO: check if edge exists
     if (this.checkIfEdgeExists(newEdge)) return this.openFailSnackBar('Already connected')
-    this.edges.add([newEdge])
 
-    const parentNode = this.nodes.get(parentNodeId) as unknown as MyNode
-    const childNode = this.nodes.get(childNodeId) as unknown as MyNode
+    const parentNode = this.nodes.get(parentNodeId) as unknown as DomainProblem
+    const childNode = this.nodes.get(childNodeId) as unknown as DomainProblem
+    // add to db
+    await this.domainService.connectTwoNodes(parentNode, childNode, this.domain)
     this.openSuccessSnackBar(`${parentNode.label} connected to ${childNode.label}`)
+  }
+
+  async createNewNode() {
+    console.log(this.nodes.getIds())
+    if (!this.domain?.id) return this.openFailSnackBar('Domain ID is missing')
+    // add to db
+    const newDomainProblem = await this.domainService.addDomainProblem({ label: 'New Node' }, this.domain)
+    if (!newDomainProblem?.id) return console.error('new domain problem is missing ID.')
+  }
+
+  editNode() {
+    if (!this.selectedNode) return
+    const dialogRef = this.dialog.open(EditNodeDialogComponent, {
+      data: this.selectedNode.label
+    })
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result && this.selectedNode && this.domain?.id) {
+        this.selectedNode.label = result
+        // update in db
+        await this.domainService.editDomainProblem(this.selectedNode, this.domain)
+      }
+    })
+  }
+
+  async deleteNode() {
+    //TODO: resiti ovaj delete cvorova
+
+    if (!this.selectedNode?.id || !this.domain?.id) return
+    const isInnerNode = this.hasOutputNodes(this.selectedNode) && this.hasInputNodes(this.selectedNode)
+    if (isInnerNode) {
+      return this.openFailSnackBar(`Cannot delete becase ${this.selectedNode.label} is inner node.`)
+    }
+    else {
+      // delete from db
+      await this.domainService.deleteDomainProblem(this.selectedNode, this.domain)
+      this.nodes.remove(this.selectedNode)
+    }
+  }
+
+  centerNetwork() {
+    this.network.fit({ animation: true })
   }
 
   checkIfEdgeExists(newEdge: { from: string, to: string, arrows: string }) {
@@ -128,60 +182,19 @@ export class GraphEditorComponent implements OnInit {
     })
     return found
   }
-  hasOutputNodes(node: MyNode) {
+  hasOutputNodes(node: DomainProblem) {
     let found = false
     this.edges.forEach(edge => {
       if (edge.from === node.id) found = true
     })
     return found
   }
-  hasInputNodes(node: MyNode) {
+  hasInputNodes(node: DomainProblem) {
     let found = false
     this.edges.forEach(edge => {
       if (edge.to === node.id) found = true
     })
     return found
-  }
-
-  createNewNode() {
-    const newNode: MyNode = { id: (Math.random() * 100).toString(), label: 'New Node' }
-    this.nodes.add([newNode])
-    this.centerNetwork()
-  }
-
-  editNode() {
-    if (!this.selectedNode) return
-    const dialogRef = this.dialog.open(EditNodeDialogComponent, {
-      // width: ' 10rem',
-      data: this.selectedNode.label
-    })
-
-    dialogRef.afterClosed().subscribe(async result => {
-      if (result && this.selectedNode) {
-        this.selectedNode.label = result
-        this.nodes.update(this.selectedNode)
-      }
-    })
-  }
-
-  deleteNode() {
-    if (!this.selectedNode) return
-    const isInnerNode = this.hasOutputNodes(this.selectedNode) && this.hasInputNodes(this.selectedNode)
-    if (isInnerNode) {
-      return this.openFailSnackBar(`Cannot delete becase ${this.selectedNode.label} is inner node.`)
-    }
-
-    // remove edges
-    const edgesToBeRemoved = this.network.getConnectedEdges(this.selectedNode.id)
-    console.log(edgesToBeRemoved)
-    edgesToBeRemoved.forEach(edgeId => this.edges.remove(edgeId))
-    // remove node
-    this.nodes.remove(this.selectedNode.id)
-    this.centerNetwork()
-  }
-
-  centerNetwork() {
-    this.network.fit({ animation: true })
   }
 
   openSuccessSnackBar(message: string): void {

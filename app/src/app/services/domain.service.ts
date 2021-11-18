@@ -4,11 +4,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/util';
 import { map } from 'rxjs/operators';
 import { Domain } from '../models/domain.model';
+import { DomainProblem } from '../models/domainProblem.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DomainService {
+
 
   constructor(
     private firestore: AngularFirestore,
@@ -61,6 +63,83 @@ export class DomainService {
   }
   getDomain(domainId: string) {
     return this.firestore.doc<Domain>(`domains/${domainId}`).valueChanges();
+  }
+
+
+  /**
+   * ---------------------- Domain Problems --------------------------- 
+   * ------------------------------------------------------------------
+   */
+
+  getDomainProblems(domainId: string) {
+    const domainProblemsCollection = this.firestore.collection<DomainProblem>(`domains/${domainId}/domainProblems`);
+    return domainProblemsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as DomainProblem;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
+  async addDomainProblem(domainProblem: DomainProblem, domain: Domain) {
+    try {
+      const docRef = await this.firestore.collection<DomainProblem>(`domains/${domain.id}/domainProblems`).add(domainProblem)
+      const docData = (await docRef.get()).data()
+      if (docData) docData.id = (await docRef.get()).id
+      this.openSuccessSnackBar(`${domainProblem.label} succesfully saved.`)
+      return docData
+    } catch (error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
+
+  async editDomainProblem(domainProblem: DomainProblem, domain: Domain) {
+    try {
+      await this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${domainProblem.id}`).update({
+        label: domainProblem.label
+      })
+      this.openSuccessSnackBar(`${domainProblem.label} succesfully updated.`)
+    } catch (error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
+  async deleteDomainProblem(domainProblem: DomainProblem, domain: Domain) {
+    try {
+      await this.firestore.doc(`domains/${domain.id}/domainProblems/${domainProblem.id}`).delete()
+      const queryResults = this.firestore.collection<DomainProblem>(`domains/${domain.id}/domainProblems`, ref =>
+        ref.where('output', 'array-contains', domainProblem.id))
+        .get()
+
+      queryResults.subscribe(querySnapshot => {
+        console.log('queries')
+        querySnapshot.forEach(async parentNode => {
+          const output = parentNode.data().output?.filter(childNodeId => childNodeId !== domainProblem.id)
+          await parentNode.ref.update({ output })
+        })
+      })
+      this.openSuccessSnackBar(`${domainProblem.label} succesfully deleted.`)
+    } catch (error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
+
+  connectTwoNodes(parent: DomainProblem, child: DomainProblem, domain: Domain) {
+    let outputList: string[];
+    if (parent.output && child.id) outputList = [...parent.output, child.id]
+    else if (child.id) outputList = [child.id]
+    else return this.openFailSnackBar('Child is missing ID.')
+
+    return this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
+      output: outputList
+    })
   }
 
   openSuccessSnackBar(message: string): void {
