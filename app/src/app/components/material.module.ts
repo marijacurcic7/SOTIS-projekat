@@ -30,6 +30,7 @@ import { StudentHomePageComponent } from './student/student-home-page/student-ho
 import { QuestionComponent } from './student/question/question.component';
 import { ResultsComponent } from './student/results/results.component';
 import { GraphEditorComponent } from './teacher/graph-editor/graph-editor.component';
+import { EditNodeDialogComponent } from './teacher/graph-editor/edit-node-dialog/edit-node-dialog.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { GraphEditorComponent } from './teacher/graph-editor/graph-editor.compon
     StudentHomePageComponent,
     QuestionComponent,
     ResultsComponent,
-    GraphEditorComponent
+    GraphEditorComponent,
+    EditNodeDialogComponent
   ],
   imports: [
     CommonModule,

@@ -16,11 +16,11 @@
   padding-bottom: 0.5rem;
   padding-left: 1rem;
 }
-.delete-btn-red {
+.btn-red {
   background-color: #a3565321; 
   color: #a35656
 }
-.delete-btn-disabled {
-  background-color: #a3565321; 
-  color: #a35656
+.btn-yellow {
+  background-color: #d5df4321; 
+  color: #929c00
 }

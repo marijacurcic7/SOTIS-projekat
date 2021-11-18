@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNode } from 'src/app/models/myNode.model';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
+import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.component';
 
 @Component({
   selector: 'app-graph-editor',
@@ -33,6 +35,7 @@ export class GraphEditorComponent implements OnInit {
 
   constructor(
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -128,6 +131,22 @@ export class GraphEditorComponent implements OnInit {
     this.nodes.add([newNode])
     this.centerNetwork()
   }
+
+  editNode() {
+    if(!this.selectedNode) return
+    const dialogRef = this.dialog.open(EditNodeDialogComponent, {
+      // width: ' 10rem',
+      data: this.selectedNode.label
+    })
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result && this.selectedNode) {
+        this.selectedNode.label = result
+        this.nodes.update(this.selectedNode)
+      }
+    })
+  }
+
   deleteNode() {
     if (!this.selectedNode) return
     const isInnerNode = this.hasOutputNodes(this.selectedNode) && this.hasInputNodes(this.selectedNode)

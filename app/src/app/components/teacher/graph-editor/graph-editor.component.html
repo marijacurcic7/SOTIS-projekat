@@ -15,11 +15,19 @@
       </button>
     </div>
     <div class='node-actions'>
-      <button mat-button class='delete-btn-red'
+      <button mat-button class='btn-yellow'
+      (click)="editNode()"
+      [disabled]="selectedNode === undefined">
+        <mat-icon class="material-icons-outlined">edit</mat-icon>
+        <!-- Edit Node -->
+      </button>
+    </div>
+    <div class='node-actions'>
+      <button mat-button class='btn-red'
       (click)="deleteNode()"
       [disabled]="selectedNode === undefined">
         <mat-icon class="material-icons-outlined">delete</mat-icon>
-        Delete Node
+        <!-- Delete Node -->
       </button>
     </div>
 
