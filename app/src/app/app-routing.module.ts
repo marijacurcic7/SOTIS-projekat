@@ -12,6 +12,7 @@ import { TakeTestComponent } from './components/student/take-test/take-test.comp
 import { QuestionComponent } from './components/student/question/question.component';
 import { ResultsComponent } from './components/student/results/results.component';
 import { GraphEditorComponent } from './components/teacher/graph-editor/graph-editor.component';
+import { DomainsComponent } from './components/teacher/domains/domains.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,10 @@ const routes: Routes = [
       {
         path: 'graph-editor',
         component: GraphEditorComponent
+      },
+      {
+        path: 'domains',
+        component: DomainsComponent
       }
     ]
   }

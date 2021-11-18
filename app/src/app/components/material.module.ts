@@ -31,6 +31,10 @@ import { QuestionComponent } from './student/question/question.component';
 import { ResultsComponent } from './student/results/results.component';
 import { GraphEditorComponent } from './teacher/graph-editor/graph-editor.component';
 import { EditNodeDialogComponent } from './teacher/graph-editor/edit-node-dialog/edit-node-dialog.component';
+import { DomainsComponent } from './teacher/domains/domains.component';
+import { AddDomainComponent } from './teacher/domains/add-domain/add-domain.component';
+import { EditDomainComponent } from './teacher/domains/edit-domain/edit-domain.component';
+import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-domain.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +53,11 @@ import { EditNodeDialogComponent } from './teacher/graph-editor/edit-node-dialog
     QuestionComponent,
     ResultsComponent,
     GraphEditorComponent,
-    EditNodeDialogComponent
+    EditNodeDialogComponent,
+    DomainsComponent,
+    AddDomainComponent,
+    EditDomainComponent,
+    DeleteDomainComponent
   ],
   imports: [
     CommonModule,
