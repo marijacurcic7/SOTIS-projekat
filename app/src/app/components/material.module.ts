@@ -35,6 +35,7 @@ import { DomainsComponent } from './teacher/domains/domains.component';
 import { AddDomainComponent } from './teacher/domains/add-domain/add-domain.component';
 import { EditDomainComponent } from './teacher/domains/edit-domain/edit-domain.component';
 import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-domain.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-do
     MatRadioModule,
     MatTableModule,
     MatCheckboxModule,
-    MatDividerModule
+    MatDividerModule,
+    MatSelectModule
   ]
 })
 export class MaterialModule { }

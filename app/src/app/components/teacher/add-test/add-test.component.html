@@ -17,6 +17,14 @@
                     <mat-label>Topic</mat-label>
                     <input matInput placeholder="Topic" formControlName="topic" required>
                 </mat-form-field>
+                <mat-form-field appearance="fill" style="padding-right: 15px;">
+                    <mat-label>Domain</mat-label>
+                    <mat-select formControlName="selectedDomain" name="domain" [disabled]="questions.length > 0" required>
+                      <mat-option *ngFor="let domain of domains" [value]="domain.id">
+                        {{domain.name}}
+                      </mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <!-- <mat-form-field class="full-width" appearance="fill"> -->
                 <div class='div1'>
                     <mat-label>Max Points: {{maxPoints}}</mat-label>          
@@ -59,7 +67,7 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
-                <button mat-raised-button (click)="questionDialog()">Add question</button>
+                <button mat-raised-button (click)="questionDialog()" [disabled]="!testForm.controls['selectedDomain'].value">Add question</button>
             </form>
         </mat-card-content>
         <mat-card-actions>

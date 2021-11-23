@@ -10,8 +10,12 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/models/user.model';
 import { createOfflineCompileUrlResolver } from '@angular/compiler';
+import { DomainProblem } from 'src/app/models/domainProblem.model';
+import { DomainService } from 'src/app/services/domain.service';
+import { Domain } from 'src/app/models/domain.model';
 
 export interface DialogData {
+  domainId: any;
   text: string;
   maxPoints: number;
   answer1: string;
@@ -26,6 +30,7 @@ export interface DialogData {
 
 export interface QuestionData {
   text: string;
+  domainProblem: DomainProblem;
   maxPoints: number;
   possibleAnswers: string[];
   trueAnswers: string[];
@@ -50,6 +55,8 @@ export class AddTestComponent implements OnInit {
   displayedColumns: string[] = ['text', 'points'];
   dataSource: MatTableDataSource<Question>;
   submitionError: boolean = false;
+  domains: Domain[];
+  domain: Domain;
 
   constructor(
     public dialog: MatDialog,
@@ -57,6 +64,7 @@ export class AddTestComponent implements OnInit {
     private testService: TestService,
     private authService: AuthService,
     private router: Router,
+    private domainService: DomainService
   ) {
     this.questions = [];
     this.answers = [];
@@ -65,14 +73,16 @@ export class AddTestComponent implements OnInit {
     this.testForm = this.fb.group({
       'name': [''],
       'topic': [''],
+      'selectedDomain': [''],
       'maxPoints': [''],
     });
   }
 
   questionDialog(): void {
+    var domainId = this.testForm.controls['selectedDomain'].value;
     const dialogRef = this.dialog.open(QuestionDialog, {
       width: '800px',
-      data: {},
+      data: { domainId },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -83,6 +93,7 @@ export class AddTestComponent implements OnInit {
         let q: Question = {
           text: result.text,
           maxPoints: result.maxPoints,
+          domainProblem: result.domainProblem,
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
@@ -102,6 +113,9 @@ export class AddTestComponent implements OnInit {
   ngOnInit(): void {
 
     this.authService.user$.subscribe(user => this.user = user);
+    this.domainService.getDomains().subscribe(d => {
+      this.domains = d;
+    });
 
   }
 
@@ -109,12 +123,14 @@ export class AddTestComponent implements OnInit {
 
     this.name = this.testForm.controls['name'].value;
     this.topic = this.testForm.controls['topic'].value;
+    this.domain = this.testForm.controls['selectedDomain'].value;
 
     if(!this.user) throw new Error('You must login first.')
 
     this.test = {
       name: this.name,
       topic: this.topic,
+      domain: this.domain,
       maxPoints: this.maxPoints,
       createdBy: {
         displayName: this.user.displayName,
@@ -144,6 +160,7 @@ export class AddTestComponent implements OnInit {
 
 }
 
+
 @Component({
   selector: 'question-dialog',
   templateUrl: 'question-dialog.html',
@@ -158,16 +175,21 @@ export class QuestionDialog {
   a3visible: boolean = false;
   a4visible: boolean = false;
   questionForm!: FormGroup;
+  
+  domainProblems: DomainProblem[];
 
   constructor(
     public dialogRef: MatDialogRef<QuestionDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fb: FormBuilder,
+    private authService: AuthService,
+    private domainService: DomainService
   ) 
   { 
     this.questionForm = this.fb.group({
       'text': [''],
       'maxPoints': [''],
+      'selectedDomainProblem': [''],
       'a1': [''],
       'a2': [''],
       'a3': [''],
@@ -179,6 +201,15 @@ export class QuestionDialog {
     });
   }
 
+  ngOnInit(): void {
+
+    console.log(this.data.domainId);
+    this.domainService.getDomainProblems(this.data.domainId).subscribe( problems => {
+      this.domainProblems = problems;
+    });
+
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
@@ -187,6 +218,7 @@ export class QuestionDialog {
 
     let question1: QuestionData = {
       text: this.questionForm.controls['text'].value,
+      domainProblem: this.questionForm.controls['selectedDomainProblem'].value,
       maxPoints: Number(this.questionForm.controls['maxPoints'].value),
       possibleAnswers: [],
       trueAnswers: []
@@ -248,6 +280,13 @@ export class QuestionDialog {
     this.a4check = false;
   }
 
+  // onChange() {
+  //   var domainId = this.questionForm.controls['selectedDomain'].value;
+  //   this.domainService.getDomainProblems(domainId).subscribe( problems => {
+  //     this.domainProblems = problems;
+  //   })
+
+  // }
 }
 
 

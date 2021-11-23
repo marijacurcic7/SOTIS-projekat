@@ -9,6 +9,18 @@
         <mat-label>Max points</mat-label>
         <input matInput type="number" formControlName="maxPoints" required>
     </mat-form-field>
+    <div>
+        
+        <mat-form-field appearance="fill">
+            <mat-label>Domain problem</mat-label>
+            <mat-select formControlName="selectedDomainProblem" name="domainProblem">
+              <mat-option *ngFor="let problem of domainProblems" [value]="problem.id">
+                {{problem.label}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    
 
 
   <table class="full-width" cellspacing="0">
