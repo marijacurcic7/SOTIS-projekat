@@ -11,6 +11,10 @@ import firebase from 'firebase/compat/app';
 import { TakeService } from 'src/app/services/take.service';
 import { MyAnswer } from 'src/app/models/my-answer.model';
 import { setupTestingRouter } from '@angular/router/testing';
+import { DomainService } from 'src/app/services/domain.service';
+import { DomainProblem } from 'src/app/models/domainProblem.model';
+import { take } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-take-test',
@@ -27,8 +31,10 @@ export class TakeTestComponent implements OnInit {
   teacherName: string;
   activeStepIndex: number;
   questions: Question[];
+  sortedQuestions: Question[];
   question: Question;
   myAnswers: MyAnswer[];
+  domainProblems: DomainProblem[];
 
 
   constructor(
@@ -37,6 +43,7 @@ export class TakeTestComponent implements OnInit {
     private takeService: TakeService,
     private authService: AuthService,
     private router: Router,
+    private domainService: DomainService,
   ) { 
     this.test = {
       name: "",
@@ -57,10 +64,18 @@ export class TakeTestComponent implements OnInit {
     this.testId = String(this.route.snapshot.paramMap.get('id'));
     console.log(this.testId);
 
-    this.testService.getTest(this.testId).subscribe(t => {
+    this.testService.getTest(this.testId).pipe(take(1)).subscribe(t => {
       this.test = t;
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
+      if (!this.test.domain) return;
+      this.domainService.getDomainProblems(String(this.test.domain)).pipe(take(1)).subscribe( async p => {
+        this.domainProblems = p;
+        console.log(this.domainProblems);
+        await this.sortQuestions();
+
+      })
+
     });
 
     this.testService.getQuestions(this.testId).subscribe(q => {
@@ -70,6 +85,8 @@ export class TakeTestComponent implements OnInit {
       
       this.questionId = this.question.id;
     });
+
+    
 
   }
 
@@ -98,8 +115,59 @@ export class TakeTestComponent implements OnInit {
     this.takeService.addTake(this.take, this.user.uid, this.questions, this.myAnswers).then( res => {
       takeId = res as string;
       console.log(this.questions.length);
-      this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], {state: {questions: this.questions}});
+      this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], {state: {questions: this.sortedQuestions}});
     })
+    
+  }
+
+  async sortQuestions() {
+    this.sortedQuestions = [];
+    var parentNodes: DomainProblem[] = [];
+    parentNodes = this.domainProblems.filter( problem => !problem.input );
+    console.log(parentNodes);
+    parentNodes.forEach( p => {
+      this.questions.forEach( q => {
+        if (String(q.domainProblem) === p.id) {
+          this.sortedQuestions.push(q);
+        }
+      });
+    });
+
+    let leveln: DomainProblem[] = [];
+    leveln.push(...parentNodes);
+    const rest = this.domainProblems.filter( problem => problem.input );
+
+    rest.forEach( p => {
+      if (p.input?.every( i => parentNodes.find( r => r.id == i))) {
+        leveln.push(p);
+        this.questions.forEach( q => {
+          if (String(q.domainProblem) === p.id) {
+            this.sortedQuestions.push(q);
+          }
+        });
+      }
+    });
+
+    while (this.sortedQuestions.length < this.questions.length) {
+      console.log(leveln)
+      let levelnn: DomainProblem[] = [];
+      console.log(this.sortedQuestions);
+      rest.forEach( p => {
+        if (p.input?.every( i => leveln.find( r => r.id == i))) {
+          levelnn.push(p);
+          this.questions.forEach( q => {
+            if (String(q.domainProblem) === p.id && this.sortedQuestions.indexOf(q) == -1) {
+              this.sortedQuestions.push(q);
+              console.log(q);
+            }
+          });
+        }
+      });
+      console.log(levelnn);
+      leveln = [...new Set([...leveln,...levelnn])]
+    }
+    console.log(this.sortedQuestions);
+    this.question = this.sortedQuestions[0];
     
   }
 
