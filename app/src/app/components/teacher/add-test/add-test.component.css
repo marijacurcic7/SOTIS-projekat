@@ -1,46 +1,54 @@
 
+#new-test {
+  width: 80%;
+  padding: 2rem;
+}
+.btn-green {
+  background-color: #5ca35321; 
+  color: #5ca356
+}
 
-  .actions {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
+.actions {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
-  .div1{
-    padding-bottom: 15px;
-  }
-  
-  .full-width {
-    width: 100%;
-  }
+.div1{
+  padding-bottom: 15px;
+}
 
-  .qdialog {
-    width: 100%;
-  }
+.full-width {
+  width: 100%;
+}
 
-  td {
-    padding-right: 8px;
-  }
+.qdialog {
+  width: 100%;
+}
 
-  .custom-modalbox {
-        padding: 0;   
-  }
+td {
+  padding-right: 8px;
+}
 
-  table {
-    width: 100%;
-  }
+.custom-modalbox {
+      padding: 0;   
+}
 
-  .example-h2 {
-    margin: 10px;
-  }
-  
-  .example-section {
-    display: flex;
-    align-content: center;
-    align-items: center;
-    height: 60px;
-  }
-  
-  .example-margin {
-    margin: 0 10px;
-  }
+table {
+  width: 100%;
+}
+
+.example-h2 {
+  margin: 10px;
+}
+
+.example-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.example-margin {
+  margin: 0 10px;
+}

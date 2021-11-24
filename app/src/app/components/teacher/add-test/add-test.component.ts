@@ -125,7 +125,7 @@ export class AddTestComponent implements OnInit {
     this.topic = this.testForm.controls['topic'].value;
     this.domain = this.testForm.controls['selectedDomain'].value;
 
-    if(!this.user) throw new Error('You must login first.')
+    if (!this.user) throw new Error('You must login first.')
 
     this.test = {
       name: this.name,
@@ -156,7 +156,9 @@ export class AddTestComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-
+  onDomainChange(domainId: any) {
+    console.log(domainId.value)
+  }
 
 }
 
@@ -175,7 +177,7 @@ export class QuestionDialog {
   a3visible: boolean = false;
   a4visible: boolean = false;
   questionForm!: FormGroup;
-  
+
   domainProblems: DomainProblem[];
 
   constructor(
@@ -184,8 +186,7 @@ export class QuestionDialog {
     private fb: FormBuilder,
     private authService: AuthService,
     private domainService: DomainService
-  ) 
-  { 
+  ) {
     this.questionForm = this.fb.group({
       'text': [''],
       'maxPoints': [''],
@@ -204,7 +205,7 @@ export class QuestionDialog {
   ngOnInit(): void {
 
     console.log(this.data.domainId);
-    this.domainService.getDomainProblems(this.data.domainId).subscribe( problems => {
+    this.domainService.getDomainProblems(this.data.domainId).subscribe(problems => {
       this.domainProblems = problems;
     });
 
@@ -262,31 +263,23 @@ export class QuestionDialog {
     this.dialogRef.close(question1);
   }
 
-  addA3(){
+  addA3() {
     this.a3visible = true;
   }
 
-  addA4(){
+  addA4() {
     this.a4visible = true;
   }
 
-  deleteA3(){
+  deleteA3() {
     this.a3visible = false;
     this.a3check = false;
   }
 
-  deleteA4(){
+  deleteA4() {
     this.a4visible = false;
     this.a4check = false;
   }
-
-  // onChange() {
-  //   var domainId = this.questionForm.controls['selectedDomain'].value;
-  //   this.domainService.getDomainProblems(domainId).subscribe( problems => {
-  //     this.domainProblems = problems;
-  //   })
-
-  // }
 }
 
 

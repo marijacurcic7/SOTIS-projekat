@@ -36,6 +36,7 @@ import { AddDomainComponent } from './teacher/domains/add-domain/add-domain.comp
 import { EditDomainComponent } from './teacher/domains/edit-domain/edit-domain.component';
 import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-domain.component';
 import { MatSelectModule } from '@angular/material/select';
+import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { MatSelectModule } from '@angular/material/select';
     DomainsComponent,
     AddDomainComponent,
     EditDomainComponent,
-    DeleteDomainComponent
+    DeleteDomainComponent,
+    GraphQuestionEditorComponent
   ],
   imports: [
     CommonModule,
