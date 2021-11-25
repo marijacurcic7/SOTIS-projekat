@@ -21,7 +21,17 @@
 
                 <ng-container matColumnDef="correct">
                     <th mat-header-cell *matHeaderCellDef> Correct </th>
-                    <td mat-cell *matCellDef="let element"> {{element.correct}} </td>
+                    <td mat-cell *matCellDef="let element">
+                        <span *ngIf="element.correct; else elseBlock">
+                            <mat-icon class="material-icons-outlined"
+                                style="vertical-align: bottom; color:#2bbf21">check</mat-icon>
+                        </span>
+                        <ng-template #elseBlock>
+                            <mat-icon class="material-icons-outlined"
+                                style="vertical-align: bottom; color: #bf3b21">close</mat-icon>
+                        </ng-template>
+                        <!-- {{element.correct}}  -->
+                        </td>
                   </ng-container>
               
                 <ng-container matColumnDef="points">

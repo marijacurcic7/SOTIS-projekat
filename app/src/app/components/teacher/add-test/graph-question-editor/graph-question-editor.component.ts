@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -14,8 +14,8 @@ import { Network, Options } from 'vis-network';
   styleUrls: ['./graph-question-editor.component.css']
 })
 export class GraphQuestionEditorComponent implements OnInit {
-
-
+  @Input() message: string;
+  @Output() someEvent = new EventEmitter();
   network: Network
   selectedNode: DomainProblem | undefined;
   domain: Domain | undefined
@@ -34,14 +34,23 @@ export class GraphQuestionEditorComponent implements OnInit {
     this.initDomainAndDomainProblems()
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    this.initNetwork();
+    this.initDomainAndDomainProblems();
+  }
+
   initDomainAndDomainProblems() {
-    const domainId = 'mQUjGBxfSBbT7nuwuxow' // TODO: PROMENITI
+    // const domainId = 'mQUjGBxfSBbT7nuwuxow' // TODO: PROMENITI
+    
+    var domainId = this.message;
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
         this.domain.id = domainId
       }
-      else this.openFailSnackBar('Domain not found.')
+      else{
+        this.openFailSnackBar('Domain not found.');
+      } 
     })
 
     this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
@@ -131,7 +140,8 @@ export class GraphQuestionEditorComponent implements OnInit {
   }
 
   addQuestionDialog() {
-    console.log('adding question')
+    if (!this.selectedNode) return;
+    this.someEvent.emit(this.selectedNode);
   }
 
 

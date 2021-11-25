@@ -16,6 +16,7 @@ import { Domain } from 'src/app/models/domain.model';
 
 export interface DialogData {
   domainId: any;
+  problemName: string;
   text: string;
   maxPoints: number;
   answer1: string;
@@ -30,7 +31,6 @@ export interface DialogData {
 
 export interface QuestionData {
   text: string;
-  domainProblem: DomainProblem;
   maxPoints: number;
   possibleAnswers: string[];
   trueAnswers: string[];
@@ -43,7 +43,7 @@ export interface QuestionData {
   styleUrls: ['./add-test.component.css']
 })
 export class AddTestComponent implements OnInit {
-
+  // @Output() messageEvent = new EventEmitter<string>();
   user: User | undefined
   testForm!: FormGroup;
   test!: Test;
@@ -57,6 +57,9 @@ export class AddTestComponent implements OnInit {
   submitionError: boolean = false;
   domains: Domain[];
   domain: Domain;
+  message: string = "";
+  graphVisible: boolean = false;
+  domainProblem: DomainProblem;
 
   constructor(
     public dialog: MatDialog,
@@ -79,10 +82,11 @@ export class AddTestComponent implements OnInit {
   }
 
   questionDialog(): void {
-    var domainId = this.testForm.controls['selectedDomain'].value;
+    // var domainId = this.testForm.controls['selectedDomain'].value;
+    var problemName = this.domainProblem.label;
     const dialogRef = this.dialog.open(QuestionDialog, {
       width: '800px',
-      data: { domainId },
+      data: { problemName },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -93,7 +97,7 @@ export class AddTestComponent implements OnInit {
         let q: Question = {
           text: result.text,
           maxPoints: result.maxPoints,
-          domainProblem: result.domainProblem,
+          domainProblem: this.domainProblem,
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
@@ -157,7 +161,17 @@ export class AddTestComponent implements OnInit {
   }
 
   onDomainChange(domainId: any) {
-    console.log(domainId.value)
+    this.graphVisible = false;
+    this.message = this.testForm.controls['selectedDomain'].value;
+    // this.messageEvent.emit(this.message);
+    console.log(this.message);
+    this.graphVisible = true;
+  }
+
+  someFunction(event: any){
+    console.log(event);
+    this.domainProblem = event;
+    this.questionDialog();
   }
 
 }
@@ -204,10 +218,10 @@ export class QuestionDialog {
 
   ngOnInit(): void {
 
-    console.log(this.data.domainId);
-    this.domainService.getDomainProblems(this.data.domainId).subscribe(problems => {
-      this.domainProblems = problems;
-    });
+    // console.log(this.data.domainId);
+    // this.domainService.getDomainProblems(this.data.domainId).subscribe(problems => {
+    //   this.domainProblems = problems;
+    // });
 
   }
 
@@ -219,7 +233,6 @@ export class QuestionDialog {
 
     let question1: QuestionData = {
       text: this.questionForm.controls['text'].value,
-      domainProblem: this.questionForm.controls['selectedDomainProblem'].value,
       maxPoints: Number(this.questionForm.controls['maxPoints'].value),
       possibleAnswers: [],
       trueAnswers: []

@@ -29,12 +29,12 @@
 
       <!-- question graph editor -->
       <div class="question-graph-editor">
-        <button mat-button (click)="questionDialog()" class="btn-green"
+        <!-- <button mat-button (click)="questionDialog()" class="btn-green"
           [disabled]="!testForm.controls['selectedDomain'].value">
           <mat-icon class="material-icons-outlined">add</mat-icon>
           Add question
-        </button>
-        <app-graph-question-editor></app-graph-question-editor>
+        </button> -->
+        <app-graph-question-editor [message]="message" *ngIf="graphVisible" (someEvent)="someFunction($event)"></app-graph-question-editor>
       </div>
 
     </mat-card-content>
