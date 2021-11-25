@@ -10,6 +10,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomePageComponent } from './home-page/home-page.component';
@@ -77,7 +78,8 @@ import { RealDomainComponent } from './teacher/real-domain/real-domain.component
     MatRadioModule,
     MatTableModule,
     MatCheckboxModule,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule
   ]
 })
 export class MaterialModule { }

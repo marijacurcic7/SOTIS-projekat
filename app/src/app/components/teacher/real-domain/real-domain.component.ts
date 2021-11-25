@@ -8,7 +8,7 @@ import { PythonService } from 'src/app/services/python.service';
 })
 export class RealDomainComponent implements OnInit {
 
-  isPyodideLoaded = false
+  isPythonReady = false
   constructor(
     private pythonServce: PythonService,
   ) {
@@ -16,6 +16,8 @@ export class RealDomainComponent implements OnInit {
 
   async ngOnInit() {
     await this.pythonServce.init()
+    await this.pythonServce.downloadPythonPackages()
+    this.isPythonReady = true
     await this.pythonServce.runPythonCode()
   }
 }

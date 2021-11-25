@@ -1,2 +1,9 @@
-<p>real-domain works!</p>
-{{isPyodideLoaded}}
+<div class="container">
+  <div *ngIf="!isPythonReady">
+    <p>Loading packages</p>
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- show real graph after python has been loaded -->
+
+</div>
