@@ -90,8 +90,6 @@ export class AddTestComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log('The dialog was closed');
-      // console.log(result);
       if (result) {
 
         let q: Question = {
@@ -102,8 +100,7 @@ export class AddTestComponent implements OnInit {
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
-        console.log(q);
-        // this.questions.push(q);
+        // console.log(q);
         this.questions = [...this.questions, q];
 
         let a: Answer = {
@@ -130,7 +127,7 @@ export class AddTestComponent implements OnInit {
     this.name = this.testForm.controls['name'].value;
     this.topic = this.testForm.controls['topic'].value;
     this.domain = this.testForm.controls['selectedDomain'].value;
-    console.log(this.domain);
+    // console.log(this.domain);
 
     if (!this.user) throw new Error('You must login first.')
 

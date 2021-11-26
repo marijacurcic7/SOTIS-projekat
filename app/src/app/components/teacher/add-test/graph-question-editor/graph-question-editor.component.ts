@@ -16,57 +16,79 @@ import { Network, Options } from 'vis-network';
 })
 export class GraphQuestionEditorComponent implements OnInit {
   @Input() domainId: string;
-  @Input() questions: Question[];
   @Output() someEvent = new EventEmitter();
+  @Input() questions: Question[];
+
+  questionNodes: { type: 'questionNode', label: string, domainProblemId?: string, id?: string, color?: any }[]
+
   network: Network
-  selectedNode: DomainProblem | undefined;
+  selectedNode: DomainProblem | any | undefined;
   domain: Domain | undefined
   nodes = new DataSet<DomainProblem>()
-  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
+  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to', color?: any }>()
 
   constructor(
     private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
     private domainService: DomainService
   ) { }
 
   ngOnInit(): void {
-    // this.initNetwork()
-    // this.initDomainAndDomainProblems()
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     if (changes.domainId) {
       this.initNetwork();
       this.nodes.clear();
       this.initDomainAndDomainProblems();
     }
     else if (changes.questions) {
-      console.log(this.questions);
+      // create new object for graph visaulization
+      this.questionNodes = this.questions.map(question => {
+        return {
+          type: 'questionNode',
+          label: question.text,
+          domainProblemId: question.domainProblemId,
+          id: question.id,
+          color: {
+            background: '#f0d5a3',
+            border: '#f0d5a3',
+            highlight: {
+              border: '#f0d5a3',
+              background: '#f0d5a3'
+            }
+          }
+        }
+      })
+      // add questions to graph 
       this.addQuestionNode();
     }
-    
   }
 
   addQuestionNode() {
-    this.nodes.update(this.questions);
-    
+    // update nodes
+    this.nodes.update(this.questionNodes);
+    // update edges
+    this.questionNodes.forEach(question => {
+      console.log(question)
+      this.edges.update({
+        from: question.domainProblemId,
+        to: question.id,
+        arrows: 'to',
+        color: '#f0d5a3'
+      })
+    })
   }
 
   initDomainAndDomainProblems() {
-    // const domainId = 'mQUjGBxfSBbT7nuwuxow' // TODO: PROMENITI
-    
     var domainId = this.domainId;
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
         this.domain.id = domainId
       }
-      else{
+      else {
         this.openFailSnackBar('Domain not found.');
-      } 
+      }
     })
 
     this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
@@ -156,7 +178,7 @@ export class GraphQuestionEditorComponent implements OnInit {
   }
 
   addQuestionDialog() {
-    if (!this.selectedNode) return;
+    if (!this.selectedNode || this.selectedNode?.type === 'questionNode') return;
     this.someEvent.emit(this.selectedNode);
   }
 
