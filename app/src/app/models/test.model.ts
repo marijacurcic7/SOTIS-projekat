@@ -5,8 +5,8 @@ import { Question } from "./question.model";
 export interface Test {
   id?: string,
   name: string,
-  topic: string,
-  domain?: Domain,
+  domainId?: string,
+  domainName?: string,
   maxPoints: number,
   createdBy: {
     displayName: string,

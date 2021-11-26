@@ -97,7 +97,8 @@ export class AddTestComponent implements OnInit {
         let q: Question = {
           text: result.text,
           maxPoints: result.maxPoints,
-          domainProblem: this.domainProblem,
+          domainProblemId: this.domainProblem.id,
+          domainProblemName: this.domainProblem.label,
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
@@ -128,13 +129,14 @@ export class AddTestComponent implements OnInit {
     this.name = this.testForm.controls['name'].value;
     this.topic = this.testForm.controls['topic'].value;
     this.domain = this.testForm.controls['selectedDomain'].value;
+    console.log(this.domain);
 
     if (!this.user) throw new Error('You must login first.')
 
     this.test = {
       name: this.name,
-      topic: this.topic,
-      domain: this.domain,
+      domainId: this.domain.id,
+      domainName: this.domain.name,
       maxPoints: this.maxPoints,
       createdBy: {
         displayName: this.user.displayName,
@@ -142,8 +144,8 @@ export class AddTestComponent implements OnInit {
       }
     }
 
-    // console.log(this.test);
-    // console.log(this.questions);
+    console.log(this.test);
+    console.log(this.questions);
     // console.log(this.answers);
 
     try {
@@ -162,7 +164,7 @@ export class AddTestComponent implements OnInit {
 
   onDomainChange(domainId: any) {
     this.graphVisible = false;
-    this.message = this.testForm.controls['selectedDomain'].value;
+    this.message = this.testForm.controls['selectedDomain'].value.id;
     // this.messageEvent.emit(this.message);
     console.log(this.message);
     this.graphVisible = true;

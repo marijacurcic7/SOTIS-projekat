@@ -47,7 +47,6 @@ export class TakeTestComponent implements OnInit {
   ) { 
     this.test = {
       name: "",
-      topic: "",
       maxPoints: 0,
       createdBy: {
         displayName: "",
@@ -68,8 +67,8 @@ export class TakeTestComponent implements OnInit {
       this.test = t;
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
-      if (!this.test.domain) return;
-      this.domainService.getDomainProblems(String(this.test.domain)).pipe(take(1)).subscribe( async p => {
+      if (!this.test.domainId) return;
+      this.domainService.getDomainProblems(this.test.domainId).pipe(take(1)).subscribe( async p => {
         this.domainProblems = p;
         console.log(this.domainProblems);
         await this.sortQuestions();
@@ -127,7 +126,7 @@ export class TakeTestComponent implements OnInit {
     console.log(parentNodes);
     parentNodes.forEach( p => {
       this.questions.forEach( q => {
-        if (String(q.domainProblem) === p.id) {
+        if (q.domainProblemId === p.id) {
           this.sortedQuestions.push(q);
         }
       });
@@ -141,7 +140,7 @@ export class TakeTestComponent implements OnInit {
       if (p.input?.every( i => parentNodes.find( r => r.id == i))) {
         leveln.push(p);
         this.questions.forEach( q => {
-          if (String(q.domainProblem) === p.id) {
+          if (q.domainProblemId === p.id) {
             this.sortedQuestions.push(q);
           }
         });
@@ -156,7 +155,7 @@ export class TakeTestComponent implements OnInit {
         if (p.input?.every( i => leveln.find( r => r.id == i))) {
           levelnn.push(p);
           this.questions.forEach( q => {
-            if (String(q.domainProblem) === p.id && this.sortedQuestions.indexOf(q) == -1) {
+            if (q.domainProblemId === p.id && this.sortedQuestions.indexOf(q) == -1) {
               this.sortedQuestions.push(q);
               console.log(q);
             }

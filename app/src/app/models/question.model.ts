@@ -3,7 +3,8 @@ import { DomainProblem } from "./domainProblem.model";
 export interface Question {
   id?: string,
   text: string,
-  domainProblem?: DomainProblem,
+  domainProblemId?: string,
+  domainProblemName?: string,
   maxPoints: number,
   possibleAnswers: string[]
 }

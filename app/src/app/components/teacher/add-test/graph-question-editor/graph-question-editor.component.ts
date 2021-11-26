@@ -30,12 +30,13 @@ export class GraphQuestionEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.initNetwork()
-    this.initDomainAndDomainProblems()
+    // this.initNetwork()
+    // this.initDomainAndDomainProblems()
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.initNetwork();
+    this.nodes.clear();
     this.initDomainAndDomainProblems();
   }
 

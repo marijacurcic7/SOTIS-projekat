@@ -17,7 +17,7 @@
           <mat-select 
           (selectionChange)="onDomainChange($event)" formControlName="selectedDomain" name="domain"
             [disabled]="questions.length > 0" required>
-            <mat-option *ngFor="let domain of domains" [value]="domain.id">
+            <mat-option *ngFor="let domain of domains" [value]="domain">
               {{domain.name}}
             </mat-option>
           </mat-select>
