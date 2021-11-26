@@ -57,7 +57,7 @@ export class AddTestComponent implements OnInit {
   submitionError: boolean = false;
   domains: Domain[];
   domain: Domain;
-  message: string = "";
+  domainId: string = "";
   graphVisible: boolean = false;
   domainProblem: DomainProblem;
 
@@ -103,7 +103,8 @@ export class AddTestComponent implements OnInit {
         }
         this.maxPoints += result.maxPoints;
         console.log(q);
-        this.questions.push(q);
+        // this.questions.push(q);
+        this.questions = [...this.questions, q];
 
         let a: Answer = {
           correctAnswers: result.trueAnswers
@@ -164,15 +165,15 @@ export class AddTestComponent implements OnInit {
 
   onDomainChange(domainId: any) {
     this.graphVisible = false;
-    this.message = this.testForm.controls['selectedDomain'].value.id;
+    this.domainId = this.testForm.controls['selectedDomain'].value.id;
     // this.messageEvent.emit(this.message);
-    console.log(this.message);
+    console.log(this.domainId);
     this.graphVisible = true;
   }
 
-  someFunction(event: any){
-    console.log(event);
-    this.domainProblem = event;
+  onNodeClick(problem: DomainProblem){
+    console.log(problem);
+    this.domainProblem = problem;
     this.questionDialog();
   }
 

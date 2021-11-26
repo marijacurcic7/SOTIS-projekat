@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Domain } from 'src/app/models/domain.model';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
+import { Question } from 'src/app/models/question.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
@@ -14,7 +15,8 @@ import { Network, Options } from 'vis-network';
   styleUrls: ['./graph-question-editor.component.css']
 })
 export class GraphQuestionEditorComponent implements OnInit {
-  @Input() message: string;
+  @Input() domainId: string;
+  @Input() questions: Question[];
   @Output() someEvent = new EventEmitter();
   network: Network
   selectedNode: DomainProblem | undefined;
@@ -35,15 +37,28 @@ export class GraphQuestionEditorComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.initNetwork();
-    this.nodes.clear();
-    this.initDomainAndDomainProblems();
+    console.log(changes);
+    if (changes.domainId) {
+      this.initNetwork();
+      this.nodes.clear();
+      this.initDomainAndDomainProblems();
+    }
+    else if (changes.questions) {
+      console.log(this.questions);
+      this.addQuestionNode();
+    }
+    
+  }
+
+  addQuestionNode() {
+    this.nodes.update(this.questions);
+    
   }
 
   initDomainAndDomainProblems() {
     // const domainId = 'mQUjGBxfSBbT7nuwuxow' // TODO: PROMENITI
     
-    var domainId = this.message;
+    var domainId = this.domainId;
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
