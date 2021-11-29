@@ -16,18 +16,33 @@ export class PythonService {
   // TODO: zapravo pokrenuti Knowledge Space Theory
   async runPythonCode() {
 
-    // await this.pyodide.runPython(`
-    //   import numpy
-    //   import pydot
-    //   x=numpy.ones((3, 4))
-    // `)
-    // console.log(this.pyodide.globals.get('x').toJs())
+    await this.pyodide.runPython(`
+    import pandas as pd
+    import numpy as np
+    import sys
+    from os import getcwd, listdir
+    cwd = getcwd()
+    print(listdir(cwd))
+    
+    `)
+    console.log(this.pyodide.globals.get('cwd'))
+
   }
 
 
   /**
    * -------------------Initalization & loading packages methods-----------------
    */
+
+  async downloadKnowledgeSpaceTheoryPackage() {
+    await this.pyodide.loadPackage(['micropip'])
+        // download unofficial packages
+        await this.pyodide.runPythonAsync(`
+        from micropip import install
+        package_url = 'pydot'
+        await install(package_url)
+        `);
+  }
 
   async init() {
     const url = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js'
@@ -38,7 +53,7 @@ export class PythonService {
     node.defer = true;
     document.getElementsByTagName('head')[0].appendChild(node)
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await new Promise(resolve => setTimeout(resolve, 100));
     //@ts-ignore
     this.pyodide = await window.loadPyodide({
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/"
