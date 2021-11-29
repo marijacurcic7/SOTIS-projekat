@@ -39,7 +39,7 @@ export class PythonService {
         // download unofficial packages
         await this.pyodide.runPythonAsync(`
         from micropip import install
-        package_url = 'pydot'
+        package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/kst-0.1.0-py3-none-any.whl'
         await install(package_url)
         `);
   }
