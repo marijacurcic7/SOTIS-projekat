@@ -17,7 +17,8 @@ export class RealDomainComponent implements OnInit {
   async ngOnInit() {
     await this.pythonServce.init()
     // await this.pythonServce.downloadPythonPackages()
-    await this.pythonServce.downloadKnowledgeSpaceTheoryPackage()
+    await this.pythonServce.downloadLearningSpaces()
+    await this.pythonServce.runPythonCode()
     this.isPythonReady = true
     // await this.pythonServce.runPythonCode()
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IitaResponse } from '../models/iitaResponse.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,15 @@ export class PythonService {
     await this.pyodide.runPython(`
     import pandas as pd
     import numpy as np
-    import sys
-    from os import getcwd, listdir
-    cwd = getcwd()
-    print(listdir(cwd))
+    from learning_spaces.kst import iita
+    data_frame = pd.DataFrame({'a': [1, 0, 1], 'b': [0, 1, 0], 'c': [0, 1, 1]})
+    response = iita(data_frame, v=1)
+    print(response)
     
     `)
-    console.log(this.pyodide.globals.get('cwd'))
+    
+    const response = new IitaResponse( this.pyodide.globals.get('response').toJs())
+    console.log(response)
 
   }
 
@@ -34,14 +37,14 @@ export class PythonService {
    * -------------------Initalization & loading packages methods-----------------
    */
 
-  async downloadKnowledgeSpaceTheoryPackage() {
+  async downloadLearningSpaces() {
     await this.pyodide.loadPackage(['micropip'])
         // download unofficial packages
         await this.pyodide.runPythonAsync(`
         from micropip import install
         package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/learning_spaces-0.1.0-py3-none-any.whl'
         await install(package_url)
-        import learning_spaces
+
         `);
   }
 
