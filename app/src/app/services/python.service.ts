@@ -39,8 +39,9 @@ export class PythonService {
         // download unofficial packages
         await this.pyodide.runPythonAsync(`
         from micropip import install
-        package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/kst-0.1.0-py3-none-any.whl'
+        package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/learning_spaces-0.1.0-py3-none-any.whl'
         await install(package_url)
+        import learning_spaces
         `);
   }
 
