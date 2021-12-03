@@ -137,8 +137,16 @@ export class DomainService {
     else if (child.id) outputList = [child.id]
     else return this.openFailSnackBar('Child is missing ID.')
 
-    return this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
+    let inputList: string[];
+    if (child.input && parent.id) inputList = [...child.input, parent.id]
+    else if (parent.id) inputList = [parent.id]
+    else return this.openFailSnackBar('Parent is missing ID.')
+
+    this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
       output: outputList
+    });
+    this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${child.id}`).update({
+      input: inputList
     })
   }
 

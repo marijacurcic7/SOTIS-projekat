@@ -37,6 +37,8 @@ import { AddDomainComponent } from './teacher/domains/add-domain/add-domain.comp
 import { EditDomainComponent } from './teacher/domains/edit-domain/edit-domain.component';
 import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-domain.component';
 import { RealDomainComponent } from './teacher/real-domain/real-domain.component';
+import { MatSelectModule } from '@angular/material/select';
+import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,8 @@ import { RealDomainComponent } from './teacher/real-domain/real-domain.component
     AddDomainComponent,
     EditDomainComponent,
     DeleteDomainComponent,
-    RealDomainComponent
+    RealDomainComponent,
+    GraphQuestionEditorComponent,
   ],
   imports: [
     CommonModule,
@@ -79,7 +82,8 @@ import { RealDomainComponent } from './teacher/real-domain/real-domain.component
     MatTableModule,
     MatCheckboxModule,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSelectModule,
   ]
 })
 export class MaterialModule { }

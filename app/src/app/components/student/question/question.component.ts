@@ -20,8 +20,8 @@ export class QuestionComponent implements OnInit {
   testId: string;
   takeId: string;
   questionId: string;
-  nextQuestionId: string;
-  prevQuestionId: string;
+  nextQuestionId: string | undefined;
+  prevQuestionId: string | undefined;
   test: Test;
   // take: Take;
   questions: Question[];
@@ -41,7 +41,7 @@ export class QuestionComponent implements OnInit {
   answer3: string;
   answer4: string;
   qlength: number;
-
+  multiple: boolean = true;
   
 
   constructor(
@@ -52,14 +52,17 @@ export class QuestionComponent implements OnInit {
     private router: Router,
   ) { 
     this.question = {
+      sortedIndex: -1,
       text: "",
       maxPoints: 0,
       possibleAnswers: []
     }
-    this.qindex = 0;
     this.first = true;
     this.last = false;
-    this.questions = this.router.getCurrentNavigation()?.extras.state?.questions;
+    // this.questions = this.router.getCurrentNavigation()?.extras.state?.questions;
+    this.questions = [];
+    this.qlength = 0;
+    this.qindex = 0;
     console.log(this.questions);
     this.myAnswer = {
       myAnswers: []
@@ -72,13 +75,10 @@ export class QuestionComponent implements OnInit {
     this.takeId = String(this.route.snapshot.paramMap.get('tid'));
     this.questionId = String(this.route.snapshot.paramMap.get('qid'));
 
-
-
     console.log("QUESTION: ", this.questionId);
 
     this.authService.user$.subscribe(user => {
       this.user = user;
-      // console.log(this.user);
 
       if(!this.user) throw new Error('You must login first.');
 
@@ -86,25 +86,34 @@ export class QuestionComponent implements OnInit {
       //   this.take = t;
       // });
 
-      if (this.questionId == '0') this.first = true;
-      else this.first = false;
+      this.takeService.getQuestions(this.takeId, this.user.uid).subscribe( questions => {
+        this.questions = questions;
+        this.questions.sort((a,b) => a.sortedIndex - b.sortedIndex);
+        console.log(this.questions);
+        this.qlength = this.questions.length;
+
+        if (this.questions[0].id == this.questionId) this.first = true;
+        else this.first = false;
+        
+        if (this.questionId == this.questions[this.questions.length-1].id) this.last = true;
+
+        this.question = this.questions.filter(q => q.id === this.questionId)[0];
+        this.qindex = this.questions.indexOf(this.question);
+
+        if(!this.user) throw new Error('You must login first.');
+
+        this.takeService.getMyAnswer(this.takeId, this.user.uid, this.questionId).subscribe(ma => {
+          if(!ma) return
+          this.myAnswer = ma;
+
+          this.question.possibleAnswers.forEach((pa, i) => {
+            if (this.myAnswer.myAnswers.includes(pa))  this.setAnswer(i);
+          });
+
+        });
+      });
 
       
-      if (this.questionId == this.questions[this.questions.length-1].id) this.last = true;
-
-      this.question = this.questions.filter(q => q.id === this.questionId)[0];
-
-      if(!this.user) throw new Error('You must login first.');
-
-      this.takeService.getMyAnswer(this.takeId, this.user.uid, this.questionId).subscribe(ma => {
-        if(!ma) return
-        this.myAnswer = ma;
-
-        this.question.possibleAnswers.forEach((pa, i) => {
-          if (this.myAnswer.myAnswers.includes(pa))  this.setAnswer(i);
-        });
-
-      });
 
     });
   }
@@ -114,7 +123,12 @@ export class QuestionComponent implements OnInit {
     if(!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
-    this.nextQuestionId = String(Number(this.questionId) + 1);
+    var nextqindex = this.questions.indexOf(this.question) + 1;
+
+    if(!this.questions[nextqindex].id) return;
+    this.nextQuestionId = this.questions[nextqindex].id;
+    // this.nextQuestionId = String(Number(this.questionId) + 1);
+
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
       this.router.navigate([`/take-test/${this.testId}/take/${this.takeId}/question/${this.nextQuestionId}`], {state: {questions: this.questions}});
 
@@ -126,7 +140,12 @@ export class QuestionComponent implements OnInit {
     if(!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
-    this.prevQuestionId = String(Number(this.questionId) - 1);
+    var prevqindex = this.questions.indexOf(this.question) - 1;
+
+    if(!this.questions[prevqindex].id) return;
+    this.prevQuestionId = this.questions[prevqindex].id;
+    // this.prevQuestionId = String(Number(this.questionId) - 1);
+
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         // this.router.navigate([`/take-test/${this.testId}/question/${this.prevQuestionId}`]);
         this.router.navigate([`/take-test/${this.testId}/take/${this.takeId}/question/${this.prevQuestionId}`], {state: {questions: this.questions}});
@@ -135,6 +154,11 @@ export class QuestionComponent implements OnInit {
 
   answer1Clicked() {
     this.a1Clicked = !this.a1Clicked;
+    // if(!this.multiple && this.a1Clicked){
+    //   this.a2Clicked = false;
+    //   this.a3Clicked = false;
+    //   this.a4Clicked = false;
+    // } 
     var text = this.question.possibleAnswers[0];
     if (this.a1Clicked) {
       this.myAnswer.myAnswers.push(text);

@@ -40,7 +40,6 @@ export class TestViewComponent implements OnInit {
   ) {
     this.test = {
       name: "",
-      topic: "",
       maxPoints: 0,
       createdBy: {
         displayName: "",
