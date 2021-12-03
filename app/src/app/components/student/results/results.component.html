@@ -10,7 +10,24 @@
         </mat-card-header>
 
         <mat-card-content>
-            <p>Points: {{take.points}}/{{maxPoints}}</p>
+            <div class="result-div">
+                <div style="float: left">Points: {{take.points}}/{{maxPoints}}</div>
+                <div class="passed-div">
+                    <label *ngIf="take.passed; else elseBlock" class="passed">Passed</label>
+                    <ng-template #elseBlock>
+                        <label class="failed">Failed</label>
+                    </ng-template>
+                </div>
+                <!-- <div class="failed">
+                    <ng-template #elseBlock>
+                        <label>Failed</label>
+                    </ng-template>
+                </div> -->
+                <!-- <ng-template class="failed" #elseBlock>
+                    <label>Failed</label>
+                </ng-template> -->
+            </div>
+
 
             <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
                   

@@ -34,7 +34,7 @@
           <mat-icon class="material-icons-outlined">add</mat-icon>
           Add question
         </button> -->
-        <app-graph-question-editor [domainId]="domainId" [questions]="questions" *ngIf="graphVisible" (someEvent)="onNodeClick($event)"></app-graph-question-editor>
+        <app-graph-question-editor [domainId]="domainId" [questions]="questions" *ngIf="graphVisible" (questionDialogEvent)="onNodeClick($event)"></app-graph-question-editor>
       </div>
 
     </mat-card-content>

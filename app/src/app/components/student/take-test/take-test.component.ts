@@ -111,9 +111,9 @@ export class TakeTestComponent implements OnInit {
     }
 
     var takeId: string;
-    this.takeService.addTake(this.take, this.user.uid, this.questions, this.myAnswers).then( res => {
+    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, this.myAnswers).then( res => {
       takeId = res as string;
-      console.log(this.questions.length);
+      console.log(this.sortedQuestions);
       this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], {state: {questions: this.sortedQuestions}});
     })
     
@@ -164,6 +164,9 @@ export class TakeTestComponent implements OnInit {
       });
       console.log(levelnn);
       leveln = [...new Set([...leveln,...levelnn])]
+    }
+    for (let index = 0; index < this.sortedQuestions.length; index++) {
+      this.sortedQuestions[index].sortedIndex = index;
     }
     console.log(this.sortedQuestions);
     this.question = this.sortedQuestions[0];

@@ -16,7 +16,7 @@ import { Network, Options } from 'vis-network';
 })
 export class GraphQuestionEditorComponent implements OnInit {
   @Input() domainId: string;
-  @Output() someEvent = new EventEmitter();
+  @Output() questionDialogEvent = new EventEmitter();
   @Input() questions: Question[];
 
   questionNodes: { type: 'questionNode', label: string, domainProblemId?: string, id?: string, color?: any }[]
@@ -33,6 +33,7 @@ export class GraphQuestionEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -42,6 +43,7 @@ export class GraphQuestionEditorComponent implements OnInit {
       this.initDomainAndDomainProblems();
     }
     else if (changes.questions) {
+      console.log(this.questions);
       // create new object for graph visaulization
       this.questionNodes = this.questions.map(question => {
         return {
@@ -58,7 +60,8 @@ export class GraphQuestionEditorComponent implements OnInit {
             }
           }
         }
-      })
+      });
+      console.log(this.questionNodes);
       // add questions to graph 
       this.addQuestionNode();
     }
@@ -74,7 +77,8 @@ export class GraphQuestionEditorComponent implements OnInit {
         from: question.domainProblemId,
         to: question.id,
         arrows: 'to',
-        color: '#f0d5a3'
+        color: '#f0d5a3',
+        id: `${question.domainProblemId}${question.id}`
       })
     })
   }
@@ -178,8 +182,17 @@ export class GraphQuestionEditorComponent implements OnInit {
   }
 
   addQuestionDialog() {
-    if (!this.selectedNode || this.selectedNode?.type === 'questionNode') return;
-    this.someEvent.emit(this.selectedNode);
+    if (!this.selectedNode) return;
+    this.questionDialogEvent.emit(this.selectedNode);
+
+    // if (this.selectedNode?.type === 'questionNode'){
+    //   console.log("+++++++++++++++++++++++++++++++++++++++++");
+    //   this.questionDialogEvent.emit(this.selectedNode);
+
+    // }
+    // else {
+    //   this.questionDialogEvent.emit(this.selectedNode);
+    // }
   }
 
 

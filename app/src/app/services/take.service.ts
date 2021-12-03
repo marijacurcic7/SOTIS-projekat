@@ -27,14 +27,14 @@ export class TakeService {
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
     try {
       const docRef = await this.firestore.collection<Take>(`users/${uid}/takes`).add(take);
-
       // write Q & A to firestore
-      // for (let index = 0; index < questions.length; index++) {
-      //   // write question to firestore
-      //   await this.firestore
-      //     .collection(`users/${uid}/takes/${docRef.id}/questions`)
-      //     .doc(`${index}`)
-      //     .set(questions[index])
+      for (let index = 0; index < questions.length; index++) {
+        // write question to firestore
+        await this.firestore
+          .collection(`users/${uid}/takes/${docRef.id}/questions`)
+          .doc(`${questions[index].id}`)
+          .set(questions[index])
+      }
 
       //   // write corresponding answer to firestore
       //   await this.firestore

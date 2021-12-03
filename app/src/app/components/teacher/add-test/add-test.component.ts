@@ -16,7 +16,10 @@ import { Domain } from 'src/app/models/domain.model';
 
 export interface DialogData {
   domainId: any;
+  testId: string;
   problemName: string;
+  ques: Question;
+  ans: Answer;
   text: string;
   maxPoints: number;
   answer1: string;
@@ -81,7 +84,7 @@ export class AddTestComponent implements OnInit {
     });
   }
 
-  questionDialog(): void {
+  addQuestion(): void {
     // var domainId = this.testForm.controls['selectedDomain'].value;
     var problemName = this.domainProblem.label;
     const dialogRef = this.dialog.open(QuestionDialog, {
@@ -90,9 +93,12 @@ export class AddTestComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      let randomStr = (Math.random() + 1).toString(36).substring(7);
       if (result) {
 
         let q: Question = {
+          sortedIndex: -1,
+          id: randomStr,
           text: result.text,
           maxPoints: result.maxPoints,
           domainProblemId: this.domainProblem.id,
@@ -100,13 +106,68 @@ export class AddTestComponent implements OnInit {
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
-        // console.log(q);
+        console.log(q);
         this.questions = [...this.questions, q];
+        console.log(this.questions);
 
         let a: Answer = {
+          id: randomStr,
           correctAnswers: result.trueAnswers
         }
-        this.answers.push(a);
+        this.answers = [...this.answers, a];
+        console.log(this.answers);
+        this.dataSource = new MatTableDataSource<Question>(this.questions);
+      }
+
+    });
+  }
+
+
+  editQuestion(ques: Question, ans: Answer): void {
+    // var domainId = this.testForm.controls['selectedDomain'].value;
+    var problemName = ques.domainProblemName;
+    const dialogRef = this.dialog.open(QuestionDialog, {
+      width: '800px',
+      data: { problemName, ques, ans },
+    });
+    
+
+    dialogRef.afterClosed().subscribe(result => {
+      // const randomStr = (Math.random() + 1).toString(36).substring(7);
+      if (result) {
+
+        let q: Question = {
+          sortedIndex: -1,
+          id: ques.id,
+          text: result.text,
+          maxPoints: result.maxPoints,
+          domainProblemId: ques.domainProblemId,
+          domainProblemName: ques.domainProblemName,
+          possibleAnswers: result.possibleAnswers,
+        }
+        this.maxPoints -= ques.maxPoints;
+        this.maxPoints += result.maxPoints;
+        console.log(q);
+
+        // let updateQ = this.questions.filter(item => item.id == q.id)[0];
+        // let qindex = this.questions.indexOf(updateQ);
+        // this.questions[qindex] = q;
+        this.questions.forEach((value,index)=>{
+          if(value==ques) this.questions.splice(index,1);
+        });
+        console.log(this.questions);
+        this.questions = [...this.questions, q];
+        console.log(this.questions);
+
+        let a: Answer = {
+          id: ans.id,
+          correctAnswers: result.trueAnswers
+        }
+        let updateA = this.answers.filter(item => item.id == a.id)[0];
+        let aindex = this.answers.indexOf(updateA);
+        this.answers[aindex] = a;
+        console.log(this.answers);
+
         this.dataSource = new MatTableDataSource<Question>(this.questions);
       }
 
@@ -168,10 +229,22 @@ export class AddTestComponent implements OnInit {
     this.graphVisible = true;
   }
 
-  onNodeClick(problem: DomainProblem){
+  onNodeClick(problem: any){
     console.log(problem);
-    this.domainProblem = problem;
-    this.questionDialog();
+
+    if (problem.type === 'questionNode') {
+      console.log("izmeni pitanje");
+      let q = this.questions.filter( qq => qq.id == problem.id)[0];
+      console.log(q);
+      let a = this.answers.filter( aa => aa.id == problem.id)[0];
+      console.log(a);
+      this.editQuestion(q, a);
+    }
+    else {
+      this.domainProblem = problem;
+      this.addQuestion();
+    }
+    
   }
 
 }
@@ -199,7 +272,8 @@ export class QuestionDialog {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fb: FormBuilder,
     private authService: AuthService,
-    private domainService: DomainService
+    private domainService: DomainService,
+    private testService: TestService,
   ) {
     this.questionForm = this.fb.group({
       'text': [''],
@@ -217,11 +291,29 @@ export class QuestionDialog {
   }
 
   ngOnInit(): void {
-
-    // console.log(this.data.domainId);
-    // this.domainService.getDomainProblems(this.data.domainId).subscribe(problems => {
-    //   this.domainProblems = problems;
-    // });
+    console.log(this.data.ans);
+    if(this.data.ques && this.data.ans){
+      this.questionForm.controls['text'].setValue(this.data.ques.text);
+      this.questionForm.controls['maxPoints'].setValue(this.data.ques.maxPoints);
+      let a1 = this.data.ques.possibleAnswers[0];
+      let a2 = this.data.ques.possibleAnswers[1];
+      let a3 = this.data.ques.possibleAnswers[2];
+      let a4 = this.data.ques.possibleAnswers[3];
+      if(a3) this.a3visible = true;
+      if(a4) this.a4visible = true;
+      this.questionForm.controls['a1'].setValue(a1);
+      this.questionForm.controls['a2'].setValue(a2);
+      this.questionForm.controls['a3'].setValue(a3);
+      this.questionForm.controls['a4'].setValue(a4);
+      this.questionForm.controls['a1check'].setValue(this.data.ans.correctAnswers.includes(a1));
+      this.questionForm.controls['a2check'].setValue(this.data.ans.correctAnswers.includes(a2));
+      this.questionForm.controls['a3check'].setValue(this.data.ans.correctAnswers.includes(a3));
+      this.questionForm.controls['a4check'].setValue(this.data.ans.correctAnswers.includes(a4));
+      this.a1check = this.data.ans.correctAnswers.includes(a1);
+      this.a2check = this.data.ans.correctAnswers.includes(a2);
+      this.a3check = this.data.ans.correctAnswers.includes(a3);
+      this.a4check = this.data.ans.correctAnswers.includes(a4);
+    }
 
   }
 
