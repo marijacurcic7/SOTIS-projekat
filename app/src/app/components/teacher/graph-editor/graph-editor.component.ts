@@ -21,6 +21,7 @@ export class GraphEditorComponent implements OnInit {
   domain: Domain | undefined
   nodes = new DataSet<DomainProblem>()
   edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
+  isRealDomainVisible = false;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -195,6 +196,10 @@ export class GraphEditorComponent implements OnInit {
       if (edge.to === node.id) found = true
     })
     return found
+  }
+
+  toogleIsRealDomainVisible() {
+    this.isRealDomainVisible = !this.isRealDomainVisible
   }
 
   openSuccessSnackBar(message: string): void {
