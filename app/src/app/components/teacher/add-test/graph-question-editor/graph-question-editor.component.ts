@@ -17,6 +17,7 @@ import { Network, Options } from 'vis-network';
 export class GraphQuestionEditorComponent implements OnInit {
   @Input() domainId: string;
   @Output() questionDialogEvent = new EventEmitter();
+  @Output() deleteQuestionEvent = new EventEmitter();
   @Input() questions: Question[];
 
   questionNodes: { type: 'questionNode', label: string, domainProblemId?: string, id?: string, color?: any }[]
@@ -184,17 +185,7 @@ export class GraphQuestionEditorComponent implements OnInit {
   addQuestionDialog() {
     if (!this.selectedNode) return;
     this.questionDialogEvent.emit(this.selectedNode);
-
-    // if (this.selectedNode?.type === 'questionNode'){
-    //   console.log("+++++++++++++++++++++++++++++++++++++++++");
-    //   this.questionDialogEvent.emit(this.selectedNode);
-
-    // }
-    // else {
-    //   this.questionDialogEvent.emit(this.selectedNode);
-    // }
   }
-
 
 
   centerNetwork() {
@@ -239,6 +230,14 @@ export class GraphQuestionEditorComponent implements OnInit {
       panelClass: ['red-snackbar'],
       duration: 2000,
     });
+  }
+
+  async deleteNode() {
+    if (!this.selectedNode?.id || !this.domain?.id) return;
+    if (this.selectedNode?.type === 'questionNode'){
+      this.deleteQuestionEvent.emit(this.selectedNode);
+      this.nodes.remove(this.selectedNode);
+    }
   }
 
 }
