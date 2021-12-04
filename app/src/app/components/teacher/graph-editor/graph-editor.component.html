@@ -1,5 +1,5 @@
 <!-- TODO: odkomentarisati -->
-<div class='container'>
+<!-- <div class='container'>
   <div style="display: flex; justify-content: space-between;">
     <span style="font-size: 2rem; font-weight: 200;">{{domain?.name}}</span>
 
@@ -31,7 +31,7 @@
   </div>
 
   <div id="mynetwork"></div>
-</div>
+</div> -->
 
 <div class='container'>
   <button mat-button class='btn-blue' (click)='toogleIsRealDomainVisible()'>
@@ -44,8 +44,9 @@
     Real Domain
   </button>
 
-  <div *ngIf="isRealDomainVisible">
-    <app-real-domain></app-real-domain>
+  <!-- <div *ngIf="isRealDomainVisible"> -->
+  <div *ngIf="true">
+    <app-real-domain [domain]="domain"></app-real-domain>
   </div>
 
 </div>
