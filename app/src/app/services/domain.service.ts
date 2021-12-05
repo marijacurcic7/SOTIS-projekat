@@ -131,7 +131,7 @@ export class DomainService {
     }
   }
 
-  connectTwoNodes(parent: DomainProblem, child: DomainProblem, domain: Domain) {
+  async connectTwoNodes(parent: DomainProblem, child: DomainProblem, domain: Domain) {
     let outputList: string[];
     if (parent.output && child.id) outputList = [...parent.output, child.id]
     else if (child.id) outputList = [child.id]
@@ -142,10 +142,10 @@ export class DomainService {
     else if (parent.id) inputList = [parent.id]
     else return this.openFailSnackBar('Parent is missing ID.')
 
-    this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
+    await this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
       output: outputList
     });
-    this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${child.id}`).update({
+    await this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${child.id}`).update({
       input: inputList
     })
   }
