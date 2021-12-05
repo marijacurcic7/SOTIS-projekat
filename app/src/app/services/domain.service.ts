@@ -150,6 +150,35 @@ export class DomainService {
     })
   }
 
+  /**
+   * ---------------------- Real Domain Problems --------------------------- 
+   * ------------------------------------------------------------------
+   */
+  async addRealDomainProblems(realDomainProblems: DomainProblem[], domain: Domain,) {
+    try {
+      const docRef = this.firestore.collection<DomainProblem>(`domains/${domain.id}/realDomainProblems`)
+      realDomainProblems.forEach(async problem => await docRef.doc(problem.id).set(problem))
+      this.openSuccessSnackBar(`Real domain problems succesfully saved.`)
+    } catch (error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
+
+  getRealDomainProblems(domainId: string) {
+    const realDomainProblemsCollection = this.firestore.collection<DomainProblem>(`domains/${domainId}/realDomainProblems`);
+    return realDomainProblemsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as DomainProblem;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
+
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {
       verticalPosition: 'top',

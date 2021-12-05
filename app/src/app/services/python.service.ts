@@ -57,7 +57,7 @@ answers = generate_answers(num_of_domains, num_of_students, implications)
 response = iita(answers, v=1)
     `)
     const response = new IitaResponse(this.pyodide.globals.get('response').toJs())
-    console.log(response.implications)
+    return response
   }
 
   
