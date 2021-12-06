@@ -14,7 +14,6 @@ export class PythonService {
     private snackBar: MatSnackBar,
   ) { }
 
-  // TODO: zapravo pokrenuti Knowledge Space Theory
   async runPythonCode() {
 
     await this.pyodide.runPython(`
@@ -78,6 +77,7 @@ response = iita(answers, v=1)
   }
 
   async init() {
+    if(this.pyodide) return
     const url = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js'
     let node = document.createElement('script')
     node.src = url

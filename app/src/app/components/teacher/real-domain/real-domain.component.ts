@@ -4,6 +4,8 @@ import { Domain } from 'src/app/models/domain.model';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { PythonService } from 'src/app/services/python.service';
+import { DataSet } from 'vis-data';
+import { Network, Options } from 'vis-network';
 
 @Component({
   selector: 'app-real-domain',
@@ -18,6 +20,10 @@ export class RealDomainComponent implements OnInit {
 
   realDomainProblems: DomainProblem[] | undefined
 
+  nodes = new DataSet<DomainProblem>()
+  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
+  network: Network
+
   constructor(
     private pythonServce: PythonService,
     private domainService: DomainService,
@@ -26,6 +32,7 @@ export class RealDomainComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.initNetwork()
     // const domainProblems: DomainProblem[] = [
     //   {
     //     "label": "Variables",
@@ -79,9 +86,10 @@ export class RealDomainComponent implements OnInit {
 
   async ngOnChanges(changes: SimpleChanges) {
     if (this.domain) {
-      await this.getRealDomainProblems()
+      this.getRealDomainProblems()
     }
   }
+
 
   async createRealDomain() {
     if (!this.domain?.id) throw new Error('domain is missing ID.')
@@ -95,21 +103,31 @@ export class RealDomainComponent implements OnInit {
     const realDomainProblems = this.implicationsArray2domainProblems(response.implications, this.domainProblems)
     await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
     this.status = 'done ✔️'
-
-    setTimeout(() => {
-      this.status = ''
-      // TODO: SHOW GRAPH
-    }, 3500);
   }
 
-  async getRealDomainProblems() {
+
+  getRealDomainProblems() {
     if (!this.domain?.id) throw new Error('domain ID is missing.')
     this.domainService.getRealDomainProblems(this.domain.id).subscribe(realDomainProblems => {
       if (realDomainProblems && realDomainProblems.length) {
+        // set real domains
         this.realDomainProblems = realDomainProblems
-        this.implications = this.domainProblems2implicationsArray(realDomainProblems)
+        // update nodes
+        this.nodes.update(realDomainProblems)
+        // reset edges
+        this.edges.clear()
+        // update edges
+        realDomainProblems.forEach(parentNode => {
+          parentNode.output?.forEach(childNodeId => {
+            this.edges.update({
+              id: `${parentNode.id}${childNodeId}`,
+              from: parentNode.id,
+              to: childNodeId,
+              arrows: 'to'
+            })
+          })
+        })
       }
-      // else this.openSuccessSnackBar('Real domain problems is empty.')
     })
   }
 
@@ -166,6 +184,40 @@ export class RealDomainComponent implements OnInit {
     })
     return newdomainProblems
   }
+
+  initNetwork() {
+    // create a network
+    const networkHtmlElem = document.getElementById("realDomainNetwork");
+    const data = {
+      nodes: this.nodes,
+      edges: this.edges,
+    };
+    const options: Options = {
+      interaction: { multiselect: true, zoomView: false },
+      // physics: {enabled: false},
+      autoResize: true,
+      height: '100%',
+      width: '100%',
+      nodes: {
+        shape: 'box',
+        margin: { top: 5, bottom: 5, left: 5, right: 5 },
+        font: { size: 14, color: '#2d735c' },
+        color: {
+          border: '#dae6de',
+          background: '#dae6de',
+          highlight: {
+            border: '#c8e3d6',
+            background: '#c8e3d6'
+          }
+        }
+      }
+    }
+
+    if (!networkHtmlElem) return console.error('real domain network elem not found')
+    this.network = new Network(networkHtmlElem, data, options)
+
+  }
+
 
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {
