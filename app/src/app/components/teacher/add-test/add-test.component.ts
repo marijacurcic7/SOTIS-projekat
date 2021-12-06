@@ -63,6 +63,8 @@ export class AddTestComponent implements OnInit {
   domainId: string = "";
   graphVisible: boolean = false;
   domainProblem: DomainProblem;
+  edit: boolean = true;
+
 
   constructor(
     public dialog: MatDialog,
@@ -259,10 +261,7 @@ export class AddTestComponent implements OnInit {
       if(value.id==event.id) this.answers.splice(index,1);
     });
     
-
     console.log(this.questions);
-    
-
     
   }
 
