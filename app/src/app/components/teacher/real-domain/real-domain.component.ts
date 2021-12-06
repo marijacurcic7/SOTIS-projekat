@@ -103,6 +103,10 @@ export class RealDomainComponent implements OnInit {
     const realDomainProblems = this.implicationsArray2domainProblems(response.implications, this.domainProblems)
     await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
     this.status = 'done ✔️'
+
+    setTimeout(() => {
+      this.status = ''
+    }, (2000));
   }
 
 
