@@ -1,0 +1,16 @@
+<div class='container'>
+  <div style="display: flex; justify-content: space-between;">
+    <span style="font-size: 2rem; font-weight: 200;">{{domain?.name}}</span>
+
+    <div class='node-actions-container'>
+      <div class='node-actions'>
+        <button mat-button class='btn-blue' (click)="centerNetwork()" [disabled]="!domain">
+          <mat-icon class="material-icons-outlined">center_focus_strong</mat-icon>
+          Recenter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mynetwork"></div>
+</div>

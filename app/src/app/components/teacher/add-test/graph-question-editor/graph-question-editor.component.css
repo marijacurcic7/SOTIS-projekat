@@ -1,9 +1,8 @@
 .container {
-  padding: 1rem;
+  padding: 2rem;
 }
 #mynetwork {
   height: 70vh;
-  max-height: 28rem;
   border: 1px solid #7256a33f;
   /* background-color: #7256a3; */
   border-radius: 1rem;
@@ -32,11 +31,4 @@
 .btn-green {
   background-color: #5ca35321; 
   color: #5ca356
-}
-
-.real-domain-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding-bottom: 1rem;
 }

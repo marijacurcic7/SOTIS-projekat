@@ -1,0 +1,15 @@
+<div style="padding-top: 1rem;">
+  <button mat-button class="btn-green" (click)="createRealDomain()">
+    <mat-icon class="material-icons-outlined">add</mat-icon>
+    Create Real Domain
+  </button>
+</div>
+
+<div class="container">
+  <mat-spinner [diameter]="30" *ngIf="status !== '' && status !== 'done ✔️' "></mat-spinner>
+  <p style="font-size: 1.5rem;">
+    {{status}}
+  </p>
+</div>
+<!-- show real graph after python has been loaded -->
+<div id="realDomainNetwork"></div>

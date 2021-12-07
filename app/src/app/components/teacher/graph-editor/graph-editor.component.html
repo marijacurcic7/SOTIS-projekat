@@ -31,3 +31,21 @@
 
   <div id="mynetwork"></div>
 </div>
+
+<div class='container'>
+  <button mat-button class='btn-blue' (click)='toogleIsRealDomainVisible()'>
+    <mat-icon *ngIf="!isRealDomainVisible; else realDomainNotVisible" class="material-icons-outlined">
+      visibility
+    </mat-icon>
+    <ng-template #realDomainNotVisible>
+      <mat-icon class="material-icons-outlined">visibility_off</mat-icon>
+    </ng-template>
+    Real Domain
+  </button>
+
+  <div *ngIf="isRealDomainVisible">
+  <!-- <div *ngIf="true"> -->
+    <app-real-domain [domain]="domain"></app-real-domain>
+  </div>
+
+</div>

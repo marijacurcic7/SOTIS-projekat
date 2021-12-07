@@ -10,6 +10,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomePageComponent } from './home-page/home-page.component';
@@ -35,6 +36,9 @@ import { DomainsComponent } from './teacher/domains/domains.component';
 import { AddDomainComponent } from './teacher/domains/add-domain/add-domain.component';
 import { EditDomainComponent } from './teacher/domains/edit-domain/edit-domain.component';
 import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-domain.component';
+import { RealDomainComponent } from './teacher/real-domain/real-domain.component';
+import { MatSelectModule } from '@angular/material/select';
+import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +61,9 @@ import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-do
     DomainsComponent,
     AddDomainComponent,
     EditDomainComponent,
-    DeleteDomainComponent
+    DeleteDomainComponent,
+    RealDomainComponent,
+    GraphQuestionEditorComponent,
   ],
   imports: [
     CommonModule,
@@ -75,7 +81,9 @@ import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-do
     MatRadioModule,
     MatTableModule,
     MatCheckboxModule,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
   ]
 })
 export class MaterialModule { }

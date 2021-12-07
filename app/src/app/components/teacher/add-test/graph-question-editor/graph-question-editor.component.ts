@@ -1,48 +1,98 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Domain } from 'src/app/models/domain.model';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
+import { Question } from 'src/app/models/question.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
-import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.component';
 
 @Component({
-  selector: 'app-graph-editor',
-  templateUrl: './graph-editor.component.html',
-  styleUrls: ['./graph-editor.component.css']
+  selector: 'app-graph-question-editor',
+  templateUrl: './graph-question-editor.component.html',
+  styleUrls: ['./graph-question-editor.component.css']
 })
-export class GraphEditorComponent implements OnInit {
+export class GraphQuestionEditorComponent implements OnInit {
+  @Input() domainId: string;
+  @Output() questionDialogEvent = new EventEmitter();
+  @Input() questions: Question[];
+
+  questionNodes: { type: 'questionNode', label: string, domainProblemId?: string, id?: string, color?: any }[]
 
   network: Network
-  selectedNode: DomainProblem | undefined;
+  selectedNode: DomainProblem | any | undefined;
   domain: Domain | undefined
   nodes = new DataSet<DomainProblem>()
-  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
-  isRealDomainVisible = false;
+  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to', color?: any }>()
 
   constructor(
     private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
     private domainService: DomainService
   ) { }
 
   ngOnInit(): void {
-    this.initNetwork()
-    this.initDomainAndDomainProblems()
+
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.domainId) {
+      this.initNetwork();
+      this.nodes.clear();
+      this.initDomainAndDomainProblems();
+    }
+    else if (changes.questions) {
+      console.log(this.questions);
+      // create new object for graph visaulization
+      this.questionNodes = this.questions.map(question => {
+        return {
+          type: 'questionNode',
+          label: question.text,
+          domainProblemId: question.domainProblemId,
+          id: question.id,
+          color: {
+            background: '#f0d5a3',
+            border: '#f0d5a3',
+            highlight: {
+              border: '#f0d5a3',
+              background: '#f0d5a3'
+            }
+          }
+        }
+      });
+      console.log(this.questionNodes);
+      // add questions to graph 
+      this.addQuestionNode();
+    }
+  }
+
+  addQuestionNode() {
+    // update nodes
+    this.nodes.update(this.questionNodes);
+    // update edges
+    this.questionNodes.forEach(question => {
+      console.log(question)
+      this.edges.update({
+        from: question.domainProblemId,
+        to: question.id,
+        arrows: 'to',
+        color: '#f0d5a3',
+        id: `${question.domainProblemId}${question.id}`
+      })
+    })
   }
 
   initDomainAndDomainProblems() {
-    const domainId = String(this.route.snapshot.paramMap.get('id'));
+    var domainId = this.domainId;
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
         this.domain.id = domainId
       }
-      else this.openFailSnackBar('Domain not found.')
+      else {
+        this.openFailSnackBar('Domain not found.');
+      }
     })
 
     this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
@@ -114,10 +164,9 @@ export class GraphEditorComponent implements OnInit {
       }
     })
     this.network.on('deselectNode', () => {
-      console.log('deselected node')
       this.selectedNode = undefined
     })
-    this.network.on('doubleClick', () => this.editNode())
+    this.network.on('doubleClick', () => this.addQuestionDialog())
   }
 
   async connectTwoNodes(parentNodeId: string, childNodeId: string) {
@@ -132,43 +181,21 @@ export class GraphEditorComponent implements OnInit {
     this.openSuccessSnackBar(`${parentNode.label} connected to ${childNode.label}`)
   }
 
-  async createNewNode() {
-    console.log(this.nodes.getIds())
-    if (!this.domain?.id) return this.openFailSnackBar('Domain ID is missing')
-    // add to db
-    const newDomainProblem = await this.domainService.addDomainProblem({ label: 'New Node' }, this.domain)
-    if (!newDomainProblem?.id) return console.error('new domain problem is missing ID.')
+  addQuestionDialog() {
+    if (!this.selectedNode) return;
+    this.questionDialogEvent.emit(this.selectedNode);
+
+    // if (this.selectedNode?.type === 'questionNode'){
+    //   console.log("+++++++++++++++++++++++++++++++++++++++++");
+    //   this.questionDialogEvent.emit(this.selectedNode);
+
+    // }
+    // else {
+    //   this.questionDialogEvent.emit(this.selectedNode);
+    // }
   }
 
-  editNode() {
-    if (!this.selectedNode) return
-    const dialogRef = this.dialog.open(EditNodeDialogComponent, {
-      data: this.selectedNode.label
-    })
 
-    dialogRef.afterClosed().subscribe(async result => {
-      if (result && this.selectedNode && this.domain?.id) {
-        this.selectedNode.label = result
-        // update in db
-        await this.domainService.editDomainProblem(this.selectedNode, this.domain)
-      }
-    })
-  }
-
-  async deleteNode() {
-    //TODO: resiti ovaj delete cvorova
-
-    if (!this.selectedNode?.id || !this.domain?.id) return
-    const isInnerNode = this.hasOutputNodes(this.selectedNode) && this.hasInputNodes(this.selectedNode)
-    if (isInnerNode) {
-      return this.openFailSnackBar(`Cannot delete becase ${this.selectedNode.label} is inner node.`)
-    }
-    else {
-      // delete from db
-      await this.domainService.deleteDomainProblem(this.selectedNode, this.domain)
-      this.nodes.remove(this.selectedNode)
-    }
-  }
 
   centerNetwork() {
     this.network.fit({ animation: true })
@@ -198,10 +225,6 @@ export class GraphEditorComponent implements OnInit {
     return found
   }
 
-  toogleIsRealDomainVisible() {
-    this.isRealDomainVisible = !this.isRealDomainVisible
-  }
-
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {
       verticalPosition: 'top',
@@ -217,4 +240,5 @@ export class GraphEditorComponent implements OnInit {
       duration: 2000,
     });
   }
+
 }

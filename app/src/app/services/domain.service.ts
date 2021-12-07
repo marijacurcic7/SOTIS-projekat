@@ -131,16 +131,53 @@ export class DomainService {
     }
   }
 
-  connectTwoNodes(parent: DomainProblem, child: DomainProblem, domain: Domain) {
+  async connectTwoNodes(parent: DomainProblem, child: DomainProblem, domain: Domain) {
     let outputList: string[];
     if (parent.output && child.id) outputList = [...parent.output, child.id]
     else if (child.id) outputList = [child.id]
     else return this.openFailSnackBar('Child is missing ID.')
 
-    return this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
+    let inputList: string[];
+    if (child.input && parent.id) inputList = [...child.input, parent.id]
+    else if (parent.id) inputList = [parent.id]
+    else return this.openFailSnackBar('Parent is missing ID.')
+
+    await this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${parent.id}`).update({
       output: outputList
+    });
+    await this.firestore.doc<DomainProblem>(`domains/${domain.id}/domainProblems/${child.id}`).update({
+      input: inputList
     })
   }
+
+  /**
+   * ---------------------- Real Domain Problems --------------------------- 
+   * ------------------------------------------------------------------
+   */
+  async addRealDomainProblems(realDomainProblems: DomainProblem[], domain: Domain,) {
+    try {
+      const docRef = this.firestore.collection<DomainProblem>(`domains/${domain.id}/realDomainProblems`)
+      realDomainProblems.forEach(async problem => await docRef.doc(problem.id).set(problem))
+      this.openSuccessSnackBar(`Real domain problems succesfully saved.`)
+    } catch (error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
+
+  getRealDomainProblems(domainId: string) {
+    const realDomainProblemsCollection = this.firestore.collection<DomainProblem>(`domains/${domainId}/realDomainProblems`);
+    return realDomainProblemsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as DomainProblem;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
 
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {
