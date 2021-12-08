@@ -120,6 +120,9 @@ export class TakeTestComponent implements OnInit {
   }
 
   async sortQuestions() {
+    console.log("SORTING");
+    console.log(this.questions);
+    
     this.sortedQuestions = [];
     var parentNodes: DomainProblem[] = [];
     parentNodes = this.domainProblems.filter( problem => !problem.input );

@@ -9,6 +9,11 @@
           Recenter
         </button>
       </div>
+      <div class='node-actions'>
+        <button mat-button class='btn-red' (click)="deleteNode()" [disabled]="selectedNode?.type != 'questionNode'">
+          <mat-icon class="material-icons-outlined" *ngIf="edit">delete</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 

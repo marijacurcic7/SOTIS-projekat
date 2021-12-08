@@ -24,12 +24,14 @@ export class TestViewComponent implements OnInit {
 
   test: Test;
   teacherName: string;
+  domainId: string = "";
   questions: Question[];
   answer: Answer;
   displayedColumns: string[] = ['text', 'points'];
   innerDisplayedColumns = ['answer', 'correct'];
   expandedElement: Question | null;
   expandedElements: Question[];
+  edit: boolean = false;
 
 
   constructor(
@@ -59,6 +61,7 @@ export class TestViewComponent implements OnInit {
 
     this.testService.getTest(testId).subscribe(t => {
       this.test = t;
+      this.domainId = this.test.domainId? this.test.domainId : "";
       console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
     });

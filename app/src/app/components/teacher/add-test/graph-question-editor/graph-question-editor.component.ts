@@ -17,7 +17,9 @@ import { Network, Options } from 'vis-network';
 export class GraphQuestionEditorComponent implements OnInit {
   @Input() domainId: string;
   @Output() questionDialogEvent = new EventEmitter();
+  @Output() deleteQuestionEvent = new EventEmitter();
   @Input() questions: Question[];
+  @Input() edit: boolean;
 
   questionNodes: { type: 'questionNode', label: string, domainProblemId?: string, id?: string, color?: any }[]
 
@@ -155,7 +157,7 @@ export class GraphQuestionEditorComponent implements OnInit {
         this.selectedNode = this.nodes.get(params.nodes[0]) as unknown as DomainProblem
       }
       if (params && params.nodes && params.nodes.length === 2) {
-        this.connectTwoNodes(params.nodes[0] as string, params.nodes[1] as string)
+        // this.connectTwoNodes(params.nodes[0] as string, params.nodes[1] as string)
         // deselect nodes after connecting them
         setTimeout(() => {
           this.network.selectNodes([])
@@ -169,32 +171,22 @@ export class GraphQuestionEditorComponent implements OnInit {
     this.network.on('doubleClick', () => this.addQuestionDialog())
   }
 
-  async connectTwoNodes(parentNodeId: string, childNodeId: string) {
-    if (!this.domain) return
-    const newEdge = { from: parentNodeId, to: childNodeId, arrows: "to" }
-    if (this.checkIfEdgeExists(newEdge)) return this.openFailSnackBar('Already connected')
+  // async connectTwoNodes(parentNodeId: string, childNodeId: string) {
+  //   if (!this.domain) return
+  //   const newEdge = { from: parentNodeId, to: childNodeId, arrows: "to" }
+  //   if (this.checkIfEdgeExists(newEdge)) return this.openFailSnackBar('Already connected')
 
-    const parentNode = this.nodes.get(parentNodeId) as unknown as DomainProblem
-    const childNode = this.nodes.get(childNodeId) as unknown as DomainProblem
-    // add to db
-    await this.domainService.connectTwoNodes(parentNode, childNode, this.domain)
-    this.openSuccessSnackBar(`${parentNode.label} connected to ${childNode.label}`)
-  }
+  //   const parentNode = this.nodes.get(parentNodeId) as unknown as DomainProblem
+  //   const childNode = this.nodes.get(childNodeId) as unknown as DomainProblem
+  //   // add to db
+  //   await this.domainService.connectTwoNodes(parentNode, childNode, this.domain)
+  //   this.openSuccessSnackBar(`${parentNode.label} connected to ${childNode.label}`)
+  // }
 
   addQuestionDialog() {
     if (!this.selectedNode) return;
     this.questionDialogEvent.emit(this.selectedNode);
-
-    // if (this.selectedNode?.type === 'questionNode'){
-    //   console.log("+++++++++++++++++++++++++++++++++++++++++");
-    //   this.questionDialogEvent.emit(this.selectedNode);
-
-    // }
-    // else {
-    //   this.questionDialogEvent.emit(this.selectedNode);
-    // }
   }
-
 
 
   centerNetwork() {
@@ -239,6 +231,14 @@ export class GraphQuestionEditorComponent implements OnInit {
       panelClass: ['red-snackbar'],
       duration: 2000,
     });
+  }
+
+  async deleteNode() {
+    if (!this.selectedNode?.id || !this.domain?.id) return;
+    if (this.selectedNode?.type === 'questionNode'){
+      this.deleteQuestionEvent.emit(this.selectedNode);
+      this.nodes.remove(this.selectedNode);
+    }
   }
 
 }
