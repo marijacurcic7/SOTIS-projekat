@@ -22,7 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import { TestViewComponent } from './test-view/test-view.component';
+import { TestViewComponent } from './teacher/test-view/test-view.component';
 import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
 import {MatDividerModule} from '@angular/material/divider';
 import { AllTestsComponent } from './all-tests/all-tests.component';
