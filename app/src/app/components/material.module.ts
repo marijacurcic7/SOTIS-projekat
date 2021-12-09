@@ -39,6 +39,7 @@ import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-do
 import { RealDomainComponent } from './teacher/real-domain/real-domain.component';
 import { MatSelectModule } from '@angular/material/select';
 import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
+import { TestResultsComponent } from './teacher/test-results/test-results.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-
     DeleteDomainComponent,
     RealDomainComponent,
     GraphQuestionEditorComponent,
+    TestResultsComponent,
   ],
   imports: [
     CommonModule,
