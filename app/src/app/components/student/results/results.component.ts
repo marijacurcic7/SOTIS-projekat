@@ -50,6 +50,7 @@ export class ResultsComponent implements OnInit {
       testName: "",
       testId: "",
       startTime: firebase.firestore.Timestamp.fromDate(new Date()),
+      userDisplayName: ''
     }
     this.dataSource = new MatTableDataSource<MyAnswer>();
   }

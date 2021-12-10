@@ -1,6 +1,9 @@
 #container {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-left: 4rem;
+  padding-right: 4rem;
 }
 mat-card{
   width: 80%;

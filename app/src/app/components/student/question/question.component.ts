@@ -199,7 +199,7 @@ export class QuestionComponent implements OnInit {
     if(!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
-    this.takeService.finishTake(this.takeId, this.user.uid, this.testId);
+    this.takeService.finishTake(this.takeId, this.user, this.testId);
     
     
     

@@ -97,6 +97,7 @@ export class TakeTestComponent implements OnInit {
       testName: this.test.name,
       testId: this.testId,
       startTime: firebase.firestore.Timestamp.fromDate(new Date()),
+      userDisplayName: ''
     }
 
     if(!this.user) throw new Error('You must login first.');

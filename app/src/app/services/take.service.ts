@@ -112,7 +112,7 @@ export class TakeService {
 
   }
 
-  finishTake(takeId: string, userId: string, testId: string) {
+  finishTake(takeId: string, user: User, testId: string) {
 
     try {
       const endTime = firebase.firestore.Timestamp.fromDate(new Date());
@@ -122,7 +122,7 @@ export class TakeService {
         if (!correctAnswers) return;
         console.log(correctAnswers);
 
-        this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
+        this.getMyAnswers(takeId, user.uid).pipe(take(1)).subscribe(myAnswers => {
           console.log(myAnswers);
 
           this.testService.getQuestions(testId).pipe(take(1)).subscribe(async questions => {
@@ -147,15 +147,16 @@ export class TakeService {
                 myAnswers[index].correct = false;
               }
               maxTestPoints += maxPoints;
-              await this.updateMyAnswer(takeId, userId, String(index), myAnswers[index]);
+              await this.updateMyAnswer(takeId, user.uid, String(index), myAnswers[index]);
               console.log(myAnswers[index]);
             });
             console.log(totalPoints);
 
-            await this.firestore.doc<Take>(`users/${userId}/takes/${takeId}`).update({
+            await this.firestore.doc<Take>(`users/${user.uid}/takes/${takeId}`).update({
               endTime: firebase.firestore.Timestamp.fromDate(new Date()),
               points: totalPoints,
-              passed: totalPoints / maxTestPoints >= 0.5
+              passed: totalPoints / maxTestPoints >= 0.5,
+              userDisplayName: user.displayName
             });
             this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
           });
