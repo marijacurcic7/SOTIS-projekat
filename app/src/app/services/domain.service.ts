@@ -65,6 +65,18 @@ export class DomainService {
     return this.firestore.doc<Domain>(`domains/${domainId}`).valueChanges();
   }
 
+  async setCurrentlyActive(domainId: string, currentlyActive: 'realDomain' | 'expectedDomain') {
+    try{
+      await this.firestore.doc<Domain>(`domains/${domainId}`).update({
+        currentlyActive
+      })
+    }
+    catch(error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
 
   /**
    * ---------------------- Domain Problems --------------------------- 

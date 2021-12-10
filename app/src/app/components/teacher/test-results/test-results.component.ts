@@ -17,7 +17,7 @@ export class TestResultsComponent implements OnInit {
   test: Test
   takes: Take[]
   domain: Domain
-  currentlyActive: 'realDomain' | 'expectedDomain'
+  currentlyActive: 'realDomain' | 'expectedDomain' | undefined
 
   constructor(
     private testService: TestService,
@@ -34,10 +34,15 @@ export class TestResultsComponent implements OnInit {
       if (test.domainId) this.domainService.getDomain(test.domainId).subscribe(domain => { 
         if (domain){
          this.domain = domain 
+         this.currentlyActive = domain.currentlyActive
          this.domain.id = test.domainId
         }  
       })
     })
   }
   
+  async currentlyActiveChanged({ value }: any) {
+    if ((value === 'realDomain' || value === 'expectedDomain') && this.domain.id)
+      await this.domainService.setCurrentlyActive(this.domain.id, value)
+  }
 }

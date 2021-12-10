@@ -33,12 +33,15 @@
 
 <mat-radio-group [(ngModel)]='currentlyActive'>
   <div style="padding: 1rem; padding-top: 3rem;">
-    <mat-radio-button color='primary' value="realDomain">Real Domain</mat-radio-button>
+    <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)">
+      Real Domain
+    </mat-radio-button>
     <app-real-domain [domain]="domain"></app-real-domain>
   </div>
   <div style="padding: 1rem;">
-    <mat-radio-button color='primary' value="expectedDomain">Expected Domain</mat-radio-button>
+    <mat-radio-button color='primary' value="expectedDomain" (change)="currentlyActiveChanged($event)">
+      Expected Domain
+    </mat-radio-button>
     <app-graph-editor [nodeActionsAvailable]="false" [domainId]="domain?.id"></app-graph-editor>
   </div>
 </mat-radio-group>
-
