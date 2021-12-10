@@ -170,7 +170,6 @@ export class DomainService {
     try {
       const docRef = this.firestore.collection<DomainProblem>(`domains/${domain.id}/realDomainProblems`)
       realDomainProblems.forEach(async problem => await docRef.doc(problem.id).set(problem))
-      this.openSuccessSnackBar(`Real domain problems succesfully saved.`)
     } catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
       else this.openFailSnackBar()

@@ -156,7 +156,10 @@ export class TakeService {
               endTime: firebase.firestore.Timestamp.fromDate(new Date()),
               points: totalPoints,
               passed: totalPoints / maxTestPoints >= 0.5,
-              userDisplayName: user.displayName
+              user: {
+                displayName: user.displayName,
+                uid: user.uid
+              }
             });
             this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
           });

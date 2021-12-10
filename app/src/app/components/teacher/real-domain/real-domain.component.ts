@@ -2,10 +2,14 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Domain } from 'src/app/models/domain.model';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
+import { Take } from 'src/app/models/take.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { PythonService } from 'src/app/services/python.service';
+import { TakeService } from 'src/app/services/take.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
+import { take } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-real-domain',
@@ -14,9 +18,13 @@ import { Network, Options } from 'vis-network';
 })
 export class RealDomainComponent implements OnInit {
   @Input() domain: Domain | undefined;
+  @Input() takes: Take[]
+
   status: 'getting domain problems' | 'loading packages' | 'creating real domain' | 'saving' | 'done ✔️' | '' = ''
   domainProblems: DomainProblem[]
   implications: [string, string][] = [] // array of domain problems
+
+  answersMatrix: number[][]
 
   realDomainProblems: DomainProblem[] | undefined
 
@@ -27,6 +35,7 @@ export class RealDomainComponent implements OnInit {
   constructor(
     private pythonServce: PythonService,
     private domainService: DomainService,
+    private takeService: TakeService,
     private snackBar: MatSnackBar,
   ) {
   }
@@ -87,6 +96,8 @@ export class RealDomainComponent implements OnInit {
   async ngOnChanges(changes: SimpleChanges) {
     if (this.domain) {
       this.getRealDomainProblems()
+      this.getDomainProblems()
+      this.answersMatrix = await this.getAnswersMatrix()
     }
   }
 
@@ -98,7 +109,7 @@ export class RealDomainComponent implements OnInit {
     this.status = 'loading packages'
     await this.loadPyodide()
     this.status = 'creating real domain'
-    const response = await this.pythonServce.createRealKnowledgeSpace(this.implications, this.domainProblems.length)
+    const response = await this.pythonServce.createRealKnowledgeSpace(this.answersMatrix)
     this.status = 'saving'
     const realDomainProblems = this.implicationsArray2domainProblems(response.implications, this.domainProblems)
     await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
@@ -144,6 +155,18 @@ export class RealDomainComponent implements OnInit {
       }
       else this.openSuccessSnackBar('Domain Problems is empty.')
     })
+  }
+
+  async getAnswersMatrix() {
+    let answersMatrix: number[][] = []
+    for (const testTake of this.takes) {
+      if (testTake.id) {
+        const studentAnswers = await this.takeService.getMyAnswers(testTake.id, testTake.user.uid).pipe(take(1)).toPromise()
+        const studentAnswersArray: number[] = studentAnswers.map(ans => ans.correct === true ? 1 : 0)
+        answersMatrix.push(studentAnswersArray)
+      }
+    }
+    return answersMatrix
   }
 
   async loadPyodide() {

@@ -36,7 +36,7 @@
     <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)">
       Real Domain
     </mat-radio-button>
-    <app-real-domain [domain]="domain"></app-real-domain>
+    <app-real-domain [domain]="domain" [takes]="takes"></app-real-domain>
   </div>
   <div style="padding: 1rem;">
     <mat-radio-button color='primary' value="expectedDomain" (change)="currentlyActiveChanged($event)">

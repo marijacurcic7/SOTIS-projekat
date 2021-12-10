@@ -35,31 +35,25 @@ print(response)
 
   }
 
-  async createRealKnowledgeSpace(implications: [string, string][], numOfDomainProblems: number, numOfStudents: number = 100) {
-    // numOfDomainProblems is similar to number of questions on a test
-    this.pyodide.globals.set('implications', implications)
-    this.pyodide.globals.set('num_of_domains', numOfDomainProblems)
-    this.pyodide.globals.set('num_of_students', numOfStudents)
-
+  async createRealKnowledgeSpace( answers: number[][]) {
+    this.pyodide.globals.set('answers', answers)
     await this.pyodide.runPython(`
 import pandas as pd
+import numpy as np
+import numpy
 from learning_spaces.kst import iita, simu
 
-implications = implications.to_py()
+answers = answers.to_py()
+answers = np.array(answers)
+answers = pd.DataFrame(answers)
 
-def generate_answers(num_of_domains, num_of_students, implications):
-  result = simu(items=num_of_domains, size=num_of_students, ce=0.05, lg=0.1, delta=0, imp=implications)
-  answers = result['dataset']
-  return pd.DataFrame(answers)
-
-answers = generate_answers(num_of_domains, num_of_students, implications)
 response = iita(answers, v=1)
     `)
     const response = new IitaResponse(this.pyodide.globals.get('response').toJs())
     return response
   }
 
-  
+
 
   /**
    * -------------------Initalization & loading packages methods-----------------
@@ -77,7 +71,7 @@ response = iita(answers, v=1)
   }
 
   async init() {
-    if(this.pyodide) return
+    if (this.pyodide) return
     const url = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js'
     let node = document.createElement('script')
     node.src = url
