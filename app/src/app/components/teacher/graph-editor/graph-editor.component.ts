@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -15,6 +15,7 @@ import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.com
   styleUrls: ['./graph-editor.component.css']
 })
 export class GraphEditorComponent implements OnInit {
+  @Input() nodeActionsAvailable: boolean = true;
 
   network: Network
   selectedNode: DomainProblem | undefined;
@@ -33,6 +34,9 @@ export class GraphEditorComponent implements OnInit {
   ngOnInit(): void {
     this.initNetwork()
     this.initDomainAndDomainProblems()
+  }
+
+  async ngOnChanges(changes: SimpleChanges){
   }
 
   initDomainAndDomainProblems() {

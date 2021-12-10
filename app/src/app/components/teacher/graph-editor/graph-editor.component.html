@@ -1,51 +1,35 @@
 <div class='container'>
-  <div style="display: flex; justify-content: space-between;">
-    <span style="font-size: 2rem; font-weight: 200;">{{domain?.name}}</span>
+  <div *ngIf="nodeActionsAvailable">
+    <div style="display: flex; justify-content: space-between;">
+      <span style="font-size: 2rem; font-weight: 200;">{{domain?.name}}</span>
 
-    <div class='node-actions-container'>
-      <div class='node-actions'>
-        <button mat-button class='btn-blue' (click)="centerNetwork()" [disabled]="!domain">
-          <mat-icon class="material-icons-outlined">center_focus_strong</mat-icon>
-          Recenter
-        </button>
+      <div class='node-actions-container'>
+        <div class='node-actions'>
+          <button mat-button class='btn-blue' (click)="centerNetwork()" [disabled]="!domain">
+            <mat-icon class="material-icons-outlined">center_focus_strong</mat-icon>
+            Recenter
+          </button>
+        </div>
+        <div class='node-actions'>
+          <button mat-button class="btn-green" (click)="createNewNode()" [disabled]="!domain">
+            <mat-icon class="material-icons-outlined">add</mat-icon>
+            Add Node
+          </button>
+        </div>
+        <div class='node-actions'>
+          <button mat-button class='btn-yellow' (click)="editNode()" [disabled]="selectedNode === undefined">
+            <mat-icon class="material-icons-outlined">edit</mat-icon>
+          </button>
+        </div>
+        <div class='node-actions'>
+          <button mat-button class='btn-red' (click)="deleteNode()" [disabled]="selectedNode === undefined">
+            <mat-icon class="material-icons-outlined">delete</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class='node-actions'>
-        <button mat-button class="btn-green" (click)="createNewNode()" [disabled]="!domain">
-          <mat-icon class="material-icons-outlined">add</mat-icon>
-          Add Node
-        </button>
-      </div>
-      <div class='node-actions'>
-        <button mat-button class='btn-yellow' (click)="editNode()" [disabled]="selectedNode === undefined">
-          <mat-icon class="material-icons-outlined">edit</mat-icon>
-        </button>
-      </div>
-      <div class='node-actions'>
-        <button mat-button class='btn-red' (click)="deleteNode()" [disabled]="selectedNode === undefined">
-          <mat-icon class="material-icons-outlined">delete</mat-icon>
-        </button>
-      </div>
-
     </div>
   </div>
 
+  <!-- actual graph -->
   <div id="mynetwork"></div>
-</div>
-
-<div class='container'>
-  <button mat-button class='btn-blue' (click)='toogleIsRealDomainVisible()'>
-    <mat-icon *ngIf="!isRealDomainVisible; else realDomainNotVisible" class="material-icons-outlined">
-      visibility
-    </mat-icon>
-    <ng-template #realDomainNotVisible>
-      <mat-icon class="material-icons-outlined">visibility_off</mat-icon>
-    </ng-template>
-    Real Domain
-  </button>
-
-  <div *ngIf="isRealDomainVisible">
-  <!-- <div *ngIf="true"> -->
-    <app-real-domain [domain]="domain"></app-real-domain>
-  </div>
-
 </div>

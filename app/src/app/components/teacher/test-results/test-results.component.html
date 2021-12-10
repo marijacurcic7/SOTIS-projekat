@@ -24,7 +24,16 @@
       <mat-card-title> Takes </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <!-- TODO: dodati listu svih take-ova -->
+      <!-- TODO: dodati listu svih take-ova. Dodati expand graf za svaki take -->
     </mat-card-content>
   </mat-card>
+</div>
+
+<div style="padding: 1rem; padding-top: 3rem;">
+  <span style="font-size: 2rem; font-weight: 200;">Real Domain</span>
+  <app-real-domain [domain]="domain"></app-real-domain>
+</div>
+<div style="padding: 1rem;">
+  <span style="font-size: 2rem; font-weight: 200;">Expected Domain</span>
+  <app-graph-editor [nodeActionsAvailable]="false"></app-graph-editor>
 </div>
