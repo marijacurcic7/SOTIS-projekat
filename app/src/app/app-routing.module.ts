@@ -65,7 +65,7 @@ const routes: Routes = [
         component: DomainsComponent
       },
       {
-        path: 'graph-editor/:id',
+        path: 'graph-editor/:domainId',
         component: GraphEditorComponent
       },
       {

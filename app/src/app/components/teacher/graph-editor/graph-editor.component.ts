@@ -34,9 +34,11 @@ export class GraphEditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initNetwork()
-    const domainId = String(this.route.snapshot.paramMap.get('id'));
-    this.domainId = domainId
-    this.initDomainAndDomainProblems(domainId)
+    const domainId = String(this.route.snapshot.paramMap.get('domainId'));
+    if(domainId && domainId !== 'null') {
+      this.domainId = domainId
+      this.initDomainAndDomainProblems(domainId)
+    }
   }
 
   async ngOnChanges(changes: SimpleChanges){
