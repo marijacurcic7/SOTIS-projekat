@@ -17,6 +17,7 @@ export class TestResultsComponent implements OnInit {
   test: Test
   takes: Take[]
   domain: Domain
+  currentlyActive: 'realDomain' | 'expectedDomain'
 
   constructor(
     private testService: TestService,
