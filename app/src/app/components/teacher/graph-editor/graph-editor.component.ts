@@ -16,6 +16,7 @@ import { EditNodeDialogComponent } from './edit-node-dialog/edit-node-dialog.com
 })
 export class GraphEditorComponent implements OnInit {
   @Input() nodeActionsAvailable: boolean = true;
+  @Input() domainId: string | undefined
 
   network: Network
   selectedNode: DomainProblem | undefined;
@@ -33,14 +34,18 @@ export class GraphEditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initNetwork()
-    this.initDomainAndDomainProblems()
+    const domainId = String(this.route.snapshot.paramMap.get('id'));
+    this.domainId = domainId
+    this.initDomainAndDomainProblems(domainId)
   }
 
   async ngOnChanges(changes: SimpleChanges){
+    if(changes.domainId && this.domainId) {
+      this.initDomainAndDomainProblems(this.domainId)
+    }
   }
 
-  initDomainAndDomainProblems() {
-    const domainId = String(this.route.snapshot.paramMap.get('id'));
+  initDomainAndDomainProblems(domainId: string) {
     this.domainService.getDomain(domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
