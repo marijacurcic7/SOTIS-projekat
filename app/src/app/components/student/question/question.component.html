@@ -46,7 +46,7 @@
                 <button mat-raised-button color="link" *ngIf="!last" (click)="next()">Next</button>
             </span>
             <span  class="finish">
-                <button mat-raised-button color="primary" (click)="finish()">Finish</button>
+                <button mat-raised-button color="primary" *ngIf="last" (click)="finish()">Finish</button>
             </span>
         </mat-card-actions>
     </mat-card>

@@ -8,6 +8,7 @@ mat-card {
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding: 1rem;
 }
 
 .full-width {
@@ -15,7 +16,7 @@ mat-card {
 }
 
 .mat-table {
-  width: 250px;
+  width: 23rem;
   margin: auto;
   
 }
