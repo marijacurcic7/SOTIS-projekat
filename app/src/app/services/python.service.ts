@@ -64,7 +64,7 @@ response = iita(answers, v=1)
     // download unofficial packages
     await this.pyodide.runPythonAsync(`
         from micropip import install
-        package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/learning_spaces-0.1.0-py3-none-any.whl'
+        package_url = 'https://raw.githubusercontent.com/marijacurcic7/SOTIS-projekat/pyodide/learning_spaces-0.2.0-py3-none-any.whl'
         await install(package_url)
 
         `);
