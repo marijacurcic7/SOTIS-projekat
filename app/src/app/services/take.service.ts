@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
-import { Answer } from '../models/answer.model';
 import { MyAnswer } from '../models/my-answer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
@@ -35,13 +34,15 @@ export class TakeService {
           .collection(`users/${uid}/takes/${docRef.id}/questions`)
           .doc(`${questions[index].id}`)
           .set(questions[index])
+
+        // write corresponding empty answer to firestore
+        await this.firestore
+          .collection(`users/${uid}/takes/${docRef.id}/my-answers`)
+          .doc(`${index}`)
+          .set(answers[index])
       }
 
-      //   // write corresponding answer to firestore
-      //   await this.firestore
-      //     .collection(`users/${uid}/takes/${docRef.id}/my-answers`)
-      //     .doc(`${index}`)
-      //     .set(answers[index])
+
       // }
       return docRef.id;
     }

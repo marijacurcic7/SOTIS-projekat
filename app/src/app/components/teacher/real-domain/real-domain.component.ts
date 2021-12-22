@@ -9,6 +9,7 @@ import { TakeService } from 'src/app/services/take.service';
 import { DataSet } from 'vis-data';
 import { Network, Options } from 'vis-network';
 import { take } from 'rxjs/operators';
+import { TestService } from 'src/app/services/test.service';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class RealDomainComponent implements OnInit {
     private pythonServce: PythonService,
     private domainService: DomainService,
     private takeService: TakeService,
+    private testService: TestService,
     private snackBar: MatSnackBar,
   ) {
   }
@@ -109,9 +111,9 @@ export class RealDomainComponent implements OnInit {
     this.status = 'loading packages'
     await this.loadPyodide()
     this.status = 'creating real domain'
-    const response = await this.pythonServce.createRealKnowledgeSpace(this.answersMatrix)
+    const response = await this.pythonServce.createRealDomain(this.answersMatrix)
     this.status = 'saving'
-    const realDomainProblems = this.implicationsArray2domainProblems(response.implications, this.domainProblems)
+    const realDomainProblems = await this.implicationsArray2domainProblems(response.implications, this.domainProblems)
     await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
     this.status = 'done ✔️'
 
@@ -157,6 +159,13 @@ export class RealDomainComponent implements OnInit {
     })
   }
 
+  /**
+   * This matrix is neccessary for iita algorithm.
+   * 1 represents true answer, 0 represents wrong answer.
+   * Columns are questions
+   * Rows are students answers
+   * @returns matrix of all answers that students have made
+   */
   async getAnswersMatrix() {
     let answersMatrix: number[][] = []
     for (const testTake of this.takes) {
@@ -188,20 +197,38 @@ export class RealDomainComponent implements OnInit {
     return implications
   }
 
-  implicationsArray2domainProblems(imp: [number, number][], domainProblems: DomainProblem[]) {
-    // deep copy object
+  /**
+   * convert implications array into real domain problems.
+   * @param imp implications array
+   * @param domainProblems expected domain problems
+   * @returns new domain problems, real domain problems
+   */
+  async implicationsArray2domainProblems(imp: [number, number][], domainProblems: DomainProblem[]) {
+    // deep copy domain problems
     const newdomainProblems: DomainProblem[] = JSON.parse(JSON.stringify(domainProblems))
 
-    // reset input and output array for each domain problem     
+    // reset input[] and output[] for each domain problem     
     newdomainProblems.map(problem => problem.output = problem.input = [])
 
-    // modify newdomainProblems input & output
-    imp.forEach((pair, i) => {
-      const [parentIndex, childIndex] = pair
-      const parent = newdomainProblems[parentIndex]
-      const child = newdomainProblems[childIndex]
+    // get all question for a test take
+    if (!this.takes[0].id) throw new Error('take id is missing.')
+    const questions = await this.takeService.getQuestions(this.takes[0].id, this.takes[0].user.uid).pipe(take(1)).toPromise()
 
-      if (!child.id || !parent.id) throw new Error('Child/Parent ID is missing.')
+    // modify input[] & output[] on domain problems
+    imp.forEach(async pair => {
+
+      // parentIndex & childIndex are IDs of questions 
+      const [parentIndex, childIndex] = pair
+
+      const parentQuestion = questions.find(q => q.id === parentIndex.toString())
+      if (!parentQuestion?.domainProblemId) throw new Error('parent question is missing domain problem id')
+      const parent = newdomainProblems.find(p => p.id === parentQuestion.domainProblemId)
+
+      const childQuestion = questions.find(q => q.id === childIndex.toString())
+      if (!childQuestion?.domainProblemId) throw new Error('child question is missing domain problem id')
+      const child = newdomainProblems.find(p => p.id === childQuestion.domainProblemId)
+
+      if (!child?.id || !parent?.id) throw new Error('Child/Parent ID is missing.')
 
       const outputList = parent.output ? [...parent.output, child.id] : [child.id]
       const inputList = child.input ? [...child.input, parent.id] : [parent.id]
@@ -209,8 +236,13 @@ export class RealDomainComponent implements OnInit {
       parent.output = outputList
       child.input = inputList
     })
+
     return newdomainProblems
   }
+
+
+
+
 
   initNetwork() {
     // create a network
