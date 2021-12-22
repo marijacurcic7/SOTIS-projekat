@@ -34,7 +34,7 @@ export class TestResultsComponent implements OnInit {
       if (test.domainId) this.domainService.getDomain(test.domainId).subscribe(domain => { 
         if (domain){
          this.domain = domain 
-         this.currentlyActive = domain.currentlyActive
+         this.currentlyActive = domain.currentlyActive ? domain.currentlyActive : 'expectedDomain'
          this.domain.id = test.domainId
         }  
       })
