@@ -199,7 +199,7 @@ export class TakesComponent implements OnInit {
         })
         // setTimeout(() => this.centerNetwork(), 200);
 
-        var passedProblems: string[] = [];
+        // var passedProblems: string[] = [];
 
         if(takeId && userId){
           this.takeService.getMyAnswers(takeId, userId).subscribe(a => {
@@ -211,26 +211,24 @@ export class TakesComponent implements OnInit {
                   this.questions.push(q);
                   if(q.domainProblemId) {
                     console.log(q.domainProblemId);
-                    passedProblems.push(q.domainProblemId);
-                    this.nodes.update({
-
-                    })
+                    // passedProblems.push(q.domainProblemId);
+                    var problemNode = {
+                      id: q.domainProblemId,
+                      label: q.domainProblemName,
+                      color: {
+                        background: '#f0d5a3',
+                        border: '#f0d5a3',
+                        highlight: {
+                          border: '#f0d5a3',
+                          background: '#f0d5a3'
+                        }
+                      }
+                    }
+                    this.nodes.update(problemNode);
                   }
                 });
               }
             }
-            console.log(this.questions);
-            // var passedProblems: string[] = [];
-            if(passedProblems.length > 0) console.log(passedProblems[0]);
-            for(let p of passedProblems){
-              console.log("ovde");
-              console.log(p);
-              // if(question.domainProblemId) {
-              //   console.log(question.domainProblemId);
-              //   // passedProblems.push(question.domainProblemId);
-              // }
-            }
-            console.log(passedProblems);
           });
         }
 
