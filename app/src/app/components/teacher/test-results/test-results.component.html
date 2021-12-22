@@ -29,8 +29,12 @@
   </mat-card>
 </div>
 
-<!-- domains -->
+<!-- real & expected domain -->
+<div>
+  <app-real-and-expected-domain [domain]="domain"></app-real-and-expected-domain>
+</div>
 
+<!-- domains -->
 <mat-radio-group [(ngModel)]='currentlyActive'>
   <div style="padding: 1rem; padding-top: 3rem;">
     <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)">
