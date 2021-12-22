@@ -41,6 +41,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
 import { TestResultsComponent } from './teacher/test-results/test-results.component';
 import { RealAndExpectedDomainComponent } from './teacher/real-and-expected-domain/real-and-expected-domain.component';
+import { TakesComponent } from './teacher/test-results/takes/takes.component';
+import { StudentGraphComponent } from './teacher/test-results/student-graph/student-graph.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import { RealAndExpectedDomainComponent } from './teacher/real-and-expected-doma
     GraphQuestionEditorComponent,
     TestResultsComponent,
     RealAndExpectedDomainComponent,
+    TakesComponent,
+    StudentGraphComponent,
   ],
   imports: [
     CommonModule,

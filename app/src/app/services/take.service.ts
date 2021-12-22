@@ -78,6 +78,18 @@ export class TakeService {
     )
   }
 
+  getQuestion(takeId: string, userId: string, questionId: string) {
+    const question = this.firestore.doc<Question>(`users/${userId}/takes/${takeId}/questions/${questionId}`);
+    return question.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Question;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
+    )
+  }
+
   getMyAnswers(takeId: string, userId: string) {
     const questionsCollection = this.firestore.collection<MyAnswer>(`users/${userId}/takes/${takeId}/my-answers`);
     return questionsCollection.snapshotChanges().pipe(

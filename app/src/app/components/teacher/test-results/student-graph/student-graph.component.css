@@ -1,0 +1,42 @@
+.container {
+    padding: 1rem;
+  }
+  #mynetwork {
+    height: 70vh;
+    max-height: 28rem;
+    border: 1px solid #7256a33f;
+    /* background-color: #7256a3; */
+    border-radius: 1rem;
+  }
+  .node-actions-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  .node-actions {
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+  }
+  .btn-red {
+    background-color: #a3565321; 
+    color: #a35656
+  }
+  .btn-yellow {
+    background-color: #d5df4321; 
+    color: #929c00
+  }
+  .btn-blue {
+    background-color: #5684a321; 
+    color: #5684a3
+  }
+  .btn-green {
+    background-color: #5ca35321; 
+    color: #5ca356
+  }
+  
+  .real-domain-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-bottom: 1rem;
+  }

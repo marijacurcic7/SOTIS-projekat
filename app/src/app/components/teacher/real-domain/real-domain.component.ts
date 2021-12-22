@@ -169,7 +169,7 @@ export class RealDomainComponent implements OnInit {
   async getAnswersMatrix() {
     let answersMatrix: number[][] = []
     for (const testTake of this.takes) {
-      if (testTake.id) {
+      if (testTake.id && testTake.user) {
         const studentAnswers = await this.takeService.getMyAnswers(testTake.id, testTake.user.uid).pipe(take(1)).toPromise()
         const studentAnswersArray: number[] = studentAnswers.map(ans => ans.correct === true ? 1 : 0)
         answersMatrix.push(studentAnswersArray)
