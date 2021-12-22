@@ -30,7 +30,6 @@ export class TakeTestComponent implements OnInit {
   questions: Question[];
   sortedQuestions: Question[];
   question: Question;
-  myAnswers: MyAnswer[];
   domainProblems: DomainProblem[];
 
 
@@ -86,18 +85,21 @@ export class TakeTestComponent implements OnInit {
 
     if (!this.user) throw new Error('You must login first.');
 
-    this.myAnswers = [];
+    const myAnswers: MyAnswer[] = [];
     for (let index = 0; index < this.questions.length; index++) {
       let myAnswer: MyAnswer = {
         id: String(index),
-        myAnswers: []
+        myAnswers: [],
+        correct: false,
+        points: 0
       }
-      this.myAnswers.push(myAnswer);
+      myAnswers.push(myAnswer);
     }
+    
+    console.log(myAnswers)
 
-    var takeId: string;
-    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, this.myAnswers).then(res => {
-      takeId = res as string;
+    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, myAnswers).then(res => {
+      const takeId = res as string;
       this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], { state: { questions: this.sortedQuestions } });
     })
 
