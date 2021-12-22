@@ -1,0 +1,11 @@
+.container {
+  padding: 1rem;
+}
+
+#realAndExpectedDomainNetwork {
+  height: 70vh;
+  max-height: 28rem;
+  border: 1px solid #56a3833f;
+  /* background-color: #7256a3; */
+  border-radius: 1rem;
+}
