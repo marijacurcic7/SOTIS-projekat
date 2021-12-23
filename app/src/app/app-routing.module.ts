@@ -13,6 +13,7 @@ import { QuestionComponent } from './components/student/question/question.compon
 import { ResultsComponent } from './components/student/results/results.component';
 import { GraphEditorComponent } from './components/teacher/graph-editor/graph-editor.component';
 import { DomainsComponent } from './components/teacher/domains/domains.component';
+import { TakesResultsComponent } from './components/student/takes-results/takes-results.component';
 
 const routes: Routes = [
   {
@@ -66,7 +67,11 @@ const routes: Routes = [
       {
         path: 'graph-editor/:id',
         component: GraphEditorComponent
-      }
+      },
+      {
+        path: 'takes-results',
+        component: TakesResultsComponent
+      },
     ]
   }
 ];
