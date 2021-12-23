@@ -1,0 +1,43 @@
+.test-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+mat-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mat-table {
+  width: 23rem;
+  margin: auto;
+  
+}
+
+.passed-div {
+  color: white;
+  margin: 5px;
+  float: right;
+}
+
+.passed {
+  background-color: green;
+  padding: 5px;
+}
+
+.failed {
+  background-color: rgb(206, 0, 0);
+  padding: 5px;
+}
+
+.result-div {
+  margin-bottom: 15px;
+  padding-bottom: 20px;
+}

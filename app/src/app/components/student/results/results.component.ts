@@ -9,14 +9,8 @@ import firebase from 'firebase/compat/app';
 import { Test } from 'src/app/models/test.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { take } from 'rxjs/operators';
-import { Answer } from 'src/app/models/answer.model';
 import { MyAnswer } from 'src/app/models/my-answer.model';
 
-export interface ResultData {
-  question: string,
-  points: number,
-  correct: boolean
-}
 
 @Component({
   selector: 'app-results',
