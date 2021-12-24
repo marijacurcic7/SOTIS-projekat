@@ -71,7 +71,6 @@ export class TakesComponent implements OnInit {
           console.log(domain.id);
 
           // this.initNetwork();
-          console.log(domain.id);
           // if(domain.id && domain.id !== 'null') {
           //   this.domainId = domainId;
           //   this.initDomainAndDomainProblems(domainId);
@@ -98,16 +97,18 @@ export class TakesComponent implements OnInit {
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
 
-    this.initNetwork();
+    this.initNetwork(t);
     if(this.domain.id && this.domain.id !== 'null') {
       this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
     }
 
   }
 
-  initNetwork() {
+  initNetwork(t: Take) {
     // create a network
-    const networkHtmlElem = document.getElementById("mynetwork");
+    var id = t.id? t.id : "";
+    console.log(id);
+    const networkHtmlElem = document.getElementById(id);
     const data = {
       nodes: this.nodes,
       edges: this.edges,

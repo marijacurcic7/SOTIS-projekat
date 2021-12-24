@@ -103,7 +103,8 @@
   .container {
     padding: 1rem;
   }
-  #mynetwork {
+
+  div[name="myNetwork"] {
     height: 70vh;
     max-height: 28rem;
     border: 1px solid #7256a33f;

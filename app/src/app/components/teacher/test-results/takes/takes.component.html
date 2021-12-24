@@ -18,7 +18,7 @@
                 <div class="inner-table mat-elevation-z8" *ngIf="expandedElements.indexOf(element) > -1">
                   <!-- <app-student-graph [domainId]="domain.id" [takeId]="element.id" [userId]="element.user?.uid"></app-student-graph> -->
                   <div class='container'>
-                    <div id="mynetwork"></div>
+                    <div id='{{element.id}}' name="myNetwork"></div>
                   </div>
                 </div>
             </div>
