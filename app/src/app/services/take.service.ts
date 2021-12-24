@@ -24,6 +24,18 @@ export class TakeService {
     private router: Router,
   ) { }
 
+  getAllTakes(userId: string) {
+    const takesCollection = this.firestore.collection<Take>(`users/${userId}/takes`, ref => ref.orderBy('startTime', 'desc'));
+    return takesCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Take;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
     try {
       const docRef = await this.firestore.collection<Take>(`users/${uid}/takes`).add(take);
@@ -44,7 +56,7 @@ export class TakeService {
       // }
       return docRef.id;
     }
-    catch(error) {
+    catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code);
       else this.openFailSnackBar();
       throw error;
@@ -111,7 +123,7 @@ export class TakeService {
 
   }
 
-  finishTake(takeId: string, userId: string, testId: string){
+  finishTake(takeId: string, userId: string, testId: string) {
 
     try {
       const endTime = firebase.firestore.Timestamp.fromDate(new Date());
@@ -130,17 +142,17 @@ export class TakeService {
             correctAnswers.forEach(async (correctAnswer, index) => {
               const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
 
-              if(!myAnswers[index]) return;
+              if (!myAnswers[index]) return;
               const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
               const maxPoints = questions[Number(myAnswers[index].id)].maxPoints;
               console.log(maxPoints);
               console.log(myAnswersForAQuestion);
               const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
-              if (isEveryAnswerForAQuestionCorrect){
+              if (isEveryAnswerForAQuestionCorrect) {
                 totalPoints += maxPoints;
                 myAnswers[index].points = maxPoints;
                 myAnswers[index].correct = true;
-              } 
+              }
               else {
                 myAnswers[index].points = 0;
                 myAnswers[index].correct = false;
@@ -158,16 +170,16 @@ export class TakeService {
             });
             this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
           });
-          
+
         });
       });
     }
-    catch(error) {
+    catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code);
       else this.openFailSnackBar();
       throw error;
     }
-    
+
 
 
   }
@@ -179,7 +191,7 @@ export class TakeService {
       duration: 4000,
     });
   }
-  
+
   openFailSnackBar(message = 'Something went wrong.'): void {
     this.snackBar.open(message, 'Dismiss', {
       verticalPosition: 'top',
