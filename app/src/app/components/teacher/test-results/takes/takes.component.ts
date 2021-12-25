@@ -153,8 +153,8 @@ export class TakesComponent implements OnInit {
       if (domainProblems && domainProblems.length) {
 
         // update nodes
-        // this.nodes.clear()
-        this.nodes.update(domainProblems)
+        this.nodes.clear();
+        this.nodes.update(domainProblems);
 
         // domainProblems.forEach(dp => {
         //   this.nodes.update({
