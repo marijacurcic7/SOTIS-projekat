@@ -12,6 +12,7 @@ import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { Question } from 'src/app/models/question.model';
 import { MyAnswer } from 'src/app/models/my-answer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MyNetwork } from 'src/app/models/my-network.model';
 
 
 @Component({
@@ -34,10 +35,11 @@ export class TakesComponent implements OnInit {
   expandedElement: Take | null;
   expandedElements: Take[];
 
-  network: Network
-  nodes = new DataSet<DomainProblem>();
-  problemNodes: { label: string, id?: string, color?: any }[]
-  edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
+  // network: Network
+  myNetworks: MyNetwork[];
+  // nodes = new DataSet<DomainProblem>();
+  // problemNodes: { label: string, id?: string, color?: any }[]
+  // edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>()
   isRealDomainVisible = false;
   myAnswers: MyAnswer[];
   questions: Question[];
@@ -54,6 +56,7 @@ export class TakesComponent implements OnInit {
     this.expandedElements = [];
     this.questions = [];
     this.myAnswers = [];
+    this.myNetworks = [];
   }
 
   ngOnInit(): void {
@@ -83,24 +86,37 @@ export class TakesComponent implements OnInit {
   toggleRow(t: Take) {
     console.log(this.domain.id);
     let testid = String(this.route.snapshot.paramMap.get('id'));
-    console.log(testid);
     if (!t.id) return;
-    console.log(t.id);
+
     // this.testService.getAnswer(id, q.id).subscribe(a => {
     //   this.answer = a;
     // });
 
     let i = this.expandedElements.indexOf(t);
-    if(i > -1) this.expandedElements.splice(i);
-    else this.expandedElements.push(t);
+    if(i > -1){
+      console.log("zatvori");
+      this.expandedElements.splice(i);
+    }
+    else{
+      console.log("otvori");
+      let mn = this.myNetworks.find(n => n.id === t.id);
+      if(!mn){
+        let myNetwork: MyNetwork = {
+          id: t.id,
+        }
+        this.myNetworks.push(myNetwork);
+      }
+      console.log(this.myNetworks);
+      this.expandedElements.push(t);
+    } 
 
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
 
-    this.initNetwork(t);
     if(this.domain.id && this.domain.id !== 'null') {
       this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
     }
+    this.initNetwork(t);
 
   }
 
@@ -108,12 +124,16 @@ export class TakesComponent implements OnInit {
     // create a network
     var id = t.id? t.id : "";
     console.log(id);
-    const networkHtmlElem = document.getElementById(id);
-    const data = {
-      nodes: this.nodes,
-      edges: this.edges,
+    let networkHtmlElem = document.getElementById(id);
+    let myNetwork = this.myNetworks.find(n => n.id === id);
+    if(!myNetwork) return;
+    let data = {
+      // nodes: this.nodes,
+      // edges: this.edges,
+      nodes: myNetwork.nodes,
+      edges: myNetwork.edges
     };
-    const options: Options = {
+    let options: Options = {
       interaction: { multiselect: true, zoomView: false },
       // physics: {enabled: false},
       autoResize: true,
@@ -134,8 +154,15 @@ export class TakesComponent implements OnInit {
       }
     }
 
-    if (!networkHtmlElem) return console.error('html elem not found')
-    this.network = new Network(networkHtmlElem, data, options);
+    if (!networkHtmlElem) return console.error('html elem not found');
+    let network = new Network(networkHtmlElem, data, options);
+    // let myNetwork: MyNetwork = {
+    //   id: id,
+    //   network: network
+    // }
+    myNetwork.network = network;
+    
+    // this.myNetworks.push(myNetwork);
     
   }
 
@@ -151,46 +178,24 @@ export class TakesComponent implements OnInit {
 
     this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
       if (domainProblems && domainProblems.length) {
+        let mn = this.myNetworks.find(n => n.id === takeId);
+        if(!mn) return;
+        mn.nodes = new DataSet<DomainProblem>();
+        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>();
+
+        mn.nodes.clear();
+        mn.nodes.update(domainProblems);
 
         // update nodes
-        this.nodes.clear();
-        this.nodes.update(domainProblems);
-
-        // domainProblems.forEach(dp => {
-        //   this.nodes.update({
-        //     id: dp.id,
-        //     label: dp.label,
-        //     color: {
-        //       background: '#f0d5a3',
-        //       border: '#f0d5a3',
-        //       highlight: {
-        //         border: '#f0d5a3',
-        //         background: '#f0d5a3'
-        //       }
-        //     }
-        //   })
-          
-        // })
-
-        // this.problemNodes = domainProblems.map(problem => {
-        //   return {
-        //     id: problem.id,
-        //     label: problem.label,
-        //     color: {
-        //       background: '#f0d5a3',
-        //       border: '#f0d5a3',
-        //       highlight: {
-        //         border: '#f0d5a3',
-        //         background: '#f0d5a3'
-        //       }
-        //     }
-        //   }
-        // });
+        // this.nodes.clear();
+        // this.nodes.update(domainProblems);
 
         // update edges
         domainProblems.forEach(parentNode => {
           parentNode.output?.forEach(childNodeId => {
-            this.edges.update({
+            if(!mn) return;
+            if(!mn.edges) return;
+            mn.edges.update({
               id: `${parentNode.id}${childNodeId}`,
               from: parentNode.id,
               to: childNodeId,
@@ -225,7 +230,9 @@ export class TakesComponent implements OnInit {
                         }
                       }
                     }
-                    this.nodes.update(problemNode);
+                    if(!mn) return;
+                    if(!mn.nodes) return;
+                    mn.nodes.update(problemNode);
                   }
                 });
               }
