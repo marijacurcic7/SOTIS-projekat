@@ -24,6 +24,18 @@ export class TakeService {
     private router: Router,
   ) { }
 
+  getAllTakes(userId: string) {
+    const takesCollection = this.firestore.collection<Take>(`users/${userId}/takes`, ref => ref.orderBy('startTime', 'desc'));
+    return takesCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Take;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
     try {
       const docRef = await this.firestore.collection<Take>(`users/${uid}/takes`).add(take);
@@ -127,6 +139,7 @@ export class TakeService {
 
   finishTake(takeId: string, user: User, testId: string) {
 
+
     try {
       const endTime = firebase.firestore.Timestamp.fromDate(new Date());
       let totalPoints = 0;
@@ -186,6 +199,8 @@ export class TakeService {
       throw error;
     }
   }
+
+
 
   getTakesForOneTest(testId: string) {
     const takeCollection = this.firestore.collectionGroup<Take>('takes', ref => ref.where('testId', '==', testId));

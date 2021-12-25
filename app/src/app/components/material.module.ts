@@ -43,6 +43,7 @@ import { TestResultsComponent } from './teacher/test-results/test-results.compon
 import { RealAndExpectedDomainComponent } from './teacher/real-and-expected-domain/real-and-expected-domain.component';
 import { TakesComponent } from './teacher/test-results/takes/takes.component';
 import { StudentGraphComponent } from './teacher/test-results/student-graph/student-graph.component';
+import { TakesResultsComponent } from './student/takes-results/takes-results.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { StudentGraphComponent } from './teacher/test-results/student-graph/stud
     RealAndExpectedDomainComponent,
     TakesComponent,
     StudentGraphComponent,
+    TakesResultsComponent,
   ],
   imports: [
     CommonModule,

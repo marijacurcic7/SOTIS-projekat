@@ -14,6 +14,7 @@ import { ResultsComponent } from './components/student/results/results.component
 import { GraphEditorComponent } from './components/teacher/graph-editor/graph-editor.component';
 import { DomainsComponent } from './components/teacher/domains/domains.component';
 import { TestResultsComponent } from './components/teacher/test-results/test-results.component';
+import { TakesResultsComponent } from './components/student/takes-results/takes-results.component';
 
 const routes: Routes = [
   {
@@ -72,6 +73,9 @@ const routes: Routes = [
         path: 'test-results/:id',
         component: TestResultsComponent
       }
+        path: 'takes-results',
+        component: TakesResultsComponent
+      },
     ]
   }
 ];
