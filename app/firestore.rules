@@ -20,8 +20,7 @@ service cloud.firestore {
         allow write: if isTeacher();
       }
       match /answers/{answer} {
-        // TODO: dozvoliti citanje odgovora studentu koji je zavrsio test
-        allow read: if isTeacher();
+        allow read: if canReadCorrectAnswers();
         allow write: if isTeacher();
       }
     }
@@ -33,23 +32,32 @@ service cloud.firestore {
       allow write: if isTeacher();
     }
 
-    // takes
-    match /{path=**}/takes/{take} {
-      allow read: if isTeacher() || (isStudent() && isOwner(request.resource.data.user.uid));
-      allow write: if isStudent() && isOwner(request.resource.data.user.uid);
-    }
 
-    match /users/{user}/takes/{take}/questions/{question} {
-      allow read: if (isStudent() && isOwner(user)) || isTeacher();
+    // student can read takes that he has made
+    match /users/{user}/takes/{take} {
+      allow read: if isStudent() && isOwner(user);
       allow write: if isStudent() && isOwner(user);
+
+      match /questions/{question} {
+        allow read: if (isStudent() && isOwner(user)) || isTeacher();
+        allow write: if isStudent() && isOwner(user);
+      }
+      match /myAnswers/{myAnswer} {
+        allow read: if (isStudent() && isOwner(user)) || isTeacher();
+        allow write: if canSaveMyAnswer(user, take);
+      }
     }
 
-    match /users/{user}/takes/{take}/myAnswers/{myAnswer} {
-      allow read: if (isStudent() && isOwner(user)) || isTeacher();
-      allow write: if canSaveMyAnswer(user, take);
+    // this is neccessary because teacher has group collection query
+    // method: getTakesForOneTest(testId)
+    // more on: https://stackoverflow.com/questions/56313459
+    match /{path=**}/takes/{take} {
+      // allow write: if isStudent() && isOwner(request.resource.data.user.uid);
+      allow read: if isTeacher();
     }
 
-  
+
+
     // ----------------------- helper functions -----------------------
     // ----------------------------------------------------------------
   
@@ -72,6 +80,13 @@ service cloud.firestore {
     function canSaveMyAnswer(user, take) {
       let studentDidNotFinishTake = isStudent() && isOwner(user) && !isTakeFinished(user, take);
       return studentDidNotFinishTake;
+    }
+
+    // teacher can write and write correct answers
+    // student cannot write correct answers
+    // student can read correct answers only if he's finished test take
+    function canReadCorrectAnswers() {
+      return true;
     }
 
     // function existingData() { return resource.data }
