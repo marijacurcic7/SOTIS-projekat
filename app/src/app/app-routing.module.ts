@@ -29,9 +29,12 @@ const routes: Routes = [
         path: 'signup',
         component: SignupComponent
       },
+      // teacher
       {
         path: 'add-test',
-        component: AddTestComponent
+        component: AddTestComponent,
+        data: { roles: ['teacher'] },
+        canActivate: [RoleGuard]
       },
       {
         path: 'my-tests',
@@ -46,36 +49,54 @@ const routes: Routes = [
         canActivate: [RoleGuard]
       },
       {
+        path: 'test-results/:id',
+        component: TestResultsComponent,
+        data: { roles: ['teacher'] },
+        canActivate: [RoleGuard]
+      },
+      {
+        path: 'domains',
+        component: DomainsComponent,
+        data: { roles: ['teacher'] },
+        canActivate: [RoleGuard]
+      },
+      {
+        path: 'graph-editor/:domainId',
+        component: GraphEditorComponent,
+        data: { roles: ['teacher'] },
+        canActivate: [RoleGuard]
+      },
+
+      // student
+      {
         path: 'all-tests',
-        component: AllTestsComponent
+        component: AllTestsComponent,
+        data: { roles: ['student'] },
+        canActivate: [RoleGuard]
       },
       {
         path: 'take-test/:id',
         component: TakeTestComponent,
+        data: { roles: ['student'] },
+        canActivate: [RoleGuard]
       },
       {
         path: 'take-test/:id/take/:tid/question/:qid',
-        component: QuestionComponent
+        component: QuestionComponent,
+        data: { roles: ['student'] },
+        canActivate: [RoleGuard]
       },
       {
         path: 'take-test/:id/take/:tid/results',
-        component: ResultsComponent
-      },
-      {
-        path: 'domains',
-        component: DomainsComponent
-      },
-      {
-        path: 'graph-editor/:domainId',
-        component: GraphEditorComponent
-      },
-      {
-        path: 'test-results/:id',
-        component: TestResultsComponent
+        component: ResultsComponent,
+        data: { roles: ['student'] },
+        canActivate: [RoleGuard]
       },
       {
         path: 'takes-results',
-        component: TakesResultsComponent
+        component: TakesResultsComponent,
+        data: { roles: ['student'] },
+        canActivate: [RoleGuard]
       },
     ]
   }

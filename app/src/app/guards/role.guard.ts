@@ -20,7 +20,7 @@ export class RoleGuard implements CanActivate {
         // if user's role is not found in the array of roles -> return false 
         if (!user || roles.indexOf(user.role) == -1) {
           this.router.navigate(['/'])
-          console.log('access denied')
+          console.error('access denied')
           return false
         }
         else return true
