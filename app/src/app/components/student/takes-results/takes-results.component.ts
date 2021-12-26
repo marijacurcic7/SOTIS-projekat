@@ -66,6 +66,7 @@ export class TakesResultsComponent implements OnInit {
 }
 
 class ExpandedTake implements Take {
+  user: { displayName: string; uid: string; };
   id?: string | undefined;
   passed: boolean;
   points: number;
