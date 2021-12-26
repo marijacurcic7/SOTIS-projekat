@@ -72,7 +72,8 @@ const routes: Routes = [
       {
         path: 'test-results/:id',
         component: TestResultsComponent
-      }
+      },
+      {
         path: 'takes-results',
         component: TakesResultsComponent
       },
