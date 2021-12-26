@@ -44,11 +44,15 @@ service cloud.firestore {
       allow write: if isStudent() && isOwner(user);
     }
 
-    match /users/{user}/takes/{take}/myAnswers/{myAsnwer} {
+    match /users/{user}/takes/{take}/myAnswers/{myAnswer} {
       allow read: if (isStudent() && isOwner(user)) || isTeacher();
-      allow write: if isStudent() && isOwner(user);
+      allow write: if canSaveMyAnswer(user, take);
     }
 
+  
+    // ----------------------- helper functions -----------------------
+    // ----------------------------------------------------------------
+  
     function isOwner(userId) { return request.auth.uid == userId }
     function isSignedIn() {return request.auth != null}
     function isStudent() { return getRole('student') }
@@ -57,10 +61,18 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
     }
 
-    // TODO: FINISH
-    // function isTakeFinished() {
+    // Take is finished if endTime property exists on take,
+    // otherwise, student is still taking a test.
+    function isTakeFinished(user, take) {
+      return 'endTime' in get(/databases/$(database)/documents/users/$(user)/takes/$(take)).data;
+    }
 
-    // }
+    // student can write only his answers (cannot write other student's answers)
+    // can write answers if he/she hasn't finished current take
+    function canSaveMyAnswer(user, take) {
+      let studentDidNotFinishTake = isStudent() && isOwner(user) && !isTakeFinished(user, take);
+      return studentDidNotFinishTake;
+    }
 
     // function existingData() { return resource.data }
     // function incomingData() { return request.resource.data }
