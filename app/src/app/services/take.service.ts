@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
-import { MyAnswer } from '../models/my-answer.model';
+import { MyAnswer } from '../models/myAnswer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
 import { map, take } from 'rxjs/operators';
@@ -49,7 +49,7 @@ export class TakeService {
 
         // write corresponding empty answer to firestore
         await this.firestore
-          .collection(`users/${uid}/takes/${docRef.id}/my-answers`)
+          .collection(`users/${uid}/takes/${docRef.id}/myAnswers`)
           .doc(`${index}`)
           .set(answers[index])
       }
@@ -103,7 +103,7 @@ export class TakeService {
   }
 
   getMyAnswers(takeId: string, userId: string) {
-    const questionsCollection = this.firestore.collection<MyAnswer>(`users/${userId}/takes/${takeId}/my-answers`);
+    const questionsCollection = this.firestore.collection<MyAnswer>(`users/${userId}/takes/${takeId}/myAnswers`);
     return questionsCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as MyAnswer;
@@ -115,7 +115,7 @@ export class TakeService {
   }
 
   getMyAnswer(takeId: string, userId: string, questionId: string) {
-    return this.firestore.doc<MyAnswer>(`users/${userId}/takes/${takeId}/my-answers/${questionId}`).valueChanges();
+    return this.firestore.doc<MyAnswer>(`users/${userId}/takes/${takeId}/myAnswers/${questionId}`).valueChanges();
 
     // return answer.snapshotChanges().pipe(
     //   map(a => {
@@ -128,7 +128,7 @@ export class TakeService {
   }
 
   updateMyAnswer(takeId: string, userId: string, questionId: string, myAnswer: MyAnswer) {
-    return this.firestore.doc<MyAnswer>(`users/${userId}/takes/${takeId}/my-answers/${questionId}`).set(myAnswer);
+    return this.firestore.doc<MyAnswer>(`users/${userId}/takes/${takeId}/myAnswers/${questionId}`).set(myAnswer);
 
   }
 

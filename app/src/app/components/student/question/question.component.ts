@@ -1,13 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
 import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TakeService } from 'src/app/services/take.service';
-import { TestService } from 'src/app/services/test.service';
 
 @Component({
   selector: 'app-question',

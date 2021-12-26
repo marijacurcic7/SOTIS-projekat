@@ -9,7 +9,7 @@ import firebase from 'firebase/compat/app';
 import { Test } from 'src/app/models/test.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { take } from 'rxjs/operators';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 
 
 @Component({

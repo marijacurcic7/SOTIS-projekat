@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TestService } from 'src/app/services/test.service';
 import firebase from 'firebase/compat/app';
 import { TakeService } from 'src/app/services/take.service';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { take } from 'rxjs/operators';
@@ -25,7 +25,6 @@ export class TakeTestComponent implements OnInit {
   testId: string;
   questionId: string | undefined;
   test: Test;
-  take: Take;
   activeStepIndex: number;
   questions: Question[];
   sortedQuestions: Question[];
@@ -73,33 +72,26 @@ export class TakeTestComponent implements OnInit {
   }
 
   start() {
-
-    this.take = {
-      passed: false,
-      points: 0,
-      testName: this.test.name,
-      testId: this.testId,
-      startTime: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: { displayName: '', uid: '' }
-    }
-
     if (!this.user) throw new Error('You must login first.');
 
-    const myAnswers: MyAnswer[] = [];
-    for (let index = 0; index < this.questions.length; index++) {
-      let myAnswer: MyAnswer = {
+    const myAnswers: MyAnswer[] = this.questions.map((_, index) => {
+      return {
         id: String(index),
         myAnswers: [],
         correct: false,
         points: 0
       }
-      myAnswers.push(myAnswer);
-    }
-    
-    console.log(myAnswers)
+    })
 
-    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, myAnswers).then(res => {
-      const takeId = res as string;
+    const take: Take = {
+      passed: false,
+      points: 0,
+      testName: this.test.name,
+      testId: this.testId,
+      startTime: firebase.firestore.Timestamp.fromDate(new Date()),
+      user: { displayName: this.user.displayName, uid: this.user.uid }
+    }
+    this.takeService.addTake(take, this.user.uid, this.sortedQuestions, myAnswers).then(takeId => {
       this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], { state: { questions: this.sortedQuestions } });
     })
 

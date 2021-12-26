@@ -35,21 +35,33 @@ service cloud.firestore {
 
     // takes
     match /{path=**}/takes/{take} {
-      allow read: if isTeacher();
+      allow read: if isTeacher() || (isStudent() && isOwner(request.resource.data.user.uid));
+      allow write: if isStudent() && isOwner(request.resource.data.user.uid);
+    }
 
-      // TODO: fix collection name
-      // match /myAnswers/{myAnswer} {
-      //   allow read: if isTeacher();
-      // }
+    match /users/{user}/takes/{take}/questions/{question} {
+      allow read: if (isStudent() && isOwner(user)) || isTeacher();
+      allow write: if isStudent() && isOwner(user);
+    }
+
+    match /users/{user}/takes/{take}/myAnswers/{myAsnwer} {
+      allow read: if (isStudent() && isOwner(user)) || isTeacher();
+      allow write: if isStudent() && isOwner(user);
     }
 
     function isOwner(userId) { return request.auth.uid == userId }
     function isSignedIn() {return request.auth != null}
-    // function isStudent() { return getRole('student') }
+    function isStudent() { return getRole('student') }
     function isTeacher() { return getRole('teacher') }
     function getRole(role) {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
     }
+
+    // TODO: FINISH
+    // function isTakeFinished() {
+
+    // }
+
     // function existingData() { return resource.data }
     // function incomingData() { return request.resource.data }
   }
