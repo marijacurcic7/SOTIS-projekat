@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
-import { Answer } from '../models/answer.model';
 import { MyAnswer } from '../models/my-answer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
@@ -10,6 +9,7 @@ import { map, take } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { TestService } from './test.service';
 import { Router } from '@angular/router';
+import { User } from '../models/user.model';
 
 
 @Injectable({
@@ -46,13 +46,15 @@ export class TakeService {
           .collection(`users/${uid}/takes/${docRef.id}/questions`)
           .doc(`${questions[index].id}`)
           .set(questions[index])
+
+        // write corresponding empty answer to firestore
+        await this.firestore
+          .collection(`users/${uid}/takes/${docRef.id}/my-answers`)
+          .doc(`${index}`)
+          .set(answers[index])
       }
 
-      //   // write corresponding answer to firestore
-      //   await this.firestore
-      //     .collection(`users/${uid}/takes/${docRef.id}/my-answers`)
-      //     .doc(`${index}`)
-      //     .set(answers[index])
+
       // }
       return docRef.id;
     }
@@ -85,6 +87,18 @@ export class TakeService {
         data.id = id;
         return data;
       }))
+    )
+  }
+
+  getQuestion(takeId: string, userId: string, questionId: string) {
+    const question = this.firestore.doc<Question>(`users/${userId}/takes/${takeId}/questions/${questionId}`);
+    return question.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Question;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
     )
   }
 
@@ -123,7 +137,8 @@ export class TakeService {
 
   }
 
-  finishTake(takeId: string, userId: string, testId: string) {
+  finishTake(takeId: string, user: User, testId: string) {
+
 
     try {
       const endTime = firebase.firestore.Timestamp.fromDate(new Date());
@@ -133,7 +148,7 @@ export class TakeService {
         if (!correctAnswers) return;
         console.log(correctAnswers);
 
-        this.getMyAnswers(takeId, userId).pipe(take(1)).subscribe(myAnswers => {
+        this.getMyAnswers(takeId, user.uid).pipe(take(1)).subscribe(myAnswers => {
           console.log(myAnswers);
 
           this.testService.getQuestions(testId).pipe(take(1)).subscribe(async questions => {
@@ -158,15 +173,19 @@ export class TakeService {
                 myAnswers[index].correct = false;
               }
               maxTestPoints += maxPoints;
-              await this.updateMyAnswer(takeId, userId, String(index), myAnswers[index]);
+              await this.updateMyAnswer(takeId, user.uid, String(index), myAnswers[index]);
               console.log(myAnswers[index]);
             });
             console.log(totalPoints);
 
-            await this.firestore.doc<Take>(`users/${userId}/takes/${takeId}`).update({
+            await this.firestore.doc<Take>(`users/${user.uid}/takes/${takeId}`).update({
               endTime: firebase.firestore.Timestamp.fromDate(new Date()),
               points: totalPoints,
-              passed: totalPoints / maxTestPoints >= 0.5
+              passed: totalPoints / maxTestPoints >= 0.5,
+              user: {
+                displayName: user.displayName,
+                uid: user.uid
+              }
             });
             this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
           });
@@ -179,9 +198,20 @@ export class TakeService {
       else this.openFailSnackBar();
       throw error;
     }
+  }
 
 
 
+  getTakesForOneTest(testId: string) {
+    const takeCollection = this.firestore.collectionGroup<Take>('takes', ref => ref.where('testId', '==', testId));
+    return takeCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Take;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
   }
 
   openSuccessSnackBar(message: string): void {

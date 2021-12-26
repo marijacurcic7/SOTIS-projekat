@@ -5,6 +5,7 @@ import { FirebaseError } from '@firebase/util';
 import { map } from 'rxjs/operators';
 import { Domain } from '../models/domain.model';
 import { DomainProblem } from '../models/domainProblem.model';
+import { MyAnswer } from '../models/my-answer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +66,18 @@ export class DomainService {
     return this.firestore.doc<Domain>(`domains/${domainId}`).valueChanges();
   }
 
+  async setCurrentlyActive(domainId: string, currentlyActive: 'realDomain' | 'expectedDomain') {
+    try{
+      await this.firestore.doc<Domain>(`domains/${domainId}`).update({
+        currentlyActive
+      })
+    }
+    catch(error) {
+      if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
+      else this.openFailSnackBar()
+      throw error
+    }
+  }
 
   /**
    * ---------------------- Domain Problems --------------------------- 
@@ -158,7 +171,6 @@ export class DomainService {
     try {
       const docRef = this.firestore.collection<DomainProblem>(`domains/${domain.id}/realDomainProblems`)
       realDomainProblems.forEach(async problem => await docRef.doc(problem.id).set(problem))
-      this.openSuccessSnackBar(`Real domain problems succesfully saved.`)
     } catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
       else this.openFailSnackBar()

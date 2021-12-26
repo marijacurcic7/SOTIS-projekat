@@ -1,0 +1,52 @@
+<div id='container'>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <span style="font-size: 2rem;">{{test?.name}}</span>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <mat-icon class="material-icons-outlined" style="vertical-align: bottom">person</mat-icon>
+        {{test?.createdBy?.displayName}}
+      </mat-card-subtitle>
+      <mat-card-subtitle>
+        {{test?.domainName}}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>Max points: {{test?.maxPoints}}</p>
+      <p>Total takes: {{takes?.length}}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card style="margin-top: 1rem;">
+    <mat-card-header>
+      <mat-card-title> Takes </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- TODO: dodati listu svih take-ova. Dodati expand graf za svaki take -->
+      <app-takes></app-takes>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- real & expected domain -->
+<div>
+  <app-real-and-expected-domain [domain]="domain"></app-real-and-expected-domain>
+</div>
+
+<!-- domains -->
+<mat-radio-group [(ngModel)]='currentlyActive'>
+  <div style="padding: 1rem; padding-top: 3rem;">
+    <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)">
+      Real Domain
+    </mat-radio-button>
+    <app-real-domain [domain]="domain" [takes]="takes"></app-real-domain>
+  </div>
+  <div style="padding: 1rem;">
+    <mat-radio-button color='primary' value="expectedDomain" (change)="currentlyActiveChanged($event)">
+      Expected Domain
+    </mat-radio-button>
+    <app-graph-editor [nodeActionsAvailable]="false" [domainId]="domain?.id"></app-graph-editor>
+  </div>
+</mat-radio-group>

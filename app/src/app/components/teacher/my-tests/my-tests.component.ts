@@ -11,7 +11,7 @@ import { TestService } from 'src/app/services/test.service';
   styleUrls: ['./my-tests.component.css']
 })
 export class MyTestsComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'topic', 'points', 'teacher', 'actions'];
+  displayedColumns: string[] = ['name', 'topic', 'points', 'results', 'details'];
   tests: Test[] = [];
   user: User | undefined
 

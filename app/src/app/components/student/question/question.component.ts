@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
 import { MyAnswer } from 'src/app/models/my-answer.model';
 import { Question } from 'src/app/models/question.model';
-import { Take } from 'src/app/models/take.model';
 import { Test } from 'src/app/models/test.model';
 import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,6 +15,12 @@ import { TestService } from 'src/app/services/test.service';
   styleUrls: ['./question.component.css']
 })
 export class QuestionComponent implements OnInit {
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler($event: any) {
+    return false
+  }
+
   user: User | undefined
   testId: string;
   takeId: string;
@@ -46,7 +51,6 @@ export class QuestionComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private testService: TestService,
     private takeService: TakeService,
     private authService: AuthService,
     private router: Router,
@@ -199,7 +203,7 @@ export class QuestionComponent implements OnInit {
     if(!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
-    this.takeService.finishTake(this.takeId, this.user.uid, this.testId);
+    this.takeService.finishTake(this.takeId, this.user, this.testId);
     
     
     

@@ -22,7 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import { TestViewComponent } from './test-view/test-view.component';
+import { TestViewComponent } from './teacher/test-view/test-view.component';
 import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
 import {MatDividerModule} from '@angular/material/divider';
 import { AllTestsComponent } from './all-tests/all-tests.component';
@@ -39,6 +39,10 @@ import { DeleteDomainComponent } from './teacher/domains/delete-domain/delete-do
 import { RealDomainComponent } from './teacher/real-domain/real-domain.component';
 import { MatSelectModule } from '@angular/material/select';
 import { GraphQuestionEditorComponent } from './teacher/add-test/graph-question-editor/graph-question-editor.component';
+import { TestResultsComponent } from './teacher/test-results/test-results.component';
+import { RealAndExpectedDomainComponent } from './teacher/real-and-expected-domain/real-and-expected-domain.component';
+import { TakesComponent } from './teacher/test-results/takes/takes.component';
+import { StudentGraphComponent } from './teacher/test-results/student-graph/student-graph.component';
 import { TakesResultsComponent } from './student/takes-results/takes-results.component';
 
 @NgModule({
@@ -65,6 +69,10 @@ import { TakesResultsComponent } from './student/takes-results/takes-results.com
     DeleteDomainComponent,
     RealDomainComponent,
     GraphQuestionEditorComponent,
+    TestResultsComponent,
+    RealAndExpectedDomainComponent,
+    TakesComponent,
+    StudentGraphComponent,
     TakesResultsComponent,
   ],
   imports: [

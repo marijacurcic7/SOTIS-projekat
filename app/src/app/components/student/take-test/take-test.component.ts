@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Answer } from 'src/app/models/answer.model';
 import { Question } from 'src/app/models/question.model';
 import { Test } from 'src/app/models/test.model';
 import { Take } from 'src/app/models/take.model';
@@ -10,7 +9,6 @@ import { TestService } from 'src/app/services/test.service';
 import firebase from 'firebase/compat/app';
 import { TakeService } from 'src/app/services/take.service';
 import { MyAnswer } from 'src/app/models/my-answer.model';
-import { setupTestingRouter } from '@angular/router/testing';
 import { DomainService } from 'src/app/services/domain.service';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { take } from 'rxjs/operators';
@@ -28,12 +26,10 @@ export class TakeTestComponent implements OnInit {
   questionId: string | undefined;
   test: Test;
   take: Take;
-  teacherName: string;
   activeStepIndex: number;
   questions: Question[];
   sortedQuestions: Question[];
   question: Question;
-  myAnswers: MyAnswer[];
   domainProblems: DomainProblem[];
 
 
@@ -44,48 +40,35 @@ export class TakeTestComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private domainService: DomainService,
-  ) { 
-    this.test = {
-      name: "",
-      maxPoints: 0,
-      createdBy: {
-        displayName: "",
-        teacherId: ""
-      }
+  ) { }
+
+  async ngOnInit() {
+    // get user
+    this.authService.user$.subscribe(user => this.user = user);
+    // get test id
+    this.testId = String(this.route.snapshot.paramMap.get('id'));
+
+    // get test
+    this.test = await this.testService.getTest(this.testId).pipe(take(1)).toPromise()
+    if (!this.test.domainId) throw new Error('test is missing ID.');
+
+    // get domain problems
+    // load active domain
+    // active domain could be expected domain or real domain
+    // if no active domain is defined, use expected domain by default
+    const domain = await this.domainService.getDomain(this.test.domainId).pipe(take(1)).toPromise()
+    if (domain?.currentlyActive === 'realDomain') {
+      this.domainProblems = await this.domainService.getDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
+    }
+    else {
+      this.domainProblems = await this.domainService.getRealDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
     }
 
-    
-  }
+    // get questions
+    this.questions = await this.testService.getQuestions(this.testId).pipe(take(1)).toPromise()
 
-  ngOnInit(): void {
-    this.authService.user$.subscribe(user => this.user = user);
-
-    this.testId = String(this.route.snapshot.paramMap.get('id'));
-    console.log(this.testId);
-
-    this.testService.getTest(this.testId).pipe(take(1)).subscribe(t => {
-      this.test = t;
-      console.log(this.test);
-      this.teacherName = this.test.createdBy.displayName;
-      if (!this.test.domainId) return;
-      this.domainService.getDomainProblems(this.test.domainId).pipe(take(1)).subscribe( async p => {
-        this.domainProblems = p;
-        console.log(this.domainProblems);
-        await this.sortQuestions();
-
-      })
-
-    });
-
-    this.testService.getQuestions(this.testId).subscribe(q => {
-      console.log(q);
-      this.questions = q;
-      this.question = q[0];
-      
-      this.questionId = this.question.id;
-    });
-
-    
+    // sort questions based on domain problems intput[] & output[]
+    await this.sortQuestions();
 
   }
 
@@ -97,38 +80,38 @@ export class TakeTestComponent implements OnInit {
       testName: this.test.name,
       testId: this.testId,
       startTime: firebase.firestore.Timestamp.fromDate(new Date()),
+      user: { displayName: '', uid: '' }
     }
 
-    if(!this.user) throw new Error('You must login first.');
+    if (!this.user) throw new Error('You must login first.');
 
-    this.myAnswers = [];
+    const myAnswers: MyAnswer[] = [];
     for (let index = 0; index < this.questions.length; index++) {
       let myAnswer: MyAnswer = {
         id: String(index),
-        myAnswers: []
+        myAnswers: [],
+        correct: false,
+        points: 0
       }
-      this.myAnswers.push(myAnswer);
+      myAnswers.push(myAnswer);
     }
-
-    var takeId: string;
-    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, this.myAnswers).then( res => {
-      takeId = res as string;
-      console.log(this.sortedQuestions);
-      this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], {state: {questions: this.sortedQuestions}});
-    })
     
+    console.log(myAnswers)
+
+    this.takeService.addTake(this.take, this.user.uid, this.sortedQuestions, myAnswers).then(res => {
+      const takeId = res as string;
+      this.router.navigate([`/take-test/${this.testId}/take/${takeId}/question/${this.question.id}`], { state: { questions: this.sortedQuestions } });
+    })
+
   }
 
   async sortQuestions() {
-    console.log("SORTING");
-    console.log(this.questions);
-    
     this.sortedQuestions = [];
     var parentNodes: DomainProblem[] = [];
-    parentNodes = this.domainProblems.filter( problem => !problem.input );
-    console.log(parentNodes);
-    parentNodes.forEach( p => {
-      this.questions.forEach( q => {
+    parentNodes = this.domainProblems.filter(problem => !problem.input);
+
+    parentNodes.forEach(p => {
+      this.questions.forEach(q => {
         if (q.domainProblemId === p.id) {
           this.sortedQuestions.push(q);
         }
@@ -137,12 +120,12 @@ export class TakeTestComponent implements OnInit {
 
     let leveln: DomainProblem[] = [];
     leveln.push(...parentNodes);
-    const rest = this.domainProblems.filter( problem => problem.input );
+    const rest = this.domainProblems.filter(problem => problem.input);
 
-    rest.forEach( p => {
-      if (p.input?.every( i => parentNodes.find( r => r.id == i))) {
+    rest.forEach(p => {
+      if (p.input?.every(i => parentNodes.find(r => r.id == i))) {
         leveln.push(p);
-        this.questions.forEach( q => {
+        this.questions.forEach(q => {
           if (q.domainProblemId === p.id) {
             this.sortedQuestions.push(q);
           }
@@ -151,31 +134,29 @@ export class TakeTestComponent implements OnInit {
     });
 
     while (this.sortedQuestions.length < this.questions.length) {
-      console.log(leveln)
+      // console.log(leveln)
       let levelnn: DomainProblem[] = [];
-      console.log(this.sortedQuestions);
-      rest.forEach( p => {
-        if (p.input?.every( i => leveln.find( r => r.id == i))) {
+      rest.forEach(p => {
+        if (p.input?.every(i => leveln.find(r => r.id == i))) {
           levelnn.push(p);
-          this.questions.forEach( q => {
+          this.questions.forEach(q => {
             if (q.domainProblemId === p.id && this.sortedQuestions.indexOf(q) == -1) {
               this.sortedQuestions.push(q);
-              console.log(q);
             }
           });
         }
       });
-      console.log(levelnn);
-      leveln = [...new Set([...leveln,...levelnn])]
+      // console.log(levelnn);
+      leveln = [...new Set([...leveln, ...levelnn])]
     }
     for (let index = 0; index < this.sortedQuestions.length; index++) {
       this.sortedQuestions[index].sortedIndex = index;
     }
     console.log(this.sortedQuestions);
     this.question = this.sortedQuestions[0];
-    
+
   }
 
-  
+
 
 }
