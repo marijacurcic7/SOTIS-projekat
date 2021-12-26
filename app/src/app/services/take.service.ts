@@ -137,69 +137,56 @@ export class TakeService {
 
   }
 
-  finishTake(takeId: string, user: User, testId: string) {
-
-
+  async finishTake(takeId: string, user: User, testId: string) {
     try {
-      const endTime = firebase.firestore.Timestamp.fromDate(new Date());
-      let totalPoints = 0;
+      let totalPoints = 0
+      let maxTestPoints = 0
+      const correctAnswers = await this.testService.getAnswers(testId).pipe(take(1)).toPromise()
+      const myAnswers = await this.getMyAnswers(takeId, user.uid).pipe(take(1)).toPromise()
+      const questions = await this.testService.getQuestions(testId).pipe(take(1)).toPromise()
 
-      this.testService.getAnswers(testId).pipe(take(1)).subscribe(correctAnswers => {
-        if (!correctAnswers) return;
-        console.log(correctAnswers);
+      // iterate over my answers and check which one is correct. Update my answers in db
+      correctAnswers.forEach(async (correctAnswer, index) => {
+        const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
 
-        this.getMyAnswers(takeId, user.uid).pipe(take(1)).subscribe(myAnswers => {
-          console.log(myAnswers);
-
-          this.testService.getQuestions(testId).pipe(take(1)).subscribe(async questions => {
-            console.log(questions);
-            var maxTestPoints = 0;
-            correctAnswers.forEach(async (correctAnswer, index) => {
-              const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
-
-              if (!myAnswers[index]) return;
-              const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
-              const maxPoints = questions[Number(myAnswers[index].id)].maxPoints;
-              console.log(maxPoints);
-              console.log(myAnswersForAQuestion);
-              const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
-              if (isEveryAnswerForAQuestionCorrect) {
-                totalPoints += maxPoints;
-                myAnswers[index].points = maxPoints;
-                myAnswers[index].correct = true;
-              }
-              else {
-                myAnswers[index].points = 0;
-                myAnswers[index].correct = false;
-              }
-              maxTestPoints += maxPoints;
-              await this.updateMyAnswer(takeId, user.uid, String(index), myAnswers[index]);
-              console.log(myAnswers[index]);
-            });
-            console.log(totalPoints);
-
-            await this.firestore.doc<Take>(`users/${user.uid}/takes/${takeId}`).update({
-              endTime: firebase.firestore.Timestamp.fromDate(new Date()),
-              points: totalPoints,
-              passed: totalPoints / maxTestPoints >= 0.5,
-              user: {
-                displayName: user.displayName,
-                uid: user.uid
-              }
-            });
-            this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
-          });
-
-        });
+        if (!myAnswers[index]) return;
+        const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
+        const maxPoints = questions[Number(myAnswers[index].id)].maxPoints;
+        const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
+        if (isEveryAnswerForAQuestionCorrect) {
+          totalPoints += maxPoints;
+          myAnswers[index].points = maxPoints;
+          myAnswers[index].correct = true;
+        }
+        else {
+          myAnswers[index].points = 0;
+          myAnswers[index].correct = false;
+        }
+        maxTestPoints += maxPoints;
+        await this.updateMyAnswer(takeId, user.uid, String(index), myAnswers[index]);
       });
+
+      // update take based on correct answers
+      await this.firestore.doc<Take>(`users/${user.uid}/takes/${takeId}`).update({
+        endTime: firebase.firestore.Timestamp.fromDate(new Date()),
+        points: totalPoints,
+        passed: totalPoints / maxTestPoints >= 0.5,
+        user: {
+          displayName: user.displayName,
+          uid: user.uid
+        }
+      })
+
+      // show take results to a student
+      this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
     }
+
     catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code);
       else this.openFailSnackBar();
       throw error;
     }
   }
-
 
 
   getTakesForOneTest(testId: string) {
