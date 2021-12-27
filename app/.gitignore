@@ -45,3 +45,5 @@ testem.log
 Thumbs.db
 
 *.log
+
+serviceAccountKey.json

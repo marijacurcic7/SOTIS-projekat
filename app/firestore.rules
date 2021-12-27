@@ -20,7 +20,7 @@ service cloud.firestore {
         allow write: if isTeacher();
       }
       match /answers/{answer} {
-        allow read: if canReadCorrectAnswers();
+        allow read: if isTeacher();
         allow write: if isTeacher();
       }
     }
@@ -44,7 +44,7 @@ service cloud.firestore {
       }
       match /myAnswers/{myAnswer} {
         allow read: if (isStudent() && isOwner(user)) || isTeacher();
-        allow write: if canSaveMyAnswer(user, take);
+        allow write: if (isStudent() && isOwner(user));
       }
     }
 
@@ -80,13 +80,6 @@ service cloud.firestore {
     function canSaveMyAnswer(user, take) {
       let studentDidNotFinishTake = isStudent() && isOwner(user) && !isTakeFinished(user, take);
       return studentDidNotFinishTake;
-    }
-
-    // teacher can write and write correct answers
-    // student cannot write correct answers
-    // student can read correct answers only if he's finished test take
-    function canReadCorrectAnswers() {
-      return true;
     }
 
     // function existingData() { return resource.data }

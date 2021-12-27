@@ -5,11 +5,10 @@ import { FirebaseError } from '@firebase/app';
 import { MyAnswer } from '../models/myAnswer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
-import { map, take } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
+import { map } from 'rxjs/operators';
 import { TestService } from './test.service';
 import { Router } from '@angular/router';
-import { User } from '../models/user.model';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
 
 
 @Injectable({
@@ -20,8 +19,7 @@ export class TakeService {
   constructor(
     private firestore: AngularFirestore,
     private snackBar: MatSnackBar,
-    private testService: TestService,
-    private router: Router,
+    private fns: AngularFireFunctions,
   ) { }
 
   getAllTakes(userId: string) {
@@ -116,15 +114,6 @@ export class TakeService {
 
   getMyAnswer(takeId: string, userId: string, questionId: string) {
     return this.firestore.doc<MyAnswer>(`users/${userId}/takes/${takeId}/myAnswers/${questionId}`).valueChanges();
-
-    // return answer.snapshotChanges().pipe(
-    //   map(a => {
-    //     const data = a.payload.data() as MyAnswer;
-    //     const id = a.payload.id;
-    //     data.id = id;
-    //     return data;
-    //   })
-    // )
   }
 
   updateMyAnswer(takeId: string, userId: string, questionId: string, myAnswer: MyAnswer) {
@@ -137,48 +126,10 @@ export class TakeService {
 
   }
 
-  async finishTake(takeId: string, user: User, testId: string) {
+  async finishTake(takeId: string) {
     try {
-      let totalPoints = 0
-      let maxTestPoints = 0
-      const correctAnswers = await this.testService.getAnswers(testId).pipe(take(1)).toPromise()
-      const myAnswers = await this.getMyAnswers(takeId, user.uid).pipe(take(1)).toPromise()
-      const questions = await this.testService.getQuestions(testId).pipe(take(1)).toPromise()
-
-      // iterate over my answers and check which one is correct. Update my answers in db
-      correctAnswers.forEach(async (correctAnswer, index) => {
-        const correctAnswersForAQuestion = correctAnswer.correctAnswers.sort();
-
-        if (!myAnswers[index]) return;
-        const myAnswersForAQuestion = myAnswers[index].myAnswers.sort();
-        const maxPoints = questions[Number(myAnswers[index].id)].maxPoints;
-        const isEveryAnswerForAQuestionCorrect = correctAnswersForAQuestion.every((ans, i) => ans === myAnswersForAQuestion[i]);
-        if (isEveryAnswerForAQuestionCorrect) {
-          totalPoints += maxPoints;
-          myAnswers[index].points = maxPoints;
-          myAnswers[index].correct = true;
-        }
-        else {
-          myAnswers[index].points = 0;
-          myAnswers[index].correct = false;
-        }
-        maxTestPoints += maxPoints;
-        await this.updateMyAnswer(takeId, user.uid, String(index), myAnswers[index]);
-      });
-
-      // update take based on correct answers
-      await this.firestore.doc<Take>(`users/${user.uid}/takes/${takeId}`).update({
-        endTime: firebase.firestore.Timestamp.fromDate(new Date()),
-        points: totalPoints,
-        passed: totalPoints / maxTestPoints >= 0.5,
-        user: {
-          displayName: user.displayName,
-          uid: user.uid
-        }
-      })
-
-      // show take results to a student
-      this.router.navigate([`/take-test/${testId}/take/${takeId}/results`]);
+      const callable = this.fns.httpsCallable<string>('finishTake');
+      return callable(takeId).toPromise()
     }
 
     catch (error) {
