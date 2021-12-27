@@ -44,55 +44,6 @@ export class RealDomainComponent implements OnInit {
 
   async ngOnInit() {
     this.initNetwork()
-    // const domainProblems: DomainProblem[] = [
-    //   {
-    //     "label": "Variables",
-    //     "output": [
-    //       "rQ4NqGjKDXBCYGDvJXzs",
-    //       "AvFRGplnBT2bJpGDVQMW",
-    //       "Vnyz9n188eNdGVePaBtV"
-    //     ],
-    //     "id": "0AAPNeAbygGZg6beETfZ"
-    //   },
-    //   {
-    //     "label": "Const",
-    //     "output": [
-    //       "MRWv0XeYubFiaqzm9wZt"
-    //     ],
-    //     "id": "AvFRGplnBT2bJpGDVQMW"
-    //   },
-    //   {
-    //     "label": "Data Types",
-    //     "output": [
-    //       "aiJn1aQBmoAtmyNvQDhd"
-    //     ],
-    //     "id": "MRWv0XeYubFiaqzm9wZt"
-    //   },
-    //   {
-    //     "label": "Functions",
-    //     "output": [
-    //       "aiJn1aQBmoAtmyNvQDhd"
-    //     ],
-    //     "id": "Vnyz9n188eNdGVePaBtV"
-    //   },
-    //   {
-    //     "label": "Objects",
-    //     "output": [],
-    //     "id": "aiJn1aQBmoAtmyNvQDhd"
-    //   },
-    //   {
-    //     "label": "Let",
-    //     "output": [
-    //       "MRWv0XeYubFiaqzm9wZt"
-    //     ],
-    //     "input": [
-    //       "0AAPNeAbygGZg6beETfZ"
-    //     ],
-    //     "id": "rQ4NqGjKDXBCYGDvJXzs"
-    //   }
-    // ]
-    // const tempImpl: [number, number][] = [[2, 0], [2, 1], [3, 0], [5, 0], [5, 4]]
-    // const ret = this.implicationsArray2domainProblems(tempImpl, domainProblems)
   }
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -111,11 +62,26 @@ export class RealDomainComponent implements OnInit {
     this.status = 'loading packages'
     await this.loadPyodide()
     this.status = 'creating real domain'
-    const response = await this.pythonServce.createRealDomain(this.answersMatrix)
-    this.status = 'saving'
-    const realDomainProblems = await this.implicationsArray2domainProblems(response.implications, this.domainProblems)
-    await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
-    this.status = 'done ✔️'
+    try {
+      const response = await this.pythonServce.createRealDomain(this.answersMatrix)
+      this.status = 'saving'
+      const realDomainProblems = await this.implicationsArray2domainProblems(response.implications, this.domainProblems)
+      await this.domainService.addRealDomainProblems(realDomainProblems, this.domain)
+      this.status = 'done ✔️'
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        if (
+          error.name === 'PythonError' &&
+          error.message.includes('data must be either a numeric matrix or a dataframe, with at least two columns')) {
+          this.openFailSnackBar('Not enough test takes to create real domain.')
+        }
+      }
+      else {
+        this.openFailSnackBar()
+      }
+    }
+
 
     setTimeout(() => {
       this.status = ''
@@ -290,7 +256,7 @@ export class RealDomainComponent implements OnInit {
     this.snackBar.open(message, 'Dismiss', {
       verticalPosition: 'top',
       panelClass: ['red-snackbar'],
-      duration: 2000,
+      duration: 5000,
     });
   }
 }
