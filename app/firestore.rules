@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if false
+      allow read, write: if false;
     }
 
     match /users/{userId} {
@@ -68,21 +68,5 @@ service cloud.firestore {
     function getRole(role) {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
     }
-
-    // Take is finished if endTime property exists on take,
-    // otherwise, student is still taking a test.
-    function isTakeFinished(user, take) {
-      return 'endTime' in get(/databases/$(database)/documents/users/$(user)/takes/$(take)).data;
-    }
-
-    // student can write only his answers (cannot write other student's answers)
-    // can write answers if he/she hasn't finished current take
-    function canSaveMyAnswer(user, take) {
-      let studentDidNotFinishTake = isStudent() && isOwner(user) && !isTakeFinished(user, take);
-      return studentDidNotFinishTake;
-    }
-
-    // function existingData() { return resource.data }
-    // function incomingData() { return request.resource.data }
   }
 }

@@ -35,17 +35,15 @@ export class GraphQuestionEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    this.initNetwork();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.domainId) {
-      this.initNetwork();
+    if (changes.domainId && this.domainId) {
       this.nodes.clear();
       this.initDomainAndDomainProblems();
     }
-    else if (changes.questions) {
-      console.log(this.questions);
+    else if (changes.questions && this.questions) {
       // create new object for graph visaulization
       this.questionNodes = this.questions.map(question => {
         return {
@@ -63,7 +61,6 @@ export class GraphQuestionEditorComponent implements OnInit {
           }
         }
       });
-      console.log(this.questionNodes);
       // add questions to graph 
       this.addQuestionNode();
     }
@@ -74,7 +71,6 @@ export class GraphQuestionEditorComponent implements OnInit {
     this.nodes.update(this.questionNodes);
     // update edges
     this.questionNodes.forEach(question => {
-      console.log(question)
       this.edges.update({
         from: question.domainProblemId,
         to: question.id,
@@ -86,18 +82,17 @@ export class GraphQuestionEditorComponent implements OnInit {
   }
 
   initDomainAndDomainProblems() {
-    var domainId = this.domainId;
-    this.domainService.getDomain(domainId).subscribe(domain => {
+    this.domainService.getDomain(this.domainId).subscribe(domain => {
       if (domain) {
         this.domain = domain
-        this.domain.id = domainId
+        this.domain.id = this.domainId
       }
       else {
         this.openFailSnackBar('Domain not found.');
       }
     })
 
-    this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
+    this.domainService.getDomainProblems(this.domainId).subscribe(domainProblems => {
       if (domainProblems && domainProblems.length) {
 
         // update nodes
@@ -149,7 +144,7 @@ export class GraphQuestionEditorComponent implements OnInit {
       }
     }
 
-    if (!networkHtmlElem) return console.error('html elem not found')
+    if (!networkHtmlElem) throw new Error('html elem not found')
     this.network = new Network(networkHtmlElem, data, options)
 
     this.network.on('click', (params) => {
@@ -171,23 +166,10 @@ export class GraphQuestionEditorComponent implements OnInit {
     this.network.on('doubleClick', () => this.addQuestionDialog())
   }
 
-  // async connectTwoNodes(parentNodeId: string, childNodeId: string) {
-  //   if (!this.domain) return
-  //   const newEdge = { from: parentNodeId, to: childNodeId, arrows: "to" }
-  //   if (this.checkIfEdgeExists(newEdge)) return this.openFailSnackBar('Already connected')
-
-  //   const parentNode = this.nodes.get(parentNodeId) as unknown as DomainProblem
-  //   const childNode = this.nodes.get(childNodeId) as unknown as DomainProblem
-  //   // add to db
-  //   await this.domainService.connectTwoNodes(parentNode, childNode, this.domain)
-  //   this.openSuccessSnackBar(`${parentNode.label} connected to ${childNode.label}`)
-  // }
-
   addQuestionDialog() {
     if (!this.selectedNode) return;
     this.questionDialogEvent.emit(this.selectedNode);
   }
-
 
   centerNetwork() {
     this.network.fit({ animation: true })
