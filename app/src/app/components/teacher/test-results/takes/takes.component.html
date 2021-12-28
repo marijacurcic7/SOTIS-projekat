@@ -10,6 +10,14 @@
         <td mat-cell *matCellDef="let element"> {{element.points}} </td>
     </ng-container>
 
+    <!-- <ng-container matColumnDef="graph">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+            <div class="example-element-detail">
+                <div id='{{element.id}}' name="myNetwork"></div>
+            </div>
+        </td>
+    </ng-container> -->
+
     <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
     <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
@@ -19,6 +27,16 @@
                   <!-- <app-student-graph [domainId]="domain.id" [takeId]="element.id" [userId]="element.user?.uid"></app-student-graph> -->
                   <div class='container'>
                     <div id='{{element.id}}' name="myNetwork"></div>
+                    <div style="display: flex; align-items: flex-end; flex-direction: column; align-items: flex-end; padding: 1rem;"> 
+                        <div style="display: flex; align-items: flex-end;">
+                            passed
+                            <mat-icon style="color: #99ff99; font-size: 2.1rem" class="material-icons-outlined">horizontal_rule</mat-icon>
+                          </div>
+                          <div style="display: flex; align-items: flex-end;">
+                            didn't pass
+                            <mat-icon style="color: #bca3ee; font-size: 2.1rem" class="material-icons-outlined">horizontal_rule</mat-icon>
+                        </div>
+                    </div>
                   </div>
                 </div>
             </div>
@@ -32,4 +50,5 @@
     
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    <!-- <tr mat-row *matRowDef="let row; columns: ['graph']" class="example-detail-row"></tr> -->
 </table>

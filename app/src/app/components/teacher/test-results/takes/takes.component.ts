@@ -64,6 +64,9 @@ export class TakesComponent implements OnInit {
     this.takeService.getTakesForOneTest(testId).subscribe(takes => {
       this.takes = takes;
       console.log(this.takes);
+
+      
+
     });
     this.testService.getTest(testId).subscribe(test => {
       console.log(test.domainId)
@@ -72,6 +75,25 @@ export class TakesComponent implements OnInit {
           this.domain = domain;
           this.domain.id = test.domainId;
           console.log(domain.id);
+
+          //init1
+          for(let t of this.takes){
+            if (!t.id) return;
+            let mn = this.myNetworks.find(n => n.id === t.id);
+            if(!mn){
+              let myNetwork: MyNetwork = {
+                id: t.id,
+              }
+              this.myNetworks.push(myNetwork);
+            }
+            console.log(this.myNetworks);
+
+            if(this.domain.id && this.domain.id !== 'null') {
+              this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
+            }
+            this.initNetwork(t);
+          }
+
 
           // this.initNetwork();
           // if(domain.id && domain.id !== 'null') {
@@ -112,6 +134,7 @@ export class TakesComponent implements OnInit {
 
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
+
 
     if(this.domain.id && this.domain.id !== 'null') {
       this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
@@ -154,7 +177,7 @@ export class TakesComponent implements OnInit {
       }
     }
 
-    if (!networkHtmlElem) return console.error('html elem not found');
+    if (!networkHtmlElem) return; //console.error('html elem not found');
     let network = new Network(networkHtmlElem, data, options);
     // let myNetwork: MyNetwork = {
     //   id: id,
@@ -221,12 +244,13 @@ export class TakesComponent implements OnInit {
                     var problemNode = {
                       id: q.domainProblemId,
                       label: q.domainProblemName,
+                      font: { size: 14, color: '#006627' },
                       color: {
-                        background: '#f0d5a3',
-                        border: '#f0d5a3',
+                        background: '#99ff99',
+                        border: '#99ff99',
                         highlight: {
-                          border: '#f0d5a3',
-                          background: '#f0d5a3'
+                          border: '#99ff99',
+                          background: '#99ff99'
                         }
                       }
                     }
