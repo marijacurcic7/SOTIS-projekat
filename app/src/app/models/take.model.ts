@@ -8,6 +8,7 @@ export interface Take {
   testId: string,
   startTime: firebase.firestore.Timestamp,
   endTime?: firebase.firestore.Timestamp,
+  duration?: string,
   user: {
     displayName: string,
     uid: string,

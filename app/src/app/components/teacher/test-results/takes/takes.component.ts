@@ -13,6 +13,7 @@ import { Question } from 'src/app/models/question.model';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNetwork } from 'src/app/models/my-network.model';
+import firebase from 'firebase/compat/app';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class TakesComponent implements OnInit {
 
   takes: Take[];
   domain: Domain;
-  displayedColumns: string[] = ['student', 'points'];
+  displayedColumns: string[] = ['student', 'points', 'duration'];
   expandedElement: Take | null;
   expandedElements: Take[];
 
@@ -204,7 +205,7 @@ export class TakesComponent implements OnInit {
         let mn = this.myNetworks.find(n => n.id === takeId);
         if(!mn) return;
         mn.nodes = new DataSet<DomainProblem>();
-        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>();
+        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' , color: string}>();
 
         mn.nodes.clear();
         mn.nodes.update(domainProblems);
@@ -222,7 +223,8 @@ export class TakesComponent implements OnInit {
               id: `${parentNode.id}${childNodeId}`,
               from: parentNode.id,
               to: childNodeId,
-              arrows: 'to'
+              arrows: 'to',
+              color: '#dedae6'
             })
           })
         })
@@ -287,4 +289,26 @@ export class TakesComponent implements OnInit {
     });
   }
 
+  getDuration(take: Take) {
+    if (!take.endTime) return ''
+    const end = take.endTime.toDate()
+    const start = take.startTime.toDate()
+
+    let dur = "";
+    const date = new Date((take.endTime.seconds - take.startTime.seconds)*1000);
+    if((date.getHours() - 1) > 0){
+      dur = (date.getHours() - 1) + 'h ' + date.getMinutes() + 'm ' + date.getSeconds() + 's';
+    }
+    else if (date.getMinutes() > 0){
+      dur = date.getMinutes() + 'm ' + date.getSeconds() + 's';
+    }
+    else {
+      dur = date.getSeconds() + 's';
+    }
+
+    return dur;
+
+  }
+
 }
+

@@ -5,5 +5,5 @@ export interface MyNetwork {
     id: string,
     network?: Network,
     nodes?: DataSet<DomainProblem>,
-    edges?: DataSet<{ id: string, from: string, to: string, arrows: 'to' }>
+    edges?: DataSet<{ id: string, from: string, to: string, arrows: 'to' , color: string}>
 }
