@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import firebase from 'firebase/compat';
 import { take } from 'rxjs/operators';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { Take } from 'src/app/models/take.model';
 import { Test } from 'src/app/models/test.model';
 import { User } from 'src/app/models/user.model';

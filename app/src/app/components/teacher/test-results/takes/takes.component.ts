@@ -10,7 +10,7 @@ import { Network, Options } from 'vis-network';
 import { DataSet } from 'vis-data';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
 import { Question } from 'src/app/models/question.model';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNetwork } from 'src/app/models/my-network.model';
 

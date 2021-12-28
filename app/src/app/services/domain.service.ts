@@ -5,7 +5,7 @@ import { FirebaseError } from '@firebase/util';
 import { map } from 'rxjs/operators';
 import { Domain } from '../models/domain.model';
 import { DomainProblem } from '../models/domainProblem.model';
-import { MyAnswer } from '../models/my-answer.model';
+import { MyAnswer } from '../models/myAnswer.model';
 
 @Injectable({
   providedIn: 'root'

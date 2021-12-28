@@ -16,9 +16,10 @@ export class PythonService {
 
 
 
-  async createRealDomain( answers: number[][]) {
+  async createRealDomain(answers: number[][]) {
     this.pyodide.globals.set('answers', answers)
-    await this.pyodide.runPython(`
+    try {
+      await this.pyodide.runPython(`
 import pandas as pd
 import numpy as np
 import numpy
@@ -30,10 +31,11 @@ answers = pd.DataFrame(answers)
 
 response = iita_exclude_transitive(answers, v=1)
     `)
-    const response = new IitaResponse(this.pyodide.globals.get('response').toJs())
-    return response
+      const response = new IitaResponse(this.pyodide.globals.get('response').toJs())
+      return response
+    }
+    catch (error) { throw error }
   }
-
 
 
   /**

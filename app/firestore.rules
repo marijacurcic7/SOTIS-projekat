@@ -2,36 +2,71 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if true
+      allow read, write: if false;
     }
 
-  match /users/{userId} {
-    allow read: if isOwner(userId)
-  }
+    match /users/{userId} {
+      allow read: if isOwner(userId)
+    }
 
-  // everybody can read tests, Q & A
-  // only teacher can write to tests, Q & A
-  match /tests/{document=**} {
-    allow read: if true;
-    allow write: if isTeacher();
+    // students & teachers can read tests, Q & A
+    // only teacher can write to tests, Q & A
+    match /tests/{document} {
+      allow read: if isSignedIn();
+      allow write: if isTeacher();
 
-    match /questions/{question} {
-      allow read: if true;
+      match /questions/{question} {
+        allow read: if isSignedIn();
+        allow write: if isTeacher();
+      }
+      match /answers/{answer} {
+        allow read: if isTeacher();
+        allow write: if isTeacher();
+      }
+    }
+
+    // students & teachers can read domains and domain problems
+    // teacher can write domains and domain problems
+    match /domains/{document=**} {
+      allow read: if isSignedIn();
       allow write: if isTeacher();
     }
-    match /answers/{answer} {
-      allow read: if true;
-      allow write: if isTeacher();
-    }
-  }
 
-    // function isStudent() { return getRole('student') }
+
+    // student can read takes that he has made
+    match /users/{user}/takes/{take} {
+      allow read: if isStudent() && isOwner(user);
+      allow write: if isStudent() && isOwner(user);
+
+      match /questions/{question} {
+        allow read: if (isStudent() && isOwner(user)) || isTeacher();
+        allow write: if isStudent() && isOwner(user);
+      }
+      match /myAnswers/{myAnswer} {
+        allow read: if (isStudent() && isOwner(user)) || isTeacher();
+        allow write: if (isStudent() && isOwner(user));
+      }
+    }
+
+    // this is neccessary because teacher has group collection query
+    // method: getTakesForOneTest(testId)
+    // more on: https://stackoverflow.com/questions/56313459
+    match /{path=**}/takes/{take} {
+      // allow write: if isStudent() && isOwner(request.resource.data.user.uid);
+      allow read: if isTeacher();
+    }
+
+
+
+    // ----------------------- helper functions -----------------------
+    // ----------------------------------------------------------------
+  
+    function isOwner(userId) { return request.auth.uid == userId }
+    function isSignedIn() {return request.auth != null}
+    function isStudent() { return getRole('student') }
     function isTeacher() { return getRole('teacher') }
     function getRole(role) {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
     }
-    function isOwner(userId) { return request.auth.uid == userId }
-    // function existingData() { return resource.data }
-    // function incomingData() { return request.resource.data }
   }
 }

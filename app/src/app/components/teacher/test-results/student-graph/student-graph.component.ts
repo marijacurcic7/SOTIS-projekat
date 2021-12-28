@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Answer } from 'src/app/models/answer.model';
 import { Domain } from 'src/app/models/domain.model';
 import { DomainProblem } from 'src/app/models/domainProblem.model';
-import { MyAnswer } from 'src/app/models/my-answer.model';
+import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { Question } from 'src/app/models/question.model';
 import { DomainService } from 'src/app/services/domain.service';
 import { TakeService } from 'src/app/services/take.service';
