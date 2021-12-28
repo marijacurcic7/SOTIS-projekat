@@ -13,6 +13,7 @@ import { Question } from 'src/app/models/question.model';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNetwork } from 'src/app/models/my-network.model';
+import firebase from 'firebase/compat/app';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class TakesComponent implements OnInit {
 
   takes: Take[];
   domain: Domain;
-  displayedColumns: string[] = ['student', 'points'];
+  displayedColumns: string[] = ['student', 'points', 'duration'];
   expandedElement: Take | null;
   expandedElements: Take[];
 
@@ -64,6 +65,9 @@ export class TakesComponent implements OnInit {
     this.takeService.getTakesForOneTest(testId).subscribe(takes => {
       this.takes = takes;
       console.log(this.takes);
+
+      
+
     });
     this.testService.getTest(testId).subscribe(test => {
       console.log(test.domainId)
@@ -72,6 +76,25 @@ export class TakesComponent implements OnInit {
           this.domain = domain;
           this.domain.id = test.domainId;
           console.log(domain.id);
+
+          //init1
+          for(let t of this.takes){
+            if (!t.id) return;
+            let mn = this.myNetworks.find(n => n.id === t.id);
+            if(!mn){
+              let myNetwork: MyNetwork = {
+                id: t.id,
+              }
+              this.myNetworks.push(myNetwork);
+            }
+            console.log(this.myNetworks);
+
+            if(this.domain.id && this.domain.id !== 'null') {
+              this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
+            }
+            this.initNetwork(t);
+          }
+
 
           // this.initNetwork();
           // if(domain.id && domain.id !== 'null') {
@@ -112,6 +135,7 @@ export class TakesComponent implements OnInit {
 
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
+
 
     if(this.domain.id && this.domain.id !== 'null') {
       this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
@@ -154,7 +178,7 @@ export class TakesComponent implements OnInit {
       }
     }
 
-    if (!networkHtmlElem) return console.error('html elem not found');
+    if (!networkHtmlElem) return; //console.error('html elem not found');
     let network = new Network(networkHtmlElem, data, options);
     // let myNetwork: MyNetwork = {
     //   id: id,
@@ -181,7 +205,7 @@ export class TakesComponent implements OnInit {
         let mn = this.myNetworks.find(n => n.id === takeId);
         if(!mn) return;
         mn.nodes = new DataSet<DomainProblem>();
-        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' }>();
+        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' , color: string}>();
 
         mn.nodes.clear();
         mn.nodes.update(domainProblems);
@@ -199,7 +223,8 @@ export class TakesComponent implements OnInit {
               id: `${parentNode.id}${childNodeId}`,
               from: parentNode.id,
               to: childNodeId,
-              arrows: 'to'
+              arrows: 'to',
+              color: '#dedae6'
             })
           })
         })
@@ -221,12 +246,13 @@ export class TakesComponent implements OnInit {
                     var problemNode = {
                       id: q.domainProblemId,
                       label: q.domainProblemName,
+                      font: { size: 14, color: '#006627' },
                       color: {
-                        background: '#f0d5a3',
-                        border: '#f0d5a3',
+                        background: '#99ff99',
+                        border: '#99ff99',
                         highlight: {
-                          border: '#f0d5a3',
-                          background: '#f0d5a3'
+                          border: '#99ff99',
+                          background: '#99ff99'
                         }
                       }
                     }
@@ -263,4 +289,26 @@ export class TakesComponent implements OnInit {
     });
   }
 
+  getDuration(take: Take) {
+    if (!take.endTime) return ''
+    const end = take.endTime.toDate()
+    const start = take.startTime.toDate()
+
+    let dur = "";
+    const date = new Date((take.endTime.seconds - take.startTime.seconds)*1000);
+    if((date.getHours() - 1) > 0){
+      dur = (date.getHours() - 1) + 'h ' + date.getMinutes() + 'm ' + date.getSeconds() + 's';
+    }
+    else if (date.getMinutes() > 0){
+      dur = date.getMinutes() + 'm ' + date.getSeconds() + 's';
+    }
+    else {
+      dur = date.getSeconds() + 's';
+    }
+
+    return dur;
+
+  }
+
 }
+
