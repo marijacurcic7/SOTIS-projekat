@@ -3,13 +3,19 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
   }
 
   mat-card {
-    width: 800px;
+    max-width: 50rem;
+    width: 50rem;
+    min-width: auto;
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: space-between;
+    min-height: 14rem;
+    padding-top: 2rem;
   }
 
   mat-card-content {
