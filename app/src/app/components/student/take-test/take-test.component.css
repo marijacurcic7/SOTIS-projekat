@@ -1,23 +1,38 @@
+.test-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
+mat-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  padding-top: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+mat-card-subtitle {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+mat-card-actions {
+  margin-top: 2rem;
+}
 
-  .test-card {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
+mat-icon {
+  color:#7256a3;
+  font-size: 1.3rem;
+  vertical-align: bottom;
+}
 
-  mat-card {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-  
-  .full-width {
-    width: 100%;
-  }
-
-
-
-  
-
-  
+#start {
+  font-size: large;
+  padding-left: 1.8rem;
+  padding-right: 1.8rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
