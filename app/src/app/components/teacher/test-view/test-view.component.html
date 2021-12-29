@@ -13,6 +13,13 @@
             </mat-card-subtitle>
         </mat-card-header>
 
+        <div>
+            <button mat-button color="primary" (click)="getImsqti()">
+                <mat-icon class="material-icons-outlined">file_download</mat-icon>
+                Export to ims-qti
+              </button>
+        </div>
+
         <mat-card-content>
             <p>Max points: {{test.maxPoints}}</p>
 

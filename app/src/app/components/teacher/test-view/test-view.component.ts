@@ -6,6 +6,7 @@ import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AuthService } from 'src/app/services/auth.service';
+import { ImsqtiService } from 'src/app/services/imsqti.service';
 
 
 @Component({
@@ -38,8 +39,8 @@ export class TestViewComponent implements OnInit {
     private route: ActivatedRoute,
     private testService: TestService,
     private cd: ChangeDetectorRef,
-    private authService: AuthService,
-  ) {
+    private imsqtiService: ImsqtiService,
+    ) {
     this.test = {
       name: "",
       maxPoints: 0,
@@ -107,5 +108,8 @@ export class TestViewComponent implements OnInit {
 
   }
 
+  getImsqti() {
+    this.imsqtiService.getImsqti()
+  }
 
 }
