@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentSnapshot, QueryDocumentSnapshot, QueryFn } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
 import { MyAnswer } from '../models/myAnswer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
-import { map } from 'rxjs/operators';
-import { TestService } from './test.service';
-import { Router } from '@angular/router';
+import { map, take } from 'rxjs/operators';
 import { AngularFireFunctions } from '@angular/fire/compat/functions';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class TakeService {
+
+  private lastTake: QueryDocumentSnapshot<Take>
+  private firstTake: QueryDocumentSnapshot<Take>
+  private pageSize: number = 2
+  previousTakesPageExists: boolean = false
+  nextTakesPageExists: boolean = false
 
   constructor(
     private firestore: AngularFirestore,
@@ -33,6 +36,53 @@ export class TakeService {
       }))
     )
   }
+
+  async getTakesPage(userId: string, action: 'init' | 'next' | 'previous'): Promise<Take[]> {
+    let query: QueryFn;
+    if (action === 'next') query = ref => ref.orderBy('startTime', 'desc').startAfter(this.lastTake).limit(this.pageSize)
+    else if (action === 'previous') query = ref => ref.orderBy('startTime', 'desc').endBefore(this.firstTake).limitToLast(this.pageSize)
+    else query = ref => ref.orderBy('startTime', 'desc').limit(this.pageSize)
+
+    const takesCollection = this.firestore.collection<Take>(`users/${userId}/takes`, query);
+
+    const takes = await takesCollection.snapshotChanges().pipe(take(1)).toPromise()
+    // check if data exists
+    if (takes.length === 0) return []
+
+    this.firstTake = takes[0].payload.doc
+    this.lastTake = takes[takes.length - 1].payload.doc
+
+    return takes.map(a => {
+      const data = a.payload.doc.data() as Take;
+      const id = a.payload.doc.id;
+      data.id = id;
+      return data
+    })
+  }
+
+
+  previousPage(pageSize: number, userId: string) {
+    const takesCollection = this.firestore.collection<Take>(`users/${userId}/takes`,
+      ref => ref.orderBy('startTime', 'desc')
+        .endBefore(this.firstTake)
+        .limitToLast(pageSize)
+    )
+
+    return takesCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Take;
+        const id = a.payload.doc.id;
+        data.id = id;
+        return data;
+      }))
+    )
+  }
+
+
+
+
+
+
 
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
     try {
