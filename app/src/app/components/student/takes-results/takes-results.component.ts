@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import firebase from 'firebase/compat';
 import { take } from 'rxjs/operators';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
@@ -26,6 +27,7 @@ export class TakesResultsComponent implements OnInit {
     public takeService: TakeService,
     private testService: TestService,
     private authService: AuthService,
+    private router: Router,
   ) { }
 
   async ngOnInit() {
@@ -70,6 +72,10 @@ export class TakesResultsComponent implements OnInit {
     if ((date.getHours() - 1) > 0) return `${date.getHours() - 1}h ${date.getMinutes()}m ${date.getSeconds()}s`
     else if (date.getMinutes() > 0) return `${date.getMinutes()}m ${date.getSeconds()}s`
     else return `${date.getSeconds()}s`
+  }
+
+  navigateToTakeResults(take: ExpandedTake) {
+    this.router.navigate([`/take-test/${take.testId}/take/${take.id}/results`]);
   }
 }
 

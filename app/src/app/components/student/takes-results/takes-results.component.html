@@ -56,7 +56,7 @@
         Details
       </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-icon-button [routerLink]="['/take-test/', element.id]" color="primary">
+        <button mat-icon-button color="primary" (click)="navigateToTakeResults(element)">
           <mat-icon class="material-icons-outlined" style="font-size: 1.4rem;">info</mat-icon>
         </button>
       </td>
