@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentChangeAction, DocumentSnapshot, QueryDocumentSnapshot, QueryFn } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentChangeAction, QueryDocumentSnapshot, QueryFn } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
 import { MyAnswer } from '../models/myAnswer.model';
@@ -7,7 +7,6 @@ import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
 import { map, take } from 'rxjs/operators';
 import { AngularFireFunctions } from '@angular/fire/compat/functions';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,10 +37,18 @@ export class TakeService {
     )
   }
 
+  /**
+   * Function provides pagination of data. 
+   * First makes a query to get documents.
+   * Then sets metadata.
+   * Then returns a page of takes. 
+   * @param userId user ID for which we find takes
+   * @param action action to be performed
+   * @returns page of takes
+   */
   async getTakesPage(userId: string, action: 'init' | 'next' | 'previous'): Promise<Take[]> {
     const takes = await this.makeQuery(userId, action)
     await this.setTakeMetadata(userId, takes)
-
 
     return takes.map(a => {
       const data = a.payload.doc.data() as Take;
@@ -51,6 +58,9 @@ export class TakeService {
     })
   }
 
+  /**
+   * create a query based on action. Can read next and previous pages.
+   */
   private async makeQuery(userId: string, action: 'init' | 'next' | 'previous'): Promise<DocumentChangeAction<Take>[]> {
     let query: QueryFn;
     if (action === 'next') query = ref => ref.orderBy('startTime', 'desc').startAfter(this.lastTake).limit(this.pageSize)
@@ -63,6 +73,11 @@ export class TakeService {
     return takes
   }
 
+  /**
+   * Important to provide information about first take and last take in a prevously performed query.
+   * This is important in order to know the next query.
+   * Checks if next page and previous page do exist (this is not obligotory but nice UX).
+   */
   private async setTakeMetadata(userId: string, takes: DocumentChangeAction<Take>[]) {
     // check if data exists
     if (takes.length === 0) return
@@ -88,7 +103,6 @@ export class TakeService {
       .length
 
     this.previousPageExists = (previousPageSize !== 0)
-
   }
 
 
