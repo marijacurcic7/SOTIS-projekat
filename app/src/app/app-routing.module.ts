@@ -7,7 +7,7 @@ import { AddTestComponent } from './components/teacher/add-test/add-test.compone
 import { TestViewComponent } from './components/teacher/test-view/test-view.component';
 import { MyTestsComponent } from './components/teacher/my-tests/my-tests.component';
 import { RoleGuard } from './guards/role.guard';
-import { AllTestsComponent } from './components/all-tests/all-tests.component';
+import { AllTestsComponent } from './components/student/all-tests/all-tests.component';
 import { TakeTestComponent } from './components/student/take-test/take-test.component';
 import { QuestionComponent } from './components/student/question/question.component';
 import { ResultsComponent } from './components/student/results/results.component';
