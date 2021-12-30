@@ -19,9 +19,11 @@ export class TakesResultsComponent implements OnInit {
   displayedColumns: string[] = ['testName', 'domain', 'points', 'duration', 'startTime', 'details'];
   takes: ExpandedTake[]
   user: User | undefined
+  previousPageExists: boolean
+  nextPageExists: boolean
 
   constructor(
-    private takeService: TakeService,
+    public takeService: TakeService,
     private testService: TestService,
     private authService: AuthService,
   ) { }

@@ -70,10 +70,10 @@
     </tr>
   </table>
   <div class="actions">
-    <button mat-icon-button color="primary" (click)="previous()">
+    <button mat-icon-button color="primary" (click)="previous()" [disabled]="!takeService.previousPageExists">
       <mat-icon class="material-icons-outlined" style="font-size: 1.8rem;">arrow_back</mat-icon>
   </button>
-  <button mat-icon-button color="primary" (click)="next()">
+  <button mat-icon-button color="primary" (click)="next()" [disabled]="!takeService.nextPageExists">
       <mat-icon class="material-icons-outlined" style="font-size: 1.8rem;">arrow_forward</mat-icon>
   </button>
   </div>
