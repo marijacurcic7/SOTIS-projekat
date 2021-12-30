@@ -30,21 +30,21 @@ export class ResultsComponent implements OnInit {
   displayedColumns: string[] = ['question', 'correct', 'points'];
   answers: MyAnswer[];
 
-  
+
   constructor(
     private route: ActivatedRoute,
     private takeService: TakeService,
     private testService: TestService,
     private authService: AuthService,
     private router: Router,
-  ) { 
+  ) {
     this.take = {
       passed: false,
       points: 0,
       testName: "",
       testId: "",
       startTime: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: {displayName: '', uid: ''}
+      user: { displayName: '', uid: '' }
     }
     this.dataSource = new MatTableDataSource<MyAnswer>();
   }
@@ -53,7 +53,7 @@ export class ResultsComponent implements OnInit {
 
     this.testId = String(this.route.snapshot.paramMap.get('id'));
     this.takeId = String(this.route.snapshot.paramMap.get('tid'));
-    
+
     this.testService.getTest(this.testId).subscribe(test => {
       this.test = test;
       console.log(this.test);
@@ -62,21 +62,29 @@ export class ResultsComponent implements OnInit {
 
     this.authService.user$.subscribe(user => {
       this.user = user;
-      if(!this.user) throw new Error('You are not logged in.');
+      if (!this.user) throw new Error('You are not logged in.');
       this.takeService.getTake(this.takeId, this.user?.uid).pipe(take(1)).subscribe(t => {
         this.take = t;
         console.log(this.take);
-        
-        if(!this.user) throw new Error('You are not logged in.');
-        this.takeService.getMyAnswers(this.takeId, this.user.uid).pipe(take(1)).subscribe( ans => {
+
+        if (!this.user) throw new Error('You are not logged in.');
+        this.takeService.getMyAnswers(this.takeId, this.user.uid).pipe(take(1)).subscribe(ans => {
           console.log(ans);
           this.answers = ans;
           this.dataSource = new MatTableDataSource<MyAnswer>(this.answers);
-          
+
         });
-        
+
       });
     });
   }
 
+  getDuration(take: Take) {
+    if (!take.endTime) return ''
+    const date = new Date((take.endTime.seconds - take.startTime.seconds) * 1000);
+
+    if ((date.getHours() - 1) > 0) return `${date.getHours() - 1}h ${date.getMinutes()}m ${date.getSeconds()}s`
+    else if (date.getMinutes() > 0) return `${date.getMinutes()}m ${date.getSeconds()}s`
+    else return `${date.getSeconds()}s`
+  }
 }
