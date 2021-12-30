@@ -34,3 +34,8 @@
 .green {
   color: #32a057;
 }
+
+.actions {
+  text-align: end;
+  width: 95%;
+}

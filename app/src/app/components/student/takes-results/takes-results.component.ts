@@ -28,21 +28,30 @@ export class TakesResultsComponent implements OnInit {
 
   async ngOnInit() {
     this.user = await this.authService.user$.pipe(take(1)).toPromise()
-
     await this.getTakes()
   }
 
   async getTakes() {
     if (!this.user) throw new Error('You must login first.');
-    // get page of takes
     let takes = await this.takeService.getTakesPage(this.user.uid, 'init');
-    takes = await this.takeService.getTakesPage(this.user.uid, 'next');
-    takes = await this.takeService.getTakesPage(this.user.uid, 'previous');
-    // takes = await this.takeService.getTakesPage(this.user.uid, 'previous');
+    this.setTakes(takes)
+  }
 
+  async previous() {
+    if (!this.user) throw new Error('You must login first.')
+    const takes = await this.takeService.getTakesPage(this.user.uid, 'previous')
+    this.setTakes(takes)
 
+  }
+
+  async next() {
+    if (!this.user) throw new Error('You must login first.')
+    const takes = await this.takeService.getTakesPage(this.user.uid, 'next');
+    this.setTakes(takes)
+  }
+
+  private async setTakes(takes: Take[]) {
     this.takes = takes.map(testTake => testTake as ExpandedTake)
-
     // get max points & domain name for current test take
     for (const testTake of this.takes) {
       const test = await this.testService.getTest(testTake.testId).pipe(take(1)).toPromise()
@@ -50,6 +59,7 @@ export class TakesResultsComponent implements OnInit {
       testTake.domainName = test.domainName
     }
   }
+
 
   getDuration(take: ExpandedTake) {
     if (!take.endTime) return ''
