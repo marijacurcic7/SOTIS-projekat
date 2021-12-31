@@ -1,65 +1,86 @@
-<div class="test-card">
-  <mat-card>
-    <button mat-button color="primary" style="align-self: flex-end;" routerLink="/takes-results">
-      View all results
-      <mat-icon class="material-icons-outlined">arrow_forward</mat-icon>
-    </button>
-    <mat-card-header>
-      <mat-card-title>
-        <span style="font-size: 2rem;">{{take?.testName}}</span>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <div>
-          <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">timer</mat-icon>
-          <span style="vertical-align: super;">{{getDuration(take)}} </span>
-        </div>
-        <div>
-          <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">today</mat-icon>
-          <span style="vertical-align: super;">
-            {{take?.startTime?.toDate()?.toLocaleString('sr-RS')}}
-          </span>
-        </div>
-        <div>
-          <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">functions</mat-icon>
-          <span style="vertical-align: super;">
-            {{take?.points}}/{{test?.maxPoints}}
-          </span>
-        </div>
-      </mat-card-subtitle>
-    </mat-card-header>
+<div class="center">
+  <button mat-button color="primary" id='view-all-results-btn' routerLink="/takes-results">
+    View all results
+    <mat-icon class="material-icons-outlined">arrow_forward</mat-icon>
+  </button>
 
-    <mat-card-content>
+  <h1>{{take?.testName}}</h1>
+
+  <div class='info'>
+    <div>
+      <mat-icon class="material-icons-outlined">timer</mat-icon>
+      <span style="vertical-align: super;">{{getDuration(take)}} </span>
+    </div>
+    <div>
+      <mat-icon class="material-icons-outlined">today</mat-icon>
+      <span style="vertical-align: super;">
+        {{take?.startTime?.toDate()?.toLocaleString('sr-RS')}}
+      </span>
+    </div>
+    <div>
+      <mat-icon class="material-icons-outlined">functions</mat-icon>
+      <span style="vertical-align: super;">
+        {{take?.points}}/{{test?.maxPoints}}
+      </span>
+    </div>
+    <div>
+      <label *ngIf="take?.passed; else elseBlock" class="passed">Passed</label>
+      <ng-template #elseBlock>
+        <label class="failed">Failed</label>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class='questions' *ngFor="let question of questions; let i=index">
+    <hr style="border-top: 1px solid #d0c3e6">
+
+    <div class="question">
+      <!-- question text -->
+      <span>{{i + 1}}. {{question.text}}</span>
+    </div>
+
+    <div style="padding-left: 2rem;">
+      <!-- correct or not -->
       <div>
-        <label *ngIf="take?.passed; else elseBlock" class="passed">Passed</label>
-        <ng-template #elseBlock>
-          <label class="failed">Failed</label>
+        <span *ngIf="myAnswers[i].correct; else wrong">
+          <mat-icon class="material-icons-outlined" style="vertical-align: middle; color:#2bbf21; font-size: 1.5rem">
+            check
+          </mat-icon>
+        </span>
+        <ng-template #wrong>
+          <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color: #bf3b21; font-size: 1.5rem">
+            close
+          </mat-icon>
         </ng-template>
       </div>
 
-
+      <!-- points / max points -->
       <div>
-        <!-- question text -->
-
-        <!-- possible answers -->
-
-        <!-- my answers -->
-
-        <!-- correct or not -->
-
-        <!-- points / max points -->
-
-        <!-- correct answers -->
+        <mat-icon class="material-icons-outlined">functions</mat-icon>
+        <span style="vertical-align: top;">
+          {{myAnswers[i].points}}/{{question.maxPoints}}
+        </span>
       </div>
 
+      <!-- possible and correct -->
+      <div style="padding: 0.5rem;">
+        <span *ngFor="let possibleAns of question.possibleAnswers" class='possible-answer'>
+          <span [ngClass]="correctAnswers?.[i]?.correctAnswers?.includes(possibleAns) ? 'correct-ans' : 'wrong-ans'">
+            {{possibleAns}}</span>
+        </span>
+      </div>
 
-
-
-
-
-
-
-    </mat-card-content>
-    <mat-card-actions>
-    </mat-card-actions>
-  </mat-card>
+      <!-- my answers -->
+      <div style="padding: 0.5rem;">
+        <span *ngIf="myAnswers[i].myAnswers.length !== 0; else notAnswered">
+          <span *ngFor="let myans of myAnswers[i].myAnswers" class='my-ans'>
+            <span *ngIf="myans; else notAnswered">{{myans}}</span>
+          </span>
+        </span>
+        <ng-template #notAnswered>
+          <span style="color: rgb(83, 83, 83); font-style: italic;"> Not answered </span>
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </div>
