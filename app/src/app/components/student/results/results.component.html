@@ -6,7 +6,7 @@
     </button>
     <mat-card-header>
       <mat-card-title>
-        <span style="font-size: 2rem;">{{take.testName}}</span>
+        <span style="font-size: 2rem;">{{take?.testName}}</span>
       </mat-card-title>
       <mat-card-subtitle>
         <div>
@@ -14,15 +14,15 @@
           <span style="vertical-align: super;">{{getDuration(take)}} </span>
         </div>
         <div>
-          <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">schedule</mat-icon>
+          <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">today</mat-icon>
           <span style="vertical-align: super;">
-            {{take.startTime.toDate().toLocaleString('sr-RS')}}
+            {{take?.startTime?.toDate()?.toLocaleString('sr-RS')}}
           </span>
         </div>
         <div>
           <mat-icon class="material-icons-outlined" style="font-size: 1.2rem; color:#7256a3">functions</mat-icon>
           <span style="vertical-align: super;">
-            {{take.points}}/{{maxPoints}}
+            {{take?.points}}/{{test?.maxPoints}}
           </span>
         </div>
       </mat-card-subtitle>
@@ -30,43 +30,32 @@
 
     <mat-card-content>
       <div>
-        <label *ngIf="take.passed; else elseBlock" class="passed">Passed</label>
+        <label *ngIf="take?.passed; else elseBlock" class="passed">Passed</label>
         <ng-template #elseBlock>
           <label class="failed">Failed</label>
         </ng-template>
       </div>
 
-      <table mat-table [dataSource]="dataSource">
 
-        <ng-container matColumnDef="question">
-          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Question </th>
-          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.id}} </td>
-        </ng-container>
+      <div>
+        <!-- question text -->
 
-        <ng-container matColumnDef="correct">
-          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Correct </th>
-          <td mat-cell *matCellDef="let element" style="text-align: center;">
-            <span *ngIf="element.correct; else elseBlock">
-              <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color:#2bbf21">
-                check</mat-icon>
-            </span>
-            <ng-template #elseBlock>
-              <mat-icon class="material-icons-outlined" style="vertical-align: bottom; color: #bf3b21">
-                close</mat-icon>
-            </ng-template>
-            <!-- {{element.correct}}  -->
-          </td>
-        </ng-container>
+        <!-- possible answers -->
 
-        <ng-container matColumnDef="points">
-          <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Points </th>
-          <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.points}} </td>
-        </ng-container>
+        <!-- my answers -->
+
+        <!-- correct or not -->
+
+        <!-- points / max points -->
+
+        <!-- correct answers -->
+      </div>
 
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+
+
+
+
 
 
     </mat-card-content>
