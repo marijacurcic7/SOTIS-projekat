@@ -1,6 +1,9 @@
 import * as functions from "firebase-functions";
 import * as admin from 'firebase-admin';
 admin.initializeApp();
+
+export * from './getAnswers'
+
 import { Answer } from "./models/answer.model";
 import { Question } from "./models/question.model";
 import { MyAnswer } from "./models/myAnswer.model";

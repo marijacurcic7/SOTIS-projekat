@@ -6,6 +6,9 @@ import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
 import { Test } from '../models/test.model';
 import { map } from 'rxjs/operators';
+import { User } from '../models/user.model';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +18,7 @@ export class TestService {
   constructor(
     private firestore: AngularFirestore,
     private snackBar: MatSnackBar,
+    private fns: AngularFireFunctions,
   ) { }
 
   async addTest(test: Test, questions: Question[], answers: Answer[]) {
@@ -66,7 +70,7 @@ export class TestService {
 
   getAllTests() {
     const testsCollection = this.firestore.collection<Test>('tests');
-    
+
     return testsCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Test;
@@ -101,8 +105,29 @@ export class TestService {
       }))
     )
   }
-  
-  getAnswers(testId: string) {
+
+  /**
+   * Get correct answers for student & teacher.
+   * @param testId 
+   * @param user - only if student is requesting correct answer 
+   * @param takeId - only if student is requesting correct answer
+   * @returns a list of correct answers
+   */
+  getAnswers(testId: string, user?: User, takeId?: string): Observable<Answer[]> {
+    // if student
+    if (user?.role === 'student' && takeId) {
+      try {
+        const callable = this.fns.httpsCallable<string>('getCorrectAnswers');
+        return callable(takeId)
+      }
+      catch (error) {
+        if (error instanceof FirebaseError) this.openFailSnackBar(error.code);
+        else this.openFailSnackBar();
+        throw error;
+      }
+    }
+
+    // if teacher
     const answersCollection = this.firestore.collection<Answer>(`tests/${testId}/answers`);
     return answersCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
