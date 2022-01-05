@@ -57,10 +57,10 @@ export class TakeTestComponent implements OnInit {
     // if no active domain is defined, use expected domain by default
     const domain = await this.domainService.getDomain(this.test.domainId).pipe(take(1)).toPromise()
     if (domain?.currentlyActive === 'realDomain') {
-      this.domainProblems = await this.domainService.getDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
+      this.domainProblems = await this.domainService.getRealDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
     }
     else {
-      this.domainProblems = await this.domainService.getRealDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
+      this.domainProblems = await this.domainService.getDomainProblems(this.test.domainId).pipe(take(1)).toPromise()
     }
 
     // get questions
