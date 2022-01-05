@@ -73,10 +73,11 @@
 
       <!-- my answers -->
       <div style="padding: 0.5rem;">
+        <div>My answers: </div>
         <span *ngIf="myAnswers[i].myAnswers.length !== 0; else notAnswered">
-          <span *ngFor="let myans of myAnswers[i].myAnswers" class='my-ans'>
-            <span *ngIf="myans; else notAnswered">{{myans}}</span>
-          </span>
+          <div *ngFor="let myans of myAnswers[i].myAnswers" class='my-ans'>
+            <li *ngIf="myans; else notAnswered">{{myans}}</li>
+          </div>
         </span>
         <ng-template #notAnswered>
           <span style="color: rgb(83, 83, 83); font-style: italic;"> Not answered </span>
