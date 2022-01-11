@@ -104,6 +104,6 @@ export class AssessmentItem {
   }
 
   public getXml() {
-    return parse('assessmentItem', this)
+    return parse('qti-assessment-item', this)
   }
 }

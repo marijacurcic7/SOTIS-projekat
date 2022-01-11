@@ -107,6 +107,6 @@ export class Manifest {
     return itemResource;
   }
   public getXml() {
-    return parse('assessmentItem', this)
+    return parse('manifest', this)
   }
 }

@@ -93,6 +93,6 @@ export class AssessmentTest {
   }
 
   public getXml() {
-    return parse('assessmentItem', this)
+    return parse('qti-assessment-test', this)
   }
 }
