@@ -4,6 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+// storage
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { USE_EMULATOR as USE_STORAGE_EMULATOR } from '@angular/fire/compat/storage';
 //firestore
 import { AngularFireModule } from '@angular/fire/compat'
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore'
@@ -12,7 +15,6 @@ import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from '@angular/fire/compat/fir
 import { AngularFireFunctionsModule } from '@angular/fire/compat/functions';
 import { USE_EMULATOR as USE_FUNCTIONS_EMULATOR } from '@angular/fire/compat/functions';
 import { environment } from 'src/environments/environment';
-
 //auth
 import { AngularFireAuth, AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -46,6 +48,10 @@ export function initializeApp1(afa: AngularFireAuth) {
     MaterialModule
   ],
   providers: [
+    {
+      provide: USE_STORAGE_EMULATOR,
+      useValue: environment.production ? undefined : ['localhost', 8084]
+    },
     {
       provide: USE_FIRESTORE_EMULATOR,
       useValue: environment.production ? undefined : ['localhost', 8080]

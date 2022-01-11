@@ -1,6 +1,6 @@
 <div class="test-card">
   <mat-card>
-    <mat-card-header style="justify-content: space-between; align-items: flex-end; padding-bottom: 2rem;">
+    <mat-card-header style="justify-content: space-between; align-items: flex-end;">
       <mat-card-title>
         <span style="font-size: 2rem;">{{test.name}}</span>
       </mat-card-title>
@@ -16,16 +16,15 @@
         <mat-icon class="material-icons-outlined">functions</mat-icon>
         {{test.maxPoints}} points
       </mat-card-subtitle>
-
-      <div>
-        <button mat-stroked-button color="primary" (click)="getImsqti()">
-          <mat-icon class="material-icons-outlined">download</mat-icon>
-          Download QTI
-        </button>
-      </div>
     </mat-card-header>
+    <div>
+      <button mat-stroked-button color="primary" (click)="downloadQti()">
+        <mat-icon class="material-icons-outlined">download</mat-icon>
+        Download QTI
+      </button>
+    </div>
 
-    <mat-card-content>
+    <mat-card-content style="padding-top: 2rem;">
       <table mat-table [dataSource]="questions" class="mat-elevation-z0" multiTemplateDataRows>
 
         <ng-container matColumnDef="text">

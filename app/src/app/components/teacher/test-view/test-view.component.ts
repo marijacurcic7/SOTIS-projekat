@@ -40,7 +40,7 @@ export class TestViewComponent implements OnInit {
     private testService: TestService,
     private cd: ChangeDetectorRef,
     private imsqtiService: ImsqtiService,
-    ) {
+  ) {
     this.test = {
       name: "",
       maxPoints: 0,
@@ -61,7 +61,7 @@ export class TestViewComponent implements OnInit {
 
     this.testService.getTest(testId).subscribe(t => {
       this.test = t;
-      this.domainId = this.test.domainId? this.test.domainId : "";
+      this.domainId = this.test.domainId ? this.test.domainId : "";
       this.teacherName = this.test.createdBy.displayName;
     });
 
@@ -81,7 +81,7 @@ export class TestViewComponent implements OnInit {
     });
 
     let i = this.expandedElements.indexOf(q);
-    if(i > -1) this.expandedElements.splice(i);
+    if (i > -1) this.expandedElements.splice(i);
     else this.expandedElements.push(q);
 
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
@@ -101,12 +101,9 @@ export class TestViewComponent implements OnInit {
     }
     return false;
     // });
-
-
   }
 
-  getImsqti() {
-    this.imsqtiService.getImsqti()
+  async downloadQti() {
+    if (this.test.id) await this.imsqtiService.downloadQti(this.test.id)
   }
-
 }
