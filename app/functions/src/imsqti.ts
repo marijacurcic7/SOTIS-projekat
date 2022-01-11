@@ -127,19 +127,32 @@ export const getAssessmentItemXml = functions.https.onRequest(async (request, re
   const correctAnswers = await getCorrectAnswers(testId)
 
   // TODO: proslediti u konstruktoru prave parametre
-  const assessmentItem = new AssessmentItem()
+  const assessmentItem = new AssessmentItem(questions[0], correctAnswers[0]);
   console.log(assessmentItem.getXml())
   response.contentType('text/xml; charset=utf8').send(assessmentItem.getXml())
 })
 
 export const getTestXml = functions.https.onRequest(async (request, response) => {
   // get test from database
-  const javascriptTest: Test = (await admin.firestore().doc(`tests/TpBxQo8I8h0b8NZ8SkCY`).get()).data() as Test
-
+  const javascriptTest: Test = (await admin.firestore().doc(`tests/TpBxQo8I8h0b8NZ8SkCY`).get()).data() as Test;
+  javascriptTest.id = testId;
+  const questions = await getQuestions(testId)
+  const correctAnswers = await getCorrectAnswers(testId)
   // TODO: proslediti u konstruktoru prave parametre
-  // const test = new AssessmentTest()
-  // console.log(test.getXml())
-  // response.contentType('text/xml; charset=utf8').send(test.getXml())
+
+  let assesmentItems: AssessmentItem[] = [];
+  for(let question of questions) {
+    var answer = correctAnswers.filter(ans => {
+      return ans.id==question.id;
+    })[0];
+
+    let assessmentItem = new AssessmentItem(question, answer);
+    assesmentItems.push(assessmentItem);
+  }
+
+  const test = new AssessmentTest(javascriptTest, assesmentItems);
+  console.log(test.getXml())
+  response.contentType('text/xml; charset=utf8').send(test.getXml())
 })
 
 export const getManifestXml = functions.https.onRequest(async (request, response) => {

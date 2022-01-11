@@ -23,12 +23,10 @@ export class AssessmentTest {
         'title': 'Section 1';
         'visible': true;
       };
-      '': {
-        'qti-assessment-item-ref': {
-          '@': {
-            'identifier': string;
-            'href': string;
-          };
+      'qti-assessment-item-ref': {
+        '@': {
+          'identifier': string;
+          'href': string;
         };
       }[];
     };
@@ -74,19 +72,19 @@ export class AssessmentTest {
           'title': 'Section 1',
           'visible': true,
         },
-        '': itemRefs,
+        'qti-assessment-item-ref': itemRefs,
       },
     }
   }
 
   private initItemRef(itemId: string, itemFile: string) {
     let itemRef = {
-      'qti-assessment-item-ref': {
+      // 'qti-assessment-item-ref': {
         "@": {
           'identifier': itemId,
           'href': itemFile
         }
-      }
+      // }
 
     }
     return itemRef;
