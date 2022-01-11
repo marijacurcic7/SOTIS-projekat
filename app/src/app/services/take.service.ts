@@ -129,7 +129,7 @@ export class TakeService {
   async finishTake(takeId: string) {
     try {
       const callable = this.fns.httpsCallable<string>('finishTake');
-      return callable(takeId).toPromise()
+      return await callable(takeId).toPromise()
     }
 
     catch (error) {
