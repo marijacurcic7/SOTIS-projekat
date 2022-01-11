@@ -31,8 +31,11 @@ export class Manifest {
     }[];
 
 
-    constructor() {
-        // TODO: proslediti u konstruktor neophodne objekte i pozvati privatne metode
+    constructor(test: AssessmentTest, items: AssessmentItem[]) {
+        let manifestId = test["@"].identifier + "test-entry";
+        this.initRoot(manifestId);
+        this.initMetadata();
+        this.initResources(test, items);
     }
     
     private initRoot(manifestId: string) {
@@ -51,7 +54,6 @@ export class Manifest {
             'schemaversion': "3.0.0",
         }
     }
-
 
     private initResources(test: AssessmentTest, items: AssessmentItem[]) {
         let resources = [];

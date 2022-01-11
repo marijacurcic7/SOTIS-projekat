@@ -1,3 +1,6 @@
+import { AssessmentItem } from "./assessment-item.model";
+import { Test } from "./test.model";
+
 export class AssessmentTest {
     '@': {
       'identifier': string; // Test.id
@@ -31,8 +34,11 @@ export class AssessmentTest {
     };
 
   
-    constructor() {
-      // TODO: proslediti u konstruktor neophodne objekte i pozvati privatne metode
+    constructor(test: Test, assesmentItems: AssessmentItem[]) {
+      if(!test.id) return;
+      this.initRoot(test.id, test.name);
+      this.initTestPart(assesmentItems);
+
     }
   
     private initRoot(testId: string, testName: string) {
@@ -46,7 +52,15 @@ export class AssessmentTest {
       }
     }
   
-    private initTestPart() {
+    private initTestPart(items: AssessmentItem[]) {
+
+      let itemRefs = [];
+      for(let item of items) {
+        let itemFile = "items/" + item["@"].title + ".xml";
+        let itemRef = this.initItemRef(item["@"].identifier, itemFile);
+        itemRefs.push(itemRef);
+      }
+
       this["qti-test-part"] = {
         '@': {
           'identifier': 'testPart-1',
@@ -59,11 +73,24 @@ export class AssessmentTest {
                 'title': 'Section 1',
                 'visible': true,
             },
-            '': [] 
+            '': itemRefs,
         },
       }
     }
 
+    private initItemRef(itemId: string, itemFile: string) {
+      let itemRef = {
+        'qti-assessment-item-ref': {
+          "@": {
+            'identifier': itemId,
+            'href': itemFile
+          }
+        }
+        
+      }
+      return itemRef;
+    }
 
-    
+
+
 }

@@ -1,3 +1,6 @@
+import { Question } from "./question.model";
+import { Answer } from "./answer.model";
+
 export class AssessmentItem {
     '@': {
       'identifier': string; // Question.id
@@ -67,17 +70,33 @@ export class AssessmentItem {
       }
     }
   
-    private initCorrectAnswers() {
+    private initCorrectAnswers(answer: Answer) {
+
       this["qti-response-declaration"] = {
         '@': {
           'identifier': 'RESPONSE',
           'cardinality': 'multiple',
           'base-type': 'identifier',
         },
-        // TODO: ovo se treba popuniti
-        'qti-correct-response': [], 
+        'qti-correct-response': answer.correctAnswers, 
       }
     }
   
-    // TODO: napraviti ostale funkcije
+    private initOutcome(question: Question) {
+      this['qti-outcome-declaration'] = {
+        '@': {
+          'base-type': 'float',
+          'cardinality': 'single',
+          'identifier': 'SCORE'
+        },
+        'qti-default-value': {
+          'qti-value': question.maxPoints,
+        }
+      }
+    }
+
+
+    private initBody(question: Question) {
+
+    }
 }
