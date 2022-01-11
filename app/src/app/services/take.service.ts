@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentChangeAction, QueryDocumentSnapshot, QueryFn } from '@angular/fire/compat/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@firebase/app';
 import { MyAnswer } from '../models/myAnswer.model';
 import { Question } from '../models/question.model';
 import { Take } from '../models/take.model';
-import { map } from 'rxjs/operators';
-import { TestService } from './test.service';
-import { Router } from '@angular/router';
+import { map, take } from 'rxjs/operators';
 import { AngularFireFunctions } from '@angular/fire/compat/functions';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class TakeService {
+
+  private lastTake: QueryDocumentSnapshot<Take>
+  private firstTake: QueryDocumentSnapshot<Take>
+  private pageSize: number = 2
+  previousPageExists: boolean
+  nextPageExists: boolean
 
   constructor(
     private firestore: AngularFirestore,
@@ -33,6 +36,77 @@ export class TakeService {
       }))
     )
   }
+
+  /**
+   * Function provides pagination of data. 
+   * First makes a query to get documents.
+   * Then sets metadata.
+   * Then returns a page of takes. 
+   * @param userId user ID for which we find takes
+   * @param action action to be performed
+   * @returns page of takes
+   */
+  async getTakesPage(userId: string, action: 'init' | 'next' | 'previous'): Promise<Take[]> {
+    const takes = await this.makeQuery(userId, action)
+    await this.setTakeMetadata(userId, takes)
+
+    return takes.map(a => {
+      const data = a.payload.doc.data() as Take;
+      const id = a.payload.doc.id;
+      data.id = id;
+      return data
+    })
+  }
+
+  /**
+   * create a query based on action. Can read next and previous pages.
+   */
+  private async makeQuery(userId: string, action: 'init' | 'next' | 'previous'): Promise<DocumentChangeAction<Take>[]> {
+    let query: QueryFn;
+    if (action === 'next') query = ref => ref.orderBy('startTime', 'desc').startAfter(this.lastTake).limit(this.pageSize)
+    else if (action === 'previous') query = ref => ref.orderBy('startTime', 'desc').endBefore(this.firstTake).limitToLast(this.pageSize)
+    else query = ref => ref.orderBy('startTime', 'desc').limit(this.pageSize)
+
+    const takesCollection = this.firestore.collection<Take>(`users/${userId}/takes`, query);
+
+    const takes = await takesCollection.snapshotChanges().pipe(take(1)).toPromise()
+    return takes
+  }
+
+  /**
+   * Important to provide information about first take and last take in a prevously performed query.
+   * This is important in order to know the next query.
+   * Checks if next page and previous page do exist (this is not obligotory but nice UX).
+   */
+  private async setTakeMetadata(userId: string, takes: DocumentChangeAction<Take>[]) {
+    // check if data exists
+    if (takes.length === 0) return
+    this.firstTake = takes[0].payload.doc
+    this.lastTake = takes[takes.length - 1].payload.doc
+
+    // make query to check if next page exists
+    const nextQuery: QueryFn = ref => ref.orderBy('startTime', 'desc').startAfter(this.lastTake).limit(this.pageSize)
+    const nextPageSize = (await this.firestore
+      .collection<Take>(`users/${userId}/takes`, nextQuery)
+      .valueChanges()
+      .pipe(take(1)).toPromise())
+      .length
+
+    this.nextPageExists = (nextPageSize !== 0)
+
+    // make query to check if previous page exists
+    const previousQuery: QueryFn = ref => ref.orderBy('startTime', 'desc').endBefore(this.firstTake).limitToLast(this.pageSize)
+    const previousPageSize = (await this.firestore
+      .collection<Take>(`users/${userId}/takes`, previousQuery)
+      .valueChanges()
+      .pipe(take(1)).toPromise())
+      .length
+
+    this.previousPageExists = (previousPageSize !== 0)
+  }
+
+
+
 
   async addTake(take: Take, uid: string, questions: Question[], answers: MyAnswer[]) {
     try {

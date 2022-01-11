@@ -25,7 +25,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TestViewComponent } from './teacher/test-view/test-view.component';
 import { MyTestsComponent } from './teacher/my-tests/my-tests.component';
 import {MatDividerModule} from '@angular/material/divider';
-import { AllTestsComponent } from './all-tests/all-tests.component';
+import { AllTestsComponent } from './student/all-tests/all-tests.component';
 import { TakeTestComponent } from './student/take-test/take-test.component';
 import { StudentHomePageComponent } from './student/student-home-page/student-home-page.component';
 import { QuestionComponent } from './student/question/question.component';

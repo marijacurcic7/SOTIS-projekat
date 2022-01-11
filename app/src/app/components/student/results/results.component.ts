@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Take } from 'src/app/models/take.model';
-import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TakeService } from 'src/app/services/take.service';
 import { TestService } from 'src/app/services/test.service';
-import firebase from 'firebase/compat/app';
 import { Test } from 'src/app/models/test.model';
-import { MatTableDataSource } from '@angular/material/table';
 import { take } from 'rxjs/operators';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
+import { Question } from 'src/app/models/question.model';
+import { Answer } from 'src/app/models/answer.model';
 
 
 @Component({
@@ -19,64 +18,45 @@ import { MyAnswer } from 'src/app/models/myAnswer.model';
 })
 export class ResultsComponent implements OnInit {
 
-  user: User | undefined
-  testId: string;
-  takeId: string;
-  take: Take;
-  test: Test;
-  maxPoints: number = 0;
-  time: number = 0;
-  dataSource: MatTableDataSource<MyAnswer>;
-  displayedColumns: string[] = ['question', 'correct', 'points'];
-  answers: MyAnswer[];
+  take: Take
+  test: Test
+  myAnswers: MyAnswer[]
+  questions: Question[]
+  correctAnswers: Answer[]
 
-  
   constructor(
     private route: ActivatedRoute,
     private takeService: TakeService,
     private testService: TestService,
     private authService: AuthService,
-    private router: Router,
-  ) { 
-    this.take = {
-      passed: false,
-      points: 0,
-      testName: "",
-      testId: "",
-      startTime: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: {displayName: '', uid: ''}
-    }
-    this.dataSource = new MatTableDataSource<MyAnswer>();
+  ) { }
+
+  async ngOnInit() {
+    const testId = String(this.route.snapshot.paramMap.get('id'));
+    const takeId = String(this.route.snapshot.paramMap.get('tid'));
+
+    // TODO: QUERY ACTUAL QUESTIONS AND ANSWER
+    const user = await this.authService.user$.pipe(take(1)).toPromise()
+    if (!user) throw new Error('You are not logged in.');
+
+    // get test
+    this.testService.getTest(testId).subscribe(test => this.test = test)
+    // get take
+    this.takeService.getTake(takeId, user.uid).subscribe(take => this.take = take)
+    // get my answers
+    this.takeService.getMyAnswers(takeId, user.uid).subscribe(ans => this.myAnswers = ans)
+    // get questions
+    this.takeService.getQuestions(takeId, user.uid).subscribe(questions => this.questions = questions)
+    // get correct answers
+    this.testService.getAnswers(testId, user, takeId).subscribe(ans => this.correctAnswers = ans)
   }
 
-  ngOnInit(): void {
+  getDuration(take: Take) {
+    if (!take?.endTime) return ''
+    const date = new Date((take.endTime.seconds - take.startTime.seconds) * 1000);
 
-    this.testId = String(this.route.snapshot.paramMap.get('id'));
-    this.takeId = String(this.route.snapshot.paramMap.get('tid'));
-    
-    this.testService.getTest(this.testId).subscribe(test => {
-      this.test = test;
-      console.log(this.test);
-      this.maxPoints = this.test.maxPoints;
-    });
-
-    this.authService.user$.subscribe(user => {
-      this.user = user;
-      if(!this.user) throw new Error('You are not logged in.');
-      this.takeService.getTake(this.takeId, this.user?.uid).pipe(take(1)).subscribe(t => {
-        this.take = t;
-        console.log(this.take);
-        
-        if(!this.user) throw new Error('You are not logged in.');
-        this.takeService.getMyAnswers(this.takeId, this.user.uid).pipe(take(1)).subscribe( ans => {
-          console.log(ans);
-          this.answers = ans;
-          this.dataSource = new MatTableDataSource<MyAnswer>(this.answers);
-          
-        });
-        
-      });
-    });
+    if ((date.getHours() - 1) > 0) return `${date.getHours() - 1}h ${date.getMinutes()}m ${date.getSeconds()}s`
+    else if (date.getMinutes() > 0) return `${date.getMinutes()}m ${date.getSeconds()}s`
+    else return `${date.getSeconds()}s`
   }
-
 }

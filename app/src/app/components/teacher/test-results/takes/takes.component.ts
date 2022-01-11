@@ -13,7 +13,6 @@ import { Question } from 'src/app/models/question.model';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNetwork } from 'src/app/models/my-network.model';
-import firebase from 'firebase/compat/app';
 
 
 @Component({

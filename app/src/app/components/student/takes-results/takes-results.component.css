@@ -1,43 +1,41 @@
-.test-card {
+.center{
   display: flex;
   align-items: center;
   flex-direction: column;
 }
-
-mat-card {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1rem;
-}
-
-.full-width {
-  width: 100%;
-}
-
 .mat-table {
-  width: 23rem;
-  margin: auto;
-  
+  width: 95%;
+  max-width: 80rem;
 }
 
-.passed-div {
-  color: white;
-  margin: 5px;
-  float: right;
+.mat-column-testName {
+  color: #412969;
+  font-size: 1.1rem;
 }
 
-.passed {
-  background-color: green;
-  padding: 5px;
+.mat-column-details {
+  width: 5rem;
+  text-align: center;
 }
 
-.failed {
-  background-color: rgb(206, 0, 0);
-  padding: 5px;
+.mat-column-points, .mat-column-startTime{
+  text-align: center;
+}
+.mat-column-duration {
+  text-align: right;
+  padding-right: 4rem;
+}
+.mat-icon {
+  /* color: #7256a3; */
+  font-size: 1rem;
+  vertical-align: top;
 }
 
-.result-div {
-  margin-bottom: 15px;
-  padding-bottom: 20px;
+.green {
+  color: #32a057;
+}
+
+.actions {
+  text-align: center;
+  width: 95%;
 }
