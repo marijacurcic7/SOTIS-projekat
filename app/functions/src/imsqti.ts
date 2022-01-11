@@ -123,8 +123,8 @@ async function getCorrectAnswers(testId: string) {
 // endpoint: http://localhost:8082/e-learning-b157f/us-central1/getAssessmentItemXml
 export const getAssessmentItemXml = functions.https.onRequest(async (request, response) => {
   // get questions
-  const questions = getQuestions(testId)
-  const correctAnswers = getCorrectAnswers(testId)
+  const questions = await getQuestions(testId)
+  const correctAnswers = await getCorrectAnswers(testId)
 
   // TODO: proslediti u konstruktoru prave parametre
   const assessmentItem = new AssessmentItem()
@@ -148,4 +148,3 @@ export const getManifestXml = functions.https.onRequest(async (request, response
   // console.log(manifest.getXml())
   // response.contentType('text/xml; charset=utf8').send(manifest.getXml())
 })
-
