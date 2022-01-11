@@ -107,7 +107,7 @@ async function getQuestions(testId: string) {
     .collection(`tests/${testId}/questions`)
     .get())
     .docs
-    .map(question => question.data() as Question)
+    .map(question => { return { ...question.data(), id: question.id } as Question })
   return questions
 }
 async function getCorrectAnswers(testId: string) {
@@ -115,7 +115,7 @@ async function getCorrectAnswers(testId: string) {
     .collection(`tests/${testId}/answers`)
     .get())
     .docs
-    .map(ans => ans.data() as Answer)
+    .map(ans => { return { ...ans.data(), id: ans.id } as Answer })
   return correctAnswers
 }
 
