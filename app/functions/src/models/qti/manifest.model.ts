@@ -64,7 +64,7 @@ export class Manifest {
       resources.push(itemResource);
     }
 
-    let testFile = test["@"].title + ".xml";
+    let testFile = "assessment.xml";
     let testResource = this.initTestResource(test["@"].identifier, testFile);
     resources.push(testResource);
 

@@ -141,9 +141,9 @@ export const getTestXml = functions.https.onRequest(async (request, response) =>
   // TODO: proslediti u konstruktoru prave parametre
 
   let assesmentItems: AssessmentItem[] = [];
-  for(let question of questions) {
+  for (let question of questions) {
     var answer = correctAnswers.filter(ans => {
-      return ans.id==question.id;
+      return ans.id == question.id;
     })[0];
 
     let assessmentItem = new AssessmentItem(question, answer);
@@ -160,12 +160,11 @@ export const getManifestXml = functions.https.onRequest(async (request, response
   javascriptTest.id = testId;
   const questions = await getQuestions(testId)
   const correctAnswers = await getCorrectAnswers(testId)
-  // TODO: proslediti u konstruktoru prave parametre
 
   let assesmentItems: AssessmentItem[] = [];
-  for(let question of questions) {
+  for (let question of questions) {
     var answer = correctAnswers.filter(ans => {
-      return ans.id==question.id;
+      return ans.id == question.id;
     })[0];
 
     let assessmentItem = new AssessmentItem(question, answer);
@@ -177,5 +176,61 @@ export const getManifestXml = functions.https.onRequest(async (request, response
   // TODO: proslediti u konstruktoru prave parametre
   const manifest = new Manifest(test, assesmentItems);
   console.log(manifest.getXml())
+  response.contentType('text/xml; charset=utf8').send(manifest.getXml())
+})
+
+
+
+export const qti = functions.https.onRequest(async (request, response) => {
+  const test = (await admin.firestore().doc(`tests/${testId}`).get()).data() as Test
+  test.id = testId
+  const questions = await getQuestions(testId)
+  const correctAnswers = await getCorrectAnswers(testId)
+
+  // create questions
+  const assessmentItems: AssessmentItem[] = [];
+  for (let question of questions) {
+    const answer = correctAnswers.find(ans => { return ans.id == question.id; });
+    if (!answer) continue
+    let assessmentItem = new AssessmentItem(question, answer);
+    assessmentItems.push(assessmentItem);
+  }
+
+  // create test
+  const assessmentTest = new AssessmentTest(test, assessmentItems);
+  // create manifest
+  const manifest = new Manifest(assessmentTest, assessmentItems);
+
+
+  // zip files
+  // create a folder for a specific test
+  // const JSZip = await import('jszip')
+  // const zip = new JSZip()
+  // const folderName = `qti-${testId}`
+  // const qtiFolder = zip.folder(folderName)
+
+  // // add questions to the folder
+  // const itemsFolder = qtiFolder?.folder('items')
+  // assessmentItems.forEach(item => itemsFolder?.file(`${item["@"]['identifier']}.xml`, item.getXml()))
+  // // add test to the folder
+  // qtiFolder?.file('assessment.xml', assessmentTest.getXml())
+  // // add manifest to the folder
+  // qtiFolder?.file('manifest.xml', manifest.getXml())
+
+
+  // // create buffer for storage
+  // const testBuffer = await zip.generateAsync({ type: 'nodebuffer' })
+
+  // // save zip to storage
+  // const bucket = admin.storage().bucket()
+  // const zippedTest = bucket.file(`qti-${testId}.zip`)
+  // await zippedTest.save(testBuffer)
+
+  // // save zip reference as a field in the test in firestore
+  // console.log(zippedTest.name)
+  // console.log(zippedTest.publicUrl())
+  // // TODO: must add actual id, not dummy id
+  // // await admin.firestore().doc(`tests/${testId}`).update({'qtiReference':zippedTest.name})
+
   response.contentType('text/xml; charset=utf8').send(manifest.getXml())
 })
