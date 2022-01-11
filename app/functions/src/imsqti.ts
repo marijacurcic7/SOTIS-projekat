@@ -127,7 +127,7 @@ export const getAssessmentItemXml = functions.https.onRequest(async (request, re
   const correctAnswers = await getCorrectAnswers(testId)
 
   // TODO: proslediti u konstruktoru prave parametre
-  const assessmentItem = new AssessmentItem(questions[0], correctAnswers[0]);
+  const assessmentItem = new AssessmentItem(questions[3], correctAnswers[3]);
   console.log(assessmentItem.getXml())
   response.contentType('text/xml; charset=utf8').send(assessmentItem.getXml())
 })

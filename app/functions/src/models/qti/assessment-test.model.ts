@@ -55,7 +55,7 @@ export class AssessmentTest {
 
     let itemRefs = [];
     for (let item of items) {
-      let itemFile = "items/" + item["@"].title + ".xml";
+      let itemFile = "items/" + item["@"].identifier + ".xml";
       let itemRef = this.initItemRef(item["@"].identifier, itemFile);
       itemRefs.push(itemRef);
     }
@@ -63,7 +63,7 @@ export class AssessmentTest {
     this["qti-test-part"] = {
       '@': {
         'identifier': 'testPart-1',
-        'navigation-mode': 'nonlinear',
+        'navigation-mode': 'linear',
         'submission-mode': 'individual',
       },
       'qti-assessment-section': {

@@ -86,7 +86,7 @@ export class AssessmentItem {
 
   private initCorrectAnswers(answer: Answer) {
     let qtivalues = []
-    for(let ans in answer.correctAnswers) {
+    for(let ans of answer.correctAnswers) {
       let qtivalue = {
           '#': ans,
       }
