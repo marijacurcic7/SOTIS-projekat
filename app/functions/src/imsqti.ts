@@ -156,8 +156,26 @@ export const getTestXml = functions.https.onRequest(async (request, response) =>
 })
 
 export const getManifestXml = functions.https.onRequest(async (request, response) => {
+  const javascriptTest: Test = (await admin.firestore().doc(`tests/TpBxQo8I8h0b8NZ8SkCY`).get()).data() as Test;
+  javascriptTest.id = testId;
+  const questions = await getQuestions(testId)
+  const correctAnswers = await getCorrectAnswers(testId)
   // TODO: proslediti u konstruktoru prave parametre
-  // const manifest = new Manifest()
-  // console.log(manifest.getXml())
-  // response.contentType('text/xml; charset=utf8').send(manifest.getXml())
+
+  let assesmentItems: AssessmentItem[] = [];
+  for(let question of questions) {
+    var answer = correctAnswers.filter(ans => {
+      return ans.id==question.id;
+    })[0];
+
+    let assessmentItem = new AssessmentItem(question, answer);
+    assesmentItems.push(assessmentItem);
+  }
+
+  const test = new AssessmentTest(javascriptTest, assesmentItems);
+
+  // TODO: proslediti u konstruktoru prave parametre
+  const manifest = new Manifest(test, assesmentItems);
+  console.log(manifest.getXml())
+  response.contentType('text/xml; charset=utf8').send(manifest.getXml())
 })

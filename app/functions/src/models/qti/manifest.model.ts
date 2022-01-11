@@ -28,12 +28,12 @@ export class Manifest {
           'href': string;
         };
       };
-    };
-  }[];
+    }[];
+  };
 
 
   constructor(test: AssessmentTest, items: AssessmentItem[]) {
-    let manifestId = test["@"].identifier + "test-entry";
+    let manifestId = test["@"].identifier + "-test-entry";
     this.initRoot(manifestId);
     this.initMetadata();
     this.initResources(test, items);
@@ -68,7 +68,9 @@ export class Manifest {
     let testResource = this.initTestResource(test["@"].identifier, testFile);
     resources.push(testResource);
 
-    this["resources"] = resources;
+    this["resources"] = {
+      'resource': resources
+    };
   }
 
 
