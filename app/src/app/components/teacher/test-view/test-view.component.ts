@@ -58,17 +58,14 @@ export class TestViewComponent implements OnInit {
 
   ngOnInit() {
     let testId = String(this.route.snapshot.paramMap.get('id'));
-    console.log(testId);
 
     this.testService.getTest(testId).subscribe(t => {
       this.test = t;
       this.domainId = this.test.domainId? this.test.domainId : "";
-      console.log(this.test);
       this.teacherName = this.test.createdBy.displayName;
     });
 
     this.testService.getQuestions(testId).subscribe(q => {
-      console.log(q);
       this.questions = q;
     });
 
