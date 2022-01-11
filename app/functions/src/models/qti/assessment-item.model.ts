@@ -19,14 +19,18 @@ export class AssessmentItem {
       'cardinality': 'multiple';
       'base-type': 'identifier';
     }
-    'qti-correct-response': string[],
+    'qti-correct-response': {
+      'qti-value': {
+        '#': string;
+      }[];
+    }
   };
 
   'qti-outcome-declaration': {
     '@': {
-      'base-type': 'float',
-      'cardinality': 'single',
-      'identifier': 'SCORE'
+      'base-type': 'float';
+      'cardinality': 'single';
+      'identifier': 'SCORE';
     };
     'qti-default-value': {
       'qti-value': number; // koliko bodova nosi pitanja
@@ -34,17 +38,20 @@ export class AssessmentItem {
   };
 
   'qti-item-body': {
+    'qti-prompt': {
+      '#': string;
+    };
     'qti-choice-interaction': {
       '@': {
-        'max-choices': 0,
-        'response-identifier': 'RESPONSE'
-      },
+        'max-choices': number;
+        'response-identifier': 'RESPONSE';
+      };
       'qti-simple-choice': {
         '@': {
-          'identifier': string // povezano sa correct answer
+          'identifier': string;
         },
-        '#': string
-      }
+        '#': string;
+      }[];
     }
   };
 
@@ -54,10 +61,14 @@ export class AssessmentItem {
     }
   }
 
-  constructor() {
-    // TODO: proslediti u konstruktor neophodne objekte i pozvati privatne metode
-    this.initRoot('12345', 'bilo sta')
-    this.initCorrectAnswers({ correctAnswers: ['true', 'false'], id: '12345' })
+  constructor(question: Question, answer: Answer) {
+    if(!question.id) return;
+    if(!question.domainProblemName) return;
+    this.initRoot(question.id, question.domainProblemName);
+    this.initCorrectAnswers(answer);
+    this.initOutcome(question);
+    this.initBody(question, answer);
+    this.initResponseProcessing();
   }
 
   private initRoot(questionId: string, domainProblemName: string) {
@@ -74,6 +85,13 @@ export class AssessmentItem {
   }
 
   private initCorrectAnswers(answer: Answer) {
+    let qtivalues = []
+    for(let ans in answer.correctAnswers) {
+      let qtivalue = {
+          '#': ans,
+      }
+      qtivalues.push(qtivalue);
+    }
 
     this["qti-response-declaration"] = {
       '@': {
@@ -81,7 +99,10 @@ export class AssessmentItem {
         'cardinality': 'multiple',
         'base-type': 'identifier',
       },
-      'qti-correct-response': answer.correctAnswers,
+      'qti-correct-response': {
+        'qti-value': qtivalues,
+      }
+      
     }
   }
 
@@ -99,8 +120,50 @@ export class AssessmentItem {
   }
 
 
-  private initBody(question: Question) {
+  private initBody(question: Question, answer: Answer) {
+    let maxchoices = 1;
+    if(answer.correctAnswers.length > 1){
+      maxchoices = question.possibleAnswers.length;
+    }
 
+    let simpleChoices = [];
+    for(let ans of question.possibleAnswers){
+      let simpleChoice = this.initSimpleChoice(ans);
+      simpleChoices.push(simpleChoice);
+    }
+
+    this['qti-item-body'] = {
+      'qti-prompt': {
+        '#': question.text,
+      },
+      'qti-choice-interaction': {
+        '@': {
+          'max-choices': maxchoices,
+          'response-identifier': 'RESPONSE',
+        },
+        'qti-simple-choice': simpleChoices,
+      }
+    }
+  }
+
+  private initSimpleChoice(possibleAnswer: string) {
+    let simpleChoice = {
+      // 'qti-simple-choice': {
+        '@': {
+          'identifier': possibleAnswer,
+        },
+        '#': possibleAnswer,
+      // }
+    }
+    return simpleChoice;
+  }
+
+  private initResponseProcessing() {
+    this['qti-response-processing'] = {
+      '@': {
+        'template': "https://purl.imsglobal.org/spec/qti/v3p0/rptemplates/match_correct", 
+      }
+    }
   }
 
   public getXml() {
