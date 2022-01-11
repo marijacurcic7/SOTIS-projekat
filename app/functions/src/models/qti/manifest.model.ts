@@ -59,7 +59,7 @@ export class Manifest {
   private initResources(test: AssessmentTest, items: AssessmentItem[]) {
     let resources = [];
     for (let item of items) {
-      let itemFile = "items/" + item["@"].title + ".xml";
+      let itemFile = "items/" + item["@"].identifier + ".xml";
       let itemResource = this.initItemResource(test["@"].identifier, item["@"].identifier, itemFile);
       resources.push(itemResource);
     }
@@ -75,7 +75,7 @@ export class Manifest {
 
 
   private initTestResource(testId: string, testFile: string): any {
-    let id = 't' + testId + '-test-entry';
+    let id = testId;
     var testResource = {
       "@": {
         'identifier': id,
@@ -93,7 +93,7 @@ export class Manifest {
 
 
   private initItemResource(testId: string, itemId: string, itemFile: string): any {
-    let id = 't' + testId + '-test-entry-item' + itemId;
+    let id = itemId;
     var itemResource = {
       "@": {
         'identifier': id,
