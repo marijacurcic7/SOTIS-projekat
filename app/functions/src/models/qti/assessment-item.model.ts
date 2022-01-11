@@ -1,6 +1,6 @@
-// import { Question } from "../question.model";
 import { Answer } from "../answer.model";
 import { parse } from 'js2xmlparser'
+import { Question } from "../question.model";
 
 export class AssessmentItem {
   '@': {
@@ -85,23 +85,23 @@ export class AssessmentItem {
     }
   }
 
-  // private initOutcome(question: Question) {
-  //   this['qti-outcome-declaration'] = {
-  //     '@': {
-  //       'base-type': 'float',
-  //       'cardinality': 'single',
-  //       'identifier': 'SCORE'
-  //     },
-  //     'qti-default-value': {
-  //       'qti-value': question.maxPoints,
-  //     }
-  //   }
-  // }
+  private initOutcome(question: Question) {
+    this['qti-outcome-declaration'] = {
+      '@': {
+        'base-type': 'float',
+        'cardinality': 'single',
+        'identifier': 'SCORE'
+      },
+      'qti-default-value': {
+        'qti-value': question.maxPoints,
+      }
+    }
+  }
 
 
-  // private initBody(question: Question) {
+  private initBody(question: Question) {
 
-  // }
+  }
 
   public getXml() {
     return parse('assessmentItem', this)

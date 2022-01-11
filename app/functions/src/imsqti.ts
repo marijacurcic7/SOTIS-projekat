@@ -3,6 +3,10 @@ import * as admin from 'firebase-admin';
 import { User } from "./models/user.model";
 import { Test } from "./models/test.model";
 import { AssessmentItem } from "./models/qti/assessment-item.model";
+import { AssessmentTest } from "./models/qti/assessment-test.model";
+import { Manifest } from "./models/qti/manifest.model";
+import { Question } from "./models/question.model";
+import { Answer } from "./models/answer.model";
 
 export const generateImsqti = functions.https.onCall(async (testId: string, context) => {
   // check if teacher is signed in
@@ -27,11 +31,6 @@ export const testStorage = functions.https.onRequest(async (request, response) =
   response.send('finished')
 })
 
-export const testXml = functions.https.onRequest(async (request, response) => {
-  const assessmentItem = new AssessmentItem()
-  console.log(assessmentItem.getXml())
-  response.send('hello xml')
-})
 
 // TODO: delte dummy variables
 const xmlAssessmentItem = `<?xml version="1.0" encoding="UTF-8"?>
@@ -58,10 +57,10 @@ export const saveQti = functions.https.onRequest(async (request, response) => {
   // create a folder for a specific test
   const JSZip = await import('jszip')
   const zip = new JSZip()
-  
+
   const testId = 'test12345'
   const folderName = `qti-${testId}`
-  
+
   const testFolder = zip.folder(folderName)
   // add questions to the folder
   xmlAssessmentItems.forEach((item, i) => {
@@ -88,3 +87,65 @@ export const saveQti = functions.https.onRequest(async (request, response) => {
 
   response.send('done')
 })
+
+
+
+
+
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * -------------------------- TODO: FINISH FUNCTIONS --------------------------
+ * ---------------------------------------------------------------------------- 
+ */
+
+const testId = 'TpBxQo8I8h0b8NZ8SkCY'
+
+async function getQuestions(testId: string) {
+  const questions: Question[] = (await admin.firestore()
+    .collection(`tests/${testId}/questions`)
+    .get())
+    .docs
+    .map(question => question.data() as Question)
+  return questions
+}
+async function getCorrectAnswers(testId: string) {
+  const correctAnswers: Answer[] = (await admin.firestore()
+    .collection(`tests/${testId}/answers`)
+    .get())
+    .docs
+    .map(ans => ans.data() as Answer)
+  return correctAnswers
+}
+
+
+// endpoint: http://localhost:8082/e-learning-b157f/us-central1/getAssessmentItemXml
+export const getAssessmentItemXml = functions.https.onRequest(async (request, response) => {
+  // get questions
+  const questions = getQuestions(testId)
+  const correctAnswers = getCorrectAnswers(testId)
+
+  // TODO: proslediti u konstruktoru prave parametre
+  const assessmentItem = new AssessmentItem()
+  console.log(assessmentItem.getXml())
+  response.contentType('text/xml; charset=utf8').send(assessmentItem.getXml())
+})
+
+export const getTestXml = functions.https.onRequest(async (request, response) => {
+  // get test from database
+  const javascriptTest: Test = (await admin.firestore().doc(`tests/TpBxQo8I8h0b8NZ8SkCY`).get()).data() as Test
+
+  // TODO: proslediti u konstruktoru prave parametre
+  // const test = new AssessmentTest()
+  // console.log(test.getXml())
+  // response.contentType('text/xml; charset=utf8').send(test.getXml())
+})
+
+export const getManifestXml = functions.https.onRequest(async (request, response) => {
+  // TODO: proslediti u konstruktoru prave parametre
+  // const manifest = new Manifest()
+  // console.log(manifest.getXml())
+  // response.contentType('text/xml; charset=utf8').send(manifest.getXml())
+})
+
