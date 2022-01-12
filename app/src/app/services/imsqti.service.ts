@@ -23,7 +23,7 @@ export class ImsqtiService {
     }
     catch (error) {
       // if url doesn't exists try to create qti zip
-      if (error instanceof FirebaseError && error.code == 'storage/object-not-found') {
+      if (error instanceof FirebaseError && error.code == 'storage/unauthorized') {
         try {
           const callable = this.fns.httpsCallable<string>('createQti')
           await callable(testId).toPromise()

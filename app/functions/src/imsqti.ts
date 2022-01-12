@@ -22,7 +22,7 @@ export const createQti = functions.https.onCall(async (testId: string, context) 
   if (exists[0] === true) throw new functions.https.HttpsError('already-exists', 'qti zip already exists.')
 
   // if zip doesn't exist, create qti zip
-  return await createQtiZip(testId)
+  return await createQtiZip(testId, userId)
 })
 
 
@@ -44,7 +44,7 @@ async function getCorrectAnswers(testId: string) {
 }
 
 
-async function createQtiZip(testId: string) {
+async function createQtiZip(testId: string, userId: string) {
   const test = (await admin.firestore().doc(`tests/${testId}`).get()).data() as Test
   test.id = testId
   const questions = await getQuestions(testId)
@@ -88,6 +88,7 @@ async function createQtiZip(testId: string) {
   const bucket = admin.storage().bucket()
   const zippedTest = bucket.file(`qti-${testId}.zip`)
   await zippedTest.save(testBuffer)
+  await zippedTest.setMetadata({ metadata: { 'createdBy': userId } })
 
   // save zip reference as a field in the test in firestore
   console.log(zippedTest.name)
