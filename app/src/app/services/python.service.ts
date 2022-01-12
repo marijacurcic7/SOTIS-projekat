@@ -83,13 +83,6 @@ response = iita_exclude_transitive(answers, v=1)
     this.openSuccessSnackBar('ready to use')
   }
 
-  async runPythonCodeFromFile(pathToPythonFile: string = './assets/python/test.py') {
-    const pythonCode = await (await fetch(pathToPythonFile)).text()
-    console.log(pythonCode)
-    const ret = this.pyodide.runPython(pythonCode)
-    console.log(ret)
-  }
-
   openSuccessSnackBar(message: string): void {
     this.snackBar.open(message, 'Dismiss', {
       verticalPosition: 'top',
