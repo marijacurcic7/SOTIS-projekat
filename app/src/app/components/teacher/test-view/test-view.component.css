@@ -101,4 +101,9 @@
     margin-top: 15px;
     width: 100%;
   }
-  
+
+  .mat-icon {
+    font-size: 1.2rem; 
+    vertical-align: middle;
+    color:#7256a3;
+  }

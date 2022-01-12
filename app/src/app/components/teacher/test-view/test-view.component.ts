@@ -6,6 +6,7 @@ import { Test } from 'src/app/models/test.model';
 import { TestService } from 'src/app/services/test.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AuthService } from 'src/app/services/auth.service';
+import { ImsqtiService } from 'src/app/services/imsqti.service';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class TestViewComponent implements OnInit {
     private route: ActivatedRoute,
     private testService: TestService,
     private cd: ChangeDetectorRef,
-    private authService: AuthService,
+    private imsqtiService: ImsqtiService,
   ) {
     this.test = {
       name: "",
@@ -57,17 +58,14 @@ export class TestViewComponent implements OnInit {
 
   ngOnInit() {
     let testId = String(this.route.snapshot.paramMap.get('id'));
-    console.log(testId);
 
     this.testService.getTest(testId).subscribe(t => {
       this.test = t;
-      this.domainId = this.test.domainId? this.test.domainId : "";
-      console.log(this.test);
+      this.domainId = this.test.domainId ? this.test.domainId : "";
       this.teacherName = this.test.createdBy.displayName;
     });
 
     this.testService.getQuestions(testId).subscribe(q => {
-      console.log(q);
       this.questions = q;
     });
 
@@ -83,7 +81,7 @@ export class TestViewComponent implements OnInit {
     });
 
     let i = this.expandedElements.indexOf(q);
-    if(i > -1) this.expandedElements.splice(i);
+    if (i > -1) this.expandedElements.splice(i);
     else this.expandedElements.push(q);
 
     // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
@@ -103,9 +101,9 @@ export class TestViewComponent implements OnInit {
     }
     return false;
     // });
-
-
   }
 
-
+  async downloadQti() {
+    if (this.test.id) await this.imsqtiService.downloadQti(this.test.id)
+  }
 }
