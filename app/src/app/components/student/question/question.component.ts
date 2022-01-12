@@ -65,7 +65,6 @@ export class QuestionComponent implements OnInit {
     this.questions = [];
     this.qlength = 0;
     this.qindex = 0;
-    console.log(this.questions);
     this.myAnswer = {
       myAnswers: []
     }
@@ -77,7 +76,6 @@ export class QuestionComponent implements OnInit {
     this.takeId = String(this.route.snapshot.paramMap.get('tid'));
     this.questionId = String(this.route.snapshot.paramMap.get('qid'));
 
-    console.log("QUESTION: ", this.questionId);
 
     this.authService.user$.subscribe(user => {
       this.user = user;
@@ -91,7 +89,6 @@ export class QuestionComponent implements OnInit {
       this.takeService.getQuestions(this.takeId, this.user.uid).subscribe(questions => {
         this.questions = questions;
         this.questions.sort((a, b) => a.sortedIndex - b.sortedIndex);
-        console.log(this.questions);
         this.qlength = this.questions.length;
 
         if (this.questions[0].id == this.questionId) this.first = true;
@@ -164,10 +161,8 @@ export class QuestionComponent implements OnInit {
     var text = this.question.possibleAnswers[0];
     if (this.a1Clicked) {
       this.myAnswer.myAnswers.push(text);
-      // console.log(text);
     }
     else this.removeAnswer(text);
-    // console.log(this.myAnswer.myAnswers);
   }
 
   answer2Clicked() {
@@ -208,14 +203,12 @@ export class QuestionComponent implements OnInit {
   }
 
   removeAnswer(element: string) {
-    // console.log(element);
     this.myAnswer.myAnswers.forEach((value, index) => {
       if (value == element) this.myAnswer.myAnswers.splice(index, 1);
     });
   }
 
   setAnswer(i: number) {
-    // console.log(i);
     switch (i) {
       case 0: {
         this.a1Clicked = true;

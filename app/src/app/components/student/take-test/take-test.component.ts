@@ -128,7 +128,6 @@ export class TakeTestComponent implements OnInit {
     });
 
     while (this.sortedQuestions.length < this.questions.length) {
-      // console.log(leveln)
       let levelnn: DomainProblem[] = [];
       rest.forEach(p => {
         if (p.input?.every(i => leveln.find(r => r.id == i))) {
@@ -140,7 +139,6 @@ export class TakeTestComponent implements OnInit {
           });
         }
       });
-      // console.log(levelnn);
       leveln = [...new Set([...leveln, ...levelnn])]
     }
     for (let index = 0; index < this.sortedQuestions.length; index++) {

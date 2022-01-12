@@ -97,7 +97,6 @@ export class TakesComponent implements OnInit {
         }
         this.myNetworks.push(myNetwork);
       }
-      console.log(this.myNetworks);
       this.expandedElements.push(t);
     }
 
@@ -113,7 +112,6 @@ export class TakesComponent implements OnInit {
   initNetwork(t: Take) {
     // create a network
     var id = t.id ? t.id : "";
-    console.log(id);
     let networkHtmlElem = document.getElementById(id);
     let myNetwork = this.myNetworks.find(n => n.id === id);
     if (!myNetwork) return;
@@ -207,8 +205,6 @@ export class TakesComponent implements OnInit {
                 this.takeService.getQuestion(takeId, userId, answer.id).subscribe(q => {
                   this.questions.push(q);
                   if (q.domainProblemId) {
-                    console.log(q.domainProblemId);
-                    // passedProblems.push(q.domainProblemId);
                     var problemNode = {
                       id: q.domainProblemId,
                       label: q.domainProblemName,

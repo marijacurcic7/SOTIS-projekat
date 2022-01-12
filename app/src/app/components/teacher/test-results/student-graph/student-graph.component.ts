@@ -36,16 +36,15 @@ export class StudentGraphComponent implements OnInit {
     private route: ActivatedRoute,
     private domainService: DomainService,
     private takeService: TakeService,
-   ) { 
+  ) {
     this.questions = [];
     this.myAnswers = [];
-   }
+  }
 
   ngOnInit(): void {
     this.initNetwork();
     const domainId = String(this.route.snapshot.paramMap.get('domainId'));
-    console.log(domainId);
-    if(domainId && domainId !== 'null') {
+    if (domainId && domainId !== 'null') {
       this.domainId = domainId;
       this.initDomainAndDomainProblems(domainId);
     }
@@ -82,35 +81,21 @@ export class StudentGraphComponent implements OnInit {
 
         var passedProblems: string[] = [];
 
-        if(this.takeId && this.userId){
+        if (this.takeId && this.userId) {
           this.takeService.getMyAnswers(this.takeId, this.userId).subscribe(a => {
             this.myAnswers = a;
-            for(var answer of this.myAnswers){
-              if(answer.correct){
-                if(!this.takeId || !this.userId || !answer.id) return;
+            for (var answer of this.myAnswers) {
+              if (answer.correct) {
+                if (!this.takeId || !this.userId || !answer.id) return;
                 this.takeService.getQuestion(this.takeId, this.userId, answer.id).subscribe(q => {
                   this.questions.push(q);
-                  if(q.domainProblemId) {
-                    console.log(q.domainProblemId);
+                  if (q.domainProblemId) {
                     passedProblems.push(q.domainProblemId);
                   }
                 });
               }
             }
-            console.log(this.questions);
-            // var passedProblems: string[] = [];
-            if(passedProblems.length > 0) console.log(passedProblems[0]);
-            for(let p of passedProblems){
-              console.log("ovde");
-              console.log(p);
-              // if(question.domainProblemId) {
-              //   console.log(question.domainProblemId);
-              //   // passedProblems.push(question.domainProblemId);
-              // }
-            }
-            console.log(passedProblems);
           });
-          this.colorNodes(passedProblems);
         }
 
       }
@@ -119,21 +104,7 @@ export class StudentGraphComponent implements OnInit {
     })
   }
 
-  colorNodes(passedProblems: string[]){
-    console.log(passedProblems);
-    // var nnode = this.nodes.get("MRWv0XeYubFiaqzm9wZt") as unknown as DomainProblem;
-    // console.log(nnode);
-    // var pos = this.network.getPosition("MRWv0XeYubFiaqzm9wZt");
-    // console.log(pos);
-    // console.log(this.network.getNodeAt(pos));
 
-    // this.nodes.update({
-    //   id: "MRWv0XeYubFiaqzm9wZt",
-    //   label: "Data Types",
-    //   color: {
-    //   }
-    // })
-  }
 
   initNetwork() {
     // create a network
@@ -183,7 +154,7 @@ export class StudentGraphComponent implements OnInit {
     //   console.log('deselected node')
     //   this.selectedNode = undefined
     // });
-    
+
   }
 
   // async connectTwoNodes(parentNodeId: string, childNodeId: string) {
