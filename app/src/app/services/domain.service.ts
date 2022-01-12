@@ -63,16 +63,25 @@ export class DomainService {
     )
   }
   getDomain(domainId: string) {
-    return this.firestore.doc<Domain>(`domains/${domainId}`).valueChanges();
+    const domain = this.firestore.doc<Domain>(`domains/${domainId}/`)
+
+    return domain.snapshotChanges().pipe(
+      map(a => {
+        const data = a.payload.data() as Domain;
+        const id = a.payload.id;
+        data.id = id;
+        return data;
+      })
+    )
   }
 
   async setCurrentlyActive(domainId: string, currentlyActive: 'realDomain' | 'expectedDomain') {
-    try{
+    try {
       await this.firestore.doc<Domain>(`domains/${domainId}`).update({
         currentlyActive
       })
     }
-    catch(error) {
+    catch (error) {
       if (error instanceof FirebaseError) this.openFailSnackBar(error.code)
       else this.openFailSnackBar()
       throw error

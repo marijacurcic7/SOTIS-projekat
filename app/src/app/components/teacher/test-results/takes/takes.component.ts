@@ -13,6 +13,7 @@ import { Question } from 'src/app/models/question.model';
 import { MyAnswer } from 'src/app/models/myAnswer.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyNetwork } from 'src/app/models/my-network.model';
+import { take } from 'rxjs/operators';
 
 
 @Component({
@@ -52,77 +53,45 @@ export class TakesComponent implements OnInit {
     private domainService: DomainService,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-  ) { 
+  ) {
     this.expandedElements = [];
     this.questions = [];
     this.myAnswers = [];
     this.myNetworks = [];
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     const testId = String(this.route.snapshot.paramMap.get('id'))
-    this.takeService.getTakesForOneTest(testId).subscribe(takes => {
-      this.takes = takes;
-      console.log(this.takes);
+    this.takes = await this.takeService.getTakesForOneTest(testId).pipe(take(1)).toPromise()
+    const test = await this.testService.getTest(testId).pipe(take(1)).toPromise()
+    if (!test.domainId) throw new Error('domain ID is missing')
+    this.domain = await this.domainService.getDomain(test.domainId).pipe(take(1)).toPromise()
 
-      
+    this.takes.forEach(t => {
+      if (!t.id) return;
+      let mn = this.myNetworks.find(n => n.id === t.id);
+      if (!mn) {
+        let myNetwork: MyNetwork = { id: t.id }
+        this.myNetworks.push(myNetwork)
+      }
 
-    });
-    this.testService.getTest(testId).subscribe(test => {
-      console.log(test.domainId)
-      if (test.domainId) this.domainService.getDomain(test.domainId).subscribe(domain => { 
-        if (domain){
-          this.domain = domain;
-          this.domain.id = test.domainId;
-          console.log(domain.id);
+      if (this.domain.id) this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid)
+      this.initNetwork(t)
+    })
 
-          //init1
-          for(let t of this.takes){
-            if (!t.id) return;
-            let mn = this.myNetworks.find(n => n.id === t.id);
-            if(!mn){
-              let myNetwork: MyNetwork = {
-                id: t.id,
-              }
-              this.myNetworks.push(myNetwork);
-            }
-            console.log(this.myNetworks);
-
-            if(this.domain.id && this.domain.id !== 'null') {
-              this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
-            }
-            this.initNetwork(t);
-          }
-
-
-          // this.initNetwork();
-          // if(domain.id && domain.id !== 'null') {
-          //   this.domainId = domainId;
-          //   this.initDomainAndDomainProblems(domainId);
-          // }
-        }  
-      });
-    });
   }
 
   toggleRow(t: Take) {
-    console.log(this.domain.id);
-    let testid = String(this.route.snapshot.paramMap.get('id'));
     if (!t.id) return;
-
-    // this.testService.getAnswer(id, q.id).subscribe(a => {
-    //   this.answer = a;
-    // });
-
     let i = this.expandedElements.indexOf(t);
-    if(i > -1){
+    if (i > -1) {
       console.log("zatvori");
       this.expandedElements.splice(i);
     }
-    else{
+    else {
       console.log("otvori");
       let mn = this.myNetworks.find(n => n.id === t.id);
-      if(!mn){
+      if (!mn) {
         let myNetwork: MyNetwork = {
           id: t.id,
         }
@@ -130,13 +99,11 @@ export class TakesComponent implements OnInit {
       }
       console.log(this.myNetworks);
       this.expandedElements.push(t);
-    } 
+    }
 
-    // q.possibleAnswers && q.possibleAnswers.length ? (this.expandedElement = this.expandedElement === q ? null : q) : null;
     this.cd.detectChanges();
 
-
-    if(this.domain.id && this.domain.id !== 'null') {
+    if (this.domain.id && this.domain.id !== 'null') {
       this.initDomainAndDomainProblems(this.domain.id, t.id, t.user.uid);
     }
     this.initNetwork(t);
@@ -145,11 +112,11 @@ export class TakesComponent implements OnInit {
 
   initNetwork(t: Take) {
     // create a network
-    var id = t.id? t.id : "";
+    var id = t.id ? t.id : "";
     console.log(id);
     let networkHtmlElem = document.getElementById(id);
     let myNetwork = this.myNetworks.find(n => n.id === id);
-    if(!myNetwork) return;
+    if (!myNetwork) return;
     let data = {
       // nodes: this.nodes,
       // edges: this.edges,
@@ -184,9 +151,9 @@ export class TakesComponent implements OnInit {
     //   network: network
     // }
     myNetwork.network = network;
-    
+
     // this.myNetworks.push(myNetwork);
-    
+
   }
 
 
@@ -202,9 +169,9 @@ export class TakesComponent implements OnInit {
     this.domainService.getDomainProblems(domainId).subscribe(domainProblems => {
       if (domainProblems && domainProblems.length) {
         let mn = this.myNetworks.find(n => n.id === takeId);
-        if(!mn) return;
+        if (!mn) return;
         mn.nodes = new DataSet<DomainProblem>();
-        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to' , color: string}>();
+        mn.edges = new DataSet<{ id: string, from: string, to: string, arrows: 'to', color: string }>();
 
         mn.nodes.clear();
         mn.nodes.update(domainProblems);
@@ -216,8 +183,8 @@ export class TakesComponent implements OnInit {
         // update edges
         domainProblems.forEach(parentNode => {
           parentNode.output?.forEach(childNodeId => {
-            if(!mn) return;
-            if(!mn.edges) return;
+            if (!mn) return;
+            if (!mn.edges) return;
             mn.edges.update({
               id: `${parentNode.id}${childNodeId}`,
               from: parentNode.id,
@@ -231,15 +198,15 @@ export class TakesComponent implements OnInit {
 
         // var passedProblems: string[] = [];
 
-        if(takeId && userId){
+        if (takeId && userId) {
           this.takeService.getMyAnswers(takeId, userId).subscribe(a => {
             this.myAnswers = a;
-            for(var answer of this.myAnswers){
-              if(answer.correct){
-                if(!takeId || !userId || !answer.id) return;
+            for (var answer of this.myAnswers) {
+              if (answer.correct) {
+                if (!takeId || !userId || !answer.id) return;
                 this.takeService.getQuestion(takeId, userId, answer.id).subscribe(q => {
                   this.questions.push(q);
-                  if(q.domainProblemId) {
+                  if (q.domainProblemId) {
                     console.log(q.domainProblemId);
                     // passedProblems.push(q.domainProblemId);
                     var problemNode = {
@@ -255,8 +222,8 @@ export class TakesComponent implements OnInit {
                         }
                       }
                     }
-                    if(!mn) return;
-                    if(!mn.nodes) return;
+                    if (!mn) return;
+                    if (!mn.nodes) return;
                     mn.nodes.update(problemNode);
                   }
                 });
@@ -294,11 +261,11 @@ export class TakesComponent implements OnInit {
     const start = take.startTime.toDate()
 
     let dur = "";
-    const date = new Date((take.endTime.seconds - take.startTime.seconds)*1000);
-    if((date.getHours() - 1) > 0){
+    const date = new Date((take.endTime.seconds - take.startTime.seconds) * 1000);
+    if ((date.getHours() - 1) > 0) {
       dur = (date.getHours() - 1) + 'h ' + date.getMinutes() + 'm ' + date.getSeconds() + 's';
     }
-    else if (date.getMinutes() > 0){
+    else if (date.getMinutes() > 0) {
       dur = date.getMinutes() + 'm ' + date.getSeconds() + 's';
     }
     else {
