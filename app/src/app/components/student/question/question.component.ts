@@ -19,7 +19,7 @@ export class QuestionComponent implements OnInit {
   beforeunloadHandler($event: any) {
     return false
   }
-
+  status: undefined | 'saving'
   user: User | undefined
   testId: string;
   takeId: string;
@@ -27,7 +27,6 @@ export class QuestionComponent implements OnInit {
   nextQuestionId: string | undefined;
   prevQuestionId: string | undefined;
   test: Test;
-  // take: Take;
   questions: Question[];
   answer: Answer;
   myAnswer: MyAnswer;
@@ -202,6 +201,7 @@ export class QuestionComponent implements OnInit {
     if (!this.user) throw new Error('You must login first.');
     await this.takeService.updateMyAnswer(this.takeId, this.user.uid, this.questionId, this.myAnswer);
 
+    this.status = 'saving'
     await this.takeService.finishTake(this.takeId);
 
     this.router.navigate([`/take-test/${this.testId}/take/${this.takeId}/results`]);

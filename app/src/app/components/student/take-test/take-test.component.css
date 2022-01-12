@@ -36,3 +36,12 @@ mat-icon {
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
 }
+.action {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-height: 4rem;
+  gap: 2rem;
+}
+  

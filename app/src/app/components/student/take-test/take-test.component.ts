@@ -21,6 +21,7 @@ import { take } from 'rxjs/operators';
 })
 export class TakeTestComponent implements OnInit {
 
+  status: undefined | 'saving'
   user: User | undefined
   testId: string;
   questionId: string | undefined;
@@ -72,8 +73,9 @@ export class TakeTestComponent implements OnInit {
   }
 
   start() {
+    this.status = 'saving'
     if (!this.user) throw new Error('You must login first.');
-
+    
     const myAnswers: MyAnswer[] = this.questions.map((_, index) => {
       return {
         id: String(index),

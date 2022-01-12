@@ -44,7 +44,7 @@
             </table>
 
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions *ngIf="!status; else saving">
             <span>
                 <button mat-raised-button color="link" *ngIf="!first" (click)="previous()">
                     <mat-icon class="material-icons-outlined">arrow_back</mat-icon>
@@ -62,5 +62,11 @@
                 </button>
             </span>
         </mat-card-actions>
+        <ng-template #saving>
+            <mat-card-actions class='action'>
+                <p> Saving results... </p>
+                <mat-spinner [diameter]="30"></mat-spinner>
+            </mat-card-actions>
+        </ng-template>
     </mat-card>
 </div>
