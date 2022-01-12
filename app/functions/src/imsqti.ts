@@ -52,10 +52,10 @@ async function createQtiZip(testId: string, userId: string) {
 
   // create questions
   const assessmentItems: AssessmentItem[] = [];
-  for (let question of questions) {
+  for (const question of questions) {
     const answer = correctAnswers.find(ans => { return ans.id == question.id; });
     if (!answer) continue
-    let assessmentItem = new AssessmentItem(question, answer);
+    const assessmentItem = new AssessmentItem(question, answer);
     assessmentItems.push(assessmentItem);
   }
 
