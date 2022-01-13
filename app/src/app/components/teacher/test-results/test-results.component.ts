@@ -50,8 +50,8 @@ export class TestResultsComponent implements OnInit {
       })
 
       // check if real domain exists
-      this.domainService.getRealDomainProblems(test.domainId).subscribe(realDomains => {
-        if (realDomains.length !== 0) this.realDomainExists = true
+      this.domainService.getRealDomainProblems(test.domainId).subscribe(realDomainProblems => {
+        if (realDomainProblems.length !== 0) this.realDomainExists = true
         else this.realDomainExists = false
       })
     })
