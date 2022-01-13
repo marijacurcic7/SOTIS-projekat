@@ -108,16 +108,13 @@ export class AddTestComponent implements OnInit {
           possibleAnswers: result.possibleAnswers,
         }
         this.maxPoints += result.maxPoints;
-        console.log(q);
         this.questions = [...this.questions, q];
-        console.log(this.questions);
 
         let a: Answer = {
           id: randomStr,
           correctAnswers: result.trueAnswers
         }
         this.answers = [...this.answers, a];
-        console.log(this.answers);
         this.dataSource = new MatTableDataSource<Question>(this.questions);
       }
 
@@ -149,7 +146,6 @@ export class AddTestComponent implements OnInit {
         }
         this.maxPoints -= ques.maxPoints;
         this.maxPoints += result.maxPoints;
-        console.log(q);
 
         // let updateQ = this.questions.filter(item => item.id == q.id)[0];
         // let qindex = this.questions.indexOf(updateQ);
@@ -157,9 +153,7 @@ export class AddTestComponent implements OnInit {
         this.questions.forEach((value,index)=>{
           if(value==ques) this.questions.splice(index,1);
         });
-        console.log(this.questions);
         this.questions = [...this.questions, q];
-        console.log(this.questions);
 
         let a: Answer = {
           id: ans.id,
@@ -168,7 +162,6 @@ export class AddTestComponent implements OnInit {
         let updateA = this.answers.filter(item => item.id == a.id)[0];
         let aindex = this.answers.indexOf(updateA);
         this.answers[aindex] = a;
-        console.log(this.answers);
 
         this.dataSource = new MatTableDataSource<Question>(this.questions);
       }
@@ -190,7 +183,6 @@ export class AddTestComponent implements OnInit {
     this.name = this.testForm.controls['name'].value;
     this.topic = this.testForm.controls['topic'].value;
     this.domain = this.testForm.controls['selectedDomain'].value;
-    // console.log(this.domain);
 
     if (!this.user) throw new Error('You must login first.')
 
@@ -205,16 +197,12 @@ export class AddTestComponent implements OnInit {
       }
     }
 
-    console.log(this.test);
-    console.log(this.questions);
-    // console.log(this.answers);
 
     try {
       // await this.testService.addTest(dummyTest, dummyQuestions, dummyAnswers);
       await this.testService.addTest(this.test, this.questions, this.answers);
       this.router.navigate(['/'])
     } catch (error) {
-      console.log(error);
       this.submitionError = true;
     }
   }
@@ -227,19 +215,14 @@ export class AddTestComponent implements OnInit {
     this.graphVisible = false;
     this.domainId = this.testForm.controls['selectedDomain'].value.id;
     // this.messageEvent.emit(this.message);
-    console.log(this.domainId);
     this.graphVisible = true;
   }
 
   onNodeClick(problem: any){
-    console.log(problem);
 
     if (problem.type === 'questionNode') {
-      console.log("izmeni pitanje");
       let q = this.questions.filter( qq => qq.id == problem.id)[0];
-      console.log(q);
       let a = this.answers.filter( aa => aa.id == problem.id)[0];
-      console.log(a);
       this.editQuestion(q, a);
     }
     else {
@@ -249,10 +232,7 @@ export class AddTestComponent implements OnInit {
   }
 
   deleteQuestion(event: any){
-    console.log("Delete question");
-    console.log(event);
 
-    console.log(this.questions);
     
     this.questions.forEach((value,index)=>{
       if(value.id==event.id) this.questions.splice(index,1);
@@ -261,7 +241,6 @@ export class AddTestComponent implements OnInit {
       if(value.id==event.id) this.answers.splice(index,1);
     });
     
-    console.log(this.questions);
     
   }
 
@@ -309,7 +288,6 @@ export class QuestionDialog {
   }
 
   ngOnInit(): void {
-    console.log(this.data.ans);
     if(this.data.ques && this.data.ans){
       this.questionForm.controls['text'].setValue(this.data.ques.text);
       this.questionForm.controls['maxPoints'].setValue(this.data.ques.maxPoints);

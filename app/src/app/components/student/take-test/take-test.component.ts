@@ -21,6 +21,7 @@ import { take } from 'rxjs/operators';
 })
 export class TakeTestComponent implements OnInit {
 
+  status: undefined | 'saving'
   user: User | undefined
   testId: string;
   questionId: string | undefined;
@@ -72,8 +73,9 @@ export class TakeTestComponent implements OnInit {
   }
 
   start() {
+    this.status = 'saving'
     if (!this.user) throw new Error('You must login first.');
-
+    
     const myAnswers: MyAnswer[] = this.questions.map((_, index) => {
       return {
         id: String(index),
@@ -126,7 +128,6 @@ export class TakeTestComponent implements OnInit {
     });
 
     while (this.sortedQuestions.length < this.questions.length) {
-      // console.log(leveln)
       let levelnn: DomainProblem[] = [];
       rest.forEach(p => {
         if (p.input?.every(i => leveln.find(r => r.id == i))) {
@@ -138,7 +139,6 @@ export class TakeTestComponent implements OnInit {
           });
         }
       });
-      // console.log(levelnn);
       leveln = [...new Set([...leveln, ...levelnn])]
     }
     for (let index = 0; index < this.sortedQuestions.length; index++) {

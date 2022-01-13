@@ -37,5 +37,12 @@
 
 
   
-
+.action {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-height: 4rem;
+  gap: 2rem;
+}
   

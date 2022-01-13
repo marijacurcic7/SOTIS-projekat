@@ -52,10 +52,10 @@ async function createQtiZip(testId: string, userId: string) {
 
   // create questions
   const assessmentItems: AssessmentItem[] = [];
-  for (let question of questions) {
+  for (const question of questions) {
     const answer = correctAnswers.find(ans => { return ans.id == question.id; });
     if (!answer) continue
-    let assessmentItem = new AssessmentItem(question, answer);
+    const assessmentItem = new AssessmentItem(question, answer);
     assessmentItems.push(assessmentItem);
   }
 
@@ -89,11 +89,4 @@ async function createQtiZip(testId: string, userId: string) {
   const zippedTest = bucket.file(`qti-${testId}.zip`)
   await zippedTest.save(testBuffer)
   await zippedTest.setMetadata({ metadata: { 'createdBy': userId } })
-
-  // save zip reference as a field in the test in firestore
-  console.log(zippedTest.name)
-  console.log(zippedTest.publicUrl())
-  // // TODO: must add actual id, not dummy id
-  // // await admin.firestore().doc(`tests/${testId}`).update({'qtiReference':zippedTest.name})
-
 }

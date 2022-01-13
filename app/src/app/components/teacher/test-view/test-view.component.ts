@@ -23,6 +23,7 @@ import { ImsqtiService } from 'src/app/services/imsqti.service';
 })
 export class TestViewComponent implements OnInit {
 
+  status: undefined | 'downloading'
   test: Test;
   teacherName: string;
   domainId: string = "";
@@ -104,6 +105,8 @@ export class TestViewComponent implements OnInit {
   }
 
   async downloadQti() {
+    this.status = 'downloading'
     if (this.test.id) await this.imsqtiService.downloadQti(this.test.id)
+    this.status = undefined
   }
 }

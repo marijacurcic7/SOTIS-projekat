@@ -19,7 +19,8 @@ export class TestResultsComponent implements OnInit {
   takes: Take[];
   domain: Domain;
   currentlyActive: 'realDomain' | 'expectedDomain' | undefined;
-  
+  realDomainExists: boolean
+
   constructor(
     private testService: TestService,
     private takeService: TakeService,
@@ -29,26 +30,38 @@ export class TestResultsComponent implements OnInit {
 
   ngOnInit(): void {
     const testId = String(this.route.snapshot.paramMap.get('id'))
+    // get takes
     this.takeService.getTakesForOneTest(testId).subscribe(takes => {
       this.takes = takes;
-    });
+    })
+
+    // get test
     this.testService.getTest(testId).subscribe(test => {
       this.test = test
-      if (test.domainId) this.domainService.getDomain(test.domainId).subscribe(domain => { 
-        if (domain){
-         this.domain = domain 
-         this.currentlyActive = domain.currentlyActive ? domain.currentlyActive : 'expectedDomain'
-         this.domain.id = test.domainId
-        }  
+      if (!test.domainId) throw new Error('no domain ID')
+
+      // get doman and currently activate domain
+      this.domainService.getDomain(test.domainId).subscribe(domain => {
+        if (domain) {
+          this.domain = domain
+          this.currentlyActive = domain.currentlyActive ? domain.currentlyActive : 'expectedDomain'
+          this.domain.id = test.domainId
+        }
+      })
+
+      // check if real domain exists
+      this.domainService.getRealDomainProblems(test.domainId).subscribe(realDomainProblems => {
+        if (realDomainProblems.length !== 0) this.realDomainExists = true
+        else this.realDomainExists = false
       })
     })
   }
-  
+
   async currentlyActiveChanged({ value }: any) {
     if ((value === 'realDomain' || value === 'expectedDomain') && this.domain.id)
       await this.domainService.setCurrentlyActive(this.domain.id, value)
   }
 
-  
+
 
 }

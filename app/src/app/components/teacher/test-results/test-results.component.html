@@ -24,7 +24,7 @@
       <mat-card-title> Takes </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <!-- TODO: dodati listu svih take-ova. Dodati expand graf za svaki take -->
+      <!-- Lista svih take-ova. Postoji expand graf za svaki take -->
       <app-takes></app-takes>
     </mat-card-content>
   </mat-card>
@@ -38,7 +38,7 @@
 <!-- domains -->
 <mat-radio-group [(ngModel)]='currentlyActive'>
   <div style="padding: 1rem; padding-top: 3rem;">
-    <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)">
+    <mat-radio-button color='primary' value="realDomain" (change)="currentlyActiveChanged($event)" [disabled]="!realDomainExists">
       Real Domain
     </mat-radio-button>
     <app-real-domain [domain]="domain" [takes]="takes"></app-real-domain>

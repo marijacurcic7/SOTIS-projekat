@@ -32,13 +32,14 @@ export class RealAndExpectedDomainComponent implements OnInit {
 
   async ngOnChanges(changes: SimpleChanges) {
     if (this.domain) {
-      this.getRealDomainProblems()
-      this.getDomainProblems()
+      this.getDomainProblemsAndRealDomainProblems()
     }
   }
 
-  getRealDomainProblems() {
+  getDomainProblemsAndRealDomainProblems() {
     if (!this.domain?.id) throw new Error('domain ID is missing.')
+
+    // get real domain problems
     this.domainService.getRealDomainProblems(this.domain.id).subscribe(realDomainProblems => {
       if (realDomainProblems && realDomainProblems.length) {
         // set real domains
@@ -59,6 +60,12 @@ export class RealAndExpectedDomainComponent implements OnInit {
             })
           })
         })
+
+        // get domain problems is necessary here, because observable will detect changes
+        // when real domain is created or updated
+        // since we reseted edges, we must again call getDomainProblems
+        this.getDomainProblems()
+
       }
     })
   }
@@ -72,7 +79,7 @@ export class RealAndExpectedDomainComponent implements OnInit {
         domainProblems.forEach(parentNode => {
           parentNode.output?.forEach(childNodeId => {
             const edge = this.edges.get(`${parentNode.id}${childNodeId}`)
-            
+
             if (edge) {
               this.edges.update({
                 id: `${parentNode.id}${childNodeId}`,
@@ -128,21 +135,5 @@ export class RealAndExpectedDomainComponent implements OnInit {
     if (!networkHtmlElem) return console.error('real and expected domain network elem not found')
     this.network = new Network(networkHtmlElem, data, options)
 
-  }
-}
-
-
-
-/**
- * temparary class that extends DomainProblem to enable colors
- */
-class NodeClass extends DomainProblem {
-  color: {
-    background: string,
-    border: string,
-    highlight: {
-      border: string,
-      background: string
-    }
   }
 }

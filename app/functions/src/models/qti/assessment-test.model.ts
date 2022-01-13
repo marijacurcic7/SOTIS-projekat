@@ -53,10 +53,10 @@ export class AssessmentTest {
 
   private initTestPart(items: AssessmentItem[]) {
 
-    let itemRefs = [];
-    for (let item of items) {
-      let itemFile = "items/" + item["@"].identifier + ".xml";
-      let itemRef = this.initItemRef(item["@"].identifier, itemFile);
+    const itemRefs = [];
+    for (const item of items) {
+      const itemFile = "items/" + item["@"].identifier + ".xml";
+      const itemRef = this.initItemRef(item["@"].identifier, itemFile);
       itemRefs.push(itemRef);
     }
 
@@ -78,7 +78,7 @@ export class AssessmentTest {
   }
 
   private initItemRef(itemId: string, itemFile: string) {
-    let itemRef = {
+    const itemRef = {
       // 'qti-assessment-item-ref': {
         "@": {
           'identifier': itemId,
@@ -90,7 +90,7 @@ export class AssessmentTest {
     return itemRef;
   }
 
-  public getXml() {
+  public getXml(): string {
     return parse('qti-assessment-test', this)
   }
 }

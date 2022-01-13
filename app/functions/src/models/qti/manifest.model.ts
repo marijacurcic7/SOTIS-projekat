@@ -33,7 +33,7 @@ export class Manifest {
 
 
   constructor(test: AssessmentTest, items: AssessmentItem[]) {
-    let manifestId = test["@"].identifier + "-test-entry";
+    const manifestId = test["@"].identifier + "-test-entry";
     this.initRoot(manifestId);
     this.initMetadata();
     this.initResources(test, items);
@@ -57,15 +57,15 @@ export class Manifest {
   }
 
   private initResources(test: AssessmentTest, items: AssessmentItem[]) {
-    let resources = [];
-    for (let item of items) {
-      let itemFile = "items/" + item["@"].identifier + ".xml";
-      let itemResource = this.initItemResource(test["@"].identifier, item["@"].identifier, itemFile);
+    const resources = [];
+    for (const item of items) {
+      const itemFile = "items/" + item["@"].identifier + ".xml";
+      const itemResource = this.initItemResource(test["@"].identifier, item["@"].identifier, itemFile);
       resources.push(itemResource);
     }
 
-    let testFile = "assessment.xml";
-    let testResource = this.initTestResource(test["@"].identifier, testFile);
+    const testFile = "assessment.xml";
+    const testResource = this.initTestResource(test["@"].identifier, testFile);
     resources.push(testResource);
 
     this["resources"] = {
@@ -74,9 +74,9 @@ export class Manifest {
   }
 
 
-  private initTestResource(testId: string, testFile: string): any {
-    let id = testId;
-    var testResource = {
+  private initTestResource(testId: string, testFile: string) {
+    const id = testId;
+    const testResource = {
       "@": {
         'identifier': id,
         'type': 'imsqti_test_xmlv3p0',
@@ -92,9 +92,9 @@ export class Manifest {
   }
 
 
-  private initItemResource(testId: string, itemId: string, itemFile: string): any {
-    let id = itemId;
-    var itemResource = {
+  private initItemResource(testId: string, itemId: string, itemFile: string) {
+    const id = itemId;
+    const itemResource = {
       "@": {
         'identifier': id,
         'type': 'imsqti_item_xmlv3p0',
@@ -108,7 +108,7 @@ export class Manifest {
     }
     return itemResource;
   }
-  public getXml() {
+  public getXml(): string {
     return parse('manifest', this)
   }
 }

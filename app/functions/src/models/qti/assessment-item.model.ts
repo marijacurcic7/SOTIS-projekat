@@ -85,9 +85,9 @@ export class AssessmentItem {
   }
 
   private initCorrectAnswers(answer: Answer) {
-    let qtivalues = []
-    for(let ans of answer.correctAnswers) {
-      let qtivalue = {
+    const qtivalues = []
+    for(const ans of answer.correctAnswers) {
+      const qtivalue = {
           '#': ans,
       }
       qtivalues.push(qtivalue);
@@ -126,9 +126,9 @@ export class AssessmentItem {
       maxchoices = question.possibleAnswers.length;
     }
 
-    let simpleChoices = [];
-    for(let ans of question.possibleAnswers){
-      let simpleChoice = this.initSimpleChoice(ans);
+    const simpleChoices = [];
+    for(const ans of question.possibleAnswers){
+      const simpleChoice = this.initSimpleChoice(ans);
       simpleChoices.push(simpleChoice);
     }
 
@@ -147,7 +147,7 @@ export class AssessmentItem {
   }
 
   private initSimpleChoice(possibleAnswer: string) {
-    let simpleChoice = {
+    const simpleChoice = {
       // 'qti-simple-choice': {
         '@': {
           'identifier': possibleAnswer,
@@ -166,7 +166,7 @@ export class AssessmentItem {
     }
   }
 
-  public getXml() {
+  public getXml(): string {
     return parse('qti-assessment-item', this)
   }
 }
